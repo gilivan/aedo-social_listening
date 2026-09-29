@@ -38,5 +38,5 @@ npm run gmaps:test -- "Centro Comercial San Nicolás Rionegro" 40 --visible   # 
 ```
 Luego en Reseñas → Google Maps se agrega el lugar (URL o nombre). Primera vez: hasta 300
 reseñas; después solo las nuevas (ordena por más recientes). Fechas aproximadas.
-Variables opcionales: GMAPS_CHROME_PATH, GMAPS_HEADLESS=0 (ver el navegador), GMAPS_PROFILE_DIR.
+Variables opcionales: GMAPS_CHROME_PATH, GMAPS_HEADLESS=1 (forzar headless; por defecto Chrome corre con ventana fuera de la pantalla), GMAPS_PROFILE_DIR.
 4. Facebook de terceros vía Apify solo si hace falta.

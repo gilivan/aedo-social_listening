@@ -35,20 +35,30 @@ export function googleMapsSessionReady(): boolean {
   return fs.existsSync(READY_MARKER);
 }
 
-async function launchContext(headless: boolean): Promise<BrowserContext> {
+/**
+ * hidden = true → Chrome real (con ventana) pero fuera de la pantalla.
+ * No se usa el modo headless: Chrome sin ventana se anuncia como
+ * "HeadlessChrome" y Google Maps le oculta la pestaña de Reseñas aunque haya
+ * sesión iniciada. GMAPS_HEADLESS=1 fuerza el modo headless de todas formas.
+ */
+async function launchContext(hidden: boolean): Promise<BrowserContext> {
+  const forceHeadless = process.env.GMAPS_HEADLESS === '1';
   const { chromium } = await import('playwright-core');
   fs.mkdirSync(GMAPS_PROFILE_DIR, { recursive: true });
   const exe = process.env.GMAPS_CHROME_PATH;
   return chromium.launchPersistentContext(GMAPS_PROFILE_DIR, {
     ...(exe ? { executablePath: exe } : { channel: process.env.GMAPS_CHROME_CHANNEL || 'chrome' }),
-    headless,
+    headless: forceHeadless,
     locale: 'es-CO',
     timezoneId: 'America/Bogota',
     viewport: { width: 1280, height: 900 },
     // Sin la marca de automatización: Google rechaza el inicio de sesión en
     // navegadores que se anuncian como controlados por software.
     ignoreDefaultArgs: ['--enable-automation'],
-    args: ['--disable-blink-features=AutomationControlled', '--lang=es-CO'],
+    args: [
+      '--disable-blink-features=AutomationControlled', '--lang=es-CO',
+      ...(hidden && !forceHeadless ? ['--window-position=-2400,-2400', '--window-size=1280,900'] : []),
+    ],
   });
 }
 
@@ -212,7 +222,7 @@ async function openPlace(page: Page, identifier: string): Promise<string> {
 async function openReviewsSortedByNewest(page: Page): Promise<void> {
   const tab = page.locator('button[role="tab"][aria-label^="Reseñas"], button[role="tab"][aria-label^="Reviews"]').first();
   if (!(await tab.count())) {
-    throw new Error('Google Maps no muestra la pestaña de Reseñas: la sesión de Google expiró o no está iniciada. Ejecuta `npm run gmaps:login`.');
+    throw new Error('Google Maps no muestra la pestaña de Reseñas. Lo más probable es que la sesión de Google haya expirado: ejecuta `npm run gmaps:login`. Si sigue igual, revisa con `npm run gmaps:test -- "<lugar>" 20 --visible`.');
   }
   await tab.click();
   await page.waitForSelector('div[data-review-id]', { timeout: 20_000 });
@@ -238,7 +248,7 @@ export type GmapsFetchOptions = {
   known?: Set<string>;
   /** Tope de reseñas por lugar y ejecución. */
   max?: number;
-  /** false = Chrome visible (útil para depurar). */
+  /** false = ventana de Chrome visible (útil para depurar); por defecto va fuera de la pantalla. */
   headless?: boolean;
   log?: (m: string) => void;
 };
@@ -252,7 +262,7 @@ export async function fetchGoogleMapsReviewsDetailed(identifier: string, opts: G
   const known = opts.known ?? new Set<string>();
   const max = opts.max ?? (known.size ? 150 : 300);
   const log = opts.log ?? (() => undefined);
-  const headless = opts.headless ?? process.env.GMAPS_HEADLESS !== '0';
+  const headless = opts.headless ?? true; // "oculto" = fuera de la pantalla, ver launchContext
 
   return exclusive(async () => {
     const ctx = await launchContext(headless);
