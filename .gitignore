@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Database locale PGlite
 .data/
+
+# Ejecutables locales (extractor de Google Maps, etc.)
+/bin/

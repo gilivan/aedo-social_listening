@@ -14,6 +14,7 @@ const LANG_MAP: Record<string, string> = {
 
 // GDELT filtra per paese con codici FIPS, che differiscono dall'ISO per alcuni stati.
 const FIPS: Record<string, string> = {
+  CO: 'CO', AR: 'AR', CL: 'CI', PE: 'PE', EC: 'EC', PA: 'PM',
   IT: 'IT', US: 'US', GB: 'UK', FR: 'FR', DE: 'GM', ES: 'SP', BR: 'BR',
   MX: 'MX', CA: 'CA', AU: 'AS', IN: 'IN', NL: 'NL', PL: 'PL', JP: 'JA',
 };

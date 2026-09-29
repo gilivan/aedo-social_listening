@@ -22,11 +22,12 @@ import { hydrateConnectorCredentials } from '@/lib/connector-credentials';
 type Project = typeof projectsTable.$inferSelect;
 
 const LANGS = [
-  ['it', 'Italiano'], ['en', 'Inglés'], ['es', 'Español'],
+  ['es', 'Español'], ['en', 'Inglés'], ['it', 'Italiano'],
   ['fr', 'Francés'], ['de', 'Alemán'], ['pt', 'Portugués'],
 ] as const;
 
 const COUNTRIES = [
+  ['CO', 'Colombia'], ['AR', 'Argentina'], ['CL', 'Chile'], ['PE', 'Perú'], ['EC', 'Ecuador'], ['PA', 'Panamá'],
   ['IT', 'Italia'], ['US', 'Estados Unidos'], ['GB', 'Reino Unido'], ['FR', 'Francia'],
   ['DE', 'Alemania'], ['ES', 'España'], ['BR', 'Brasil'], ['MX', 'México'],
   ['CA', 'Canadá'], ['AU', 'Australia'], ['IN', 'India'], ['NL', 'Países Bajos'],
@@ -445,7 +446,7 @@ function ProjectFields({ project }: { project: Project | null }) {
           {LANGS.map(([code, label]) => (
             <label key={code} className="flex items-center gap-1.5 text-sm text-slate-300">
               <input type="checkbox" name="languages" value={code}
-                defaultChecked={project ? project.languages.includes(code) : code === 'it' || code === 'en'}
+                defaultChecked={project ? project.languages.includes(code) : code === 'es'}
                 className="accent-sky-500" />
               {label}
             </label>
@@ -458,7 +459,7 @@ function ProjectFields({ project }: { project: Project | null }) {
           {COUNTRIES.map(([code, label]) => (
             <label key={code} className="flex items-center gap-1.5 text-sm text-slate-300">
               <input type="checkbox" name="countries" value={code}
-                defaultChecked={(project?.countries ?? []).includes(code)} className="accent-sky-500" />
+                defaultChecked={project ? (project.countries ?? []).includes(code) : code === 'CO'} className="accent-sky-500" />
               {label}
             </label>
           ))}

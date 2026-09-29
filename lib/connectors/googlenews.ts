@@ -7,13 +7,20 @@ type Locale = { hl: string; gl: string; ceid: string };
 const BY_LANGUAGE: Record<string, Locale> = {
   it: { hl: 'it', gl: 'IT', ceid: 'IT:it' },
   en: { hl: 'en-US', gl: 'US', ceid: 'US:en' },
-  es: { hl: 'es', gl: 'ES', ceid: 'ES:es' },
+  // AEDO: el español por defecto es el de Colombia (antes España).
+  es: { hl: 'es-419', gl: 'CO', ceid: 'CO:es-419' },
   fr: { hl: 'fr', gl: 'FR', ceid: 'FR:fr' },
   de: { hl: 'de', gl: 'DE', ceid: 'DE:de' },
   pt: { hl: 'pt-BR', gl: 'BR', ceid: 'BR:pt-419' },
 };
 
 export const BY_COUNTRY: Record<string, Locale> = {
+  CO: { hl: 'es-419', gl: 'CO', ceid: 'CO:es-419' },
+  AR: { hl: 'es-419', gl: 'AR', ceid: 'AR:es-419' },
+  CL: { hl: 'es-419', gl: 'CL', ceid: 'CL:es-419' },
+  PE: { hl: 'es-419', gl: 'PE', ceid: 'PE:es-419' },
+  EC: { hl: 'es-419', gl: 'EC', ceid: 'EC:es-419' },
+  PA: { hl: 'es-419', gl: 'PA', ceid: 'PA:es-419' },
   IT: { hl: 'it', gl: 'IT', ceid: 'IT:it' },
   US: { hl: 'en-US', gl: 'US', ceid: 'US:en' },
   GB: { hl: 'en-GB', gl: 'GB', ceid: 'GB:en' },
