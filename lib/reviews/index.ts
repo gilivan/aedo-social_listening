@@ -13,11 +13,12 @@ const TZ = 'America/Bogota';
  * Le fonti "upload" non si interrogano: sono state popolate una volta sola
  * al momento dell'import, non hanno un endpoint da rileggere.
  */
-export async function ingestReviews(projectId: number): Promise<{ tried: number; fetched: number }> {
+export async function ingestReviews(projectId: number): Promise<{ tried: number; fetched: number; errors: { label: string; message: string }[] }> {
   const db = await getDb();
   const sources = await db.select().from(reviewSources).where(eq(reviewSources.projectId, projectId));
   let tried = 0;
   let fetched = 0;
+  const errors: { label: string; message: string }[] = [];
 
   for (const src of sources) {
     if (src.type === 'upload') continue;
@@ -34,6 +35,7 @@ export async function ingestReviews(projectId: number): Promise<{ tried: number;
       }
     } catch (e) {
       console.error(`[reviews] fetch fallita per la fonte #${src.id} (${src.type} · ${src.identifier}):`, e);
+      errors.push({ label: src.label, message: (e as Error).message });
     }
     if (raw.length) {
       fetched += raw.length;
@@ -46,7 +48,7 @@ export async function ingestReviews(projectId: number): Promise<{ tried: number;
     }
     await db.update(reviewSources).set({ lastFetchedAt: new Date() }).where(eq(reviewSources.id, src.id));
   }
-  return { tried, fetched };
+  return { tried, fetched, errors };
 }
 
 export type ReviewSourceRow = {

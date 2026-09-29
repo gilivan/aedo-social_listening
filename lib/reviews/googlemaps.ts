@@ -168,10 +168,33 @@ const EXPAND_MORE_IN_PAGE = `(() => {
   document.querySelectorAll('button.w8nwRe, button[aria-label="Ver más"], button[aria-label="See more"]').forEach((b) => b.click());
 })()`;
 
+/**
+ * Acepta lo que la persona pegue y lo convierte en una URL de Google Maps:
+ *  - cualquier enlace de Google con el identificador del lugar (0x…:0x…), p. ej.
+ *    el de Reseñas en la búsqueda de Google (…#lrd=0x…:0x…) o una URL de Maps
+ *    → https://www.google.com/maps?ftid=0x…:0x…  (abre la ficha directamente);
+ *  - otra URL de Maps → tal cual;
+ *  - una URL de búsqueda de Google sin identificador → se busca su texto en Maps;
+ *  - texto → búsqueda en Maps.
+ */
+export function normalizeGoogleMapsIdentifier(identifier: string): string {
+  const raw = identifier.trim();
+  const ftid = raw.match(/0x[0-9a-f]+:0x[0-9a-f]+/i);
+  if (ftid) return `https://www.google.com/maps?ftid=${ftid[0].toLowerCase()}`;
+  if (/^https?:\/\//i.test(raw)) {
+    try {
+      const u = new URL(raw);
+      if (u.pathname.startsWith('/maps') || u.hostname.startsWith('maps.')) return raw;
+      const q = u.searchParams.get('q');
+      if (q) return `https://www.google.com/maps/search/${encodeURIComponent(q)}`;
+    } catch { /* no es una URL válida: se trata como texto */ }
+    return raw;
+  }
+  return `https://www.google.com/maps/search/${encodeURIComponent(raw)}`;
+}
+
 async function openPlace(page: Page, identifier: string): Promise<string> {
-  const url = /^https?:\/\//.test(identifier)
-    ? identifier
-    : `https://www.google.com/maps/search/${encodeURIComponent(identifier)}`;
+  const url = normalizeGoogleMapsIdentifier(identifier);
   await page.goto(url + (url.includes('?') ? '&' : '?') + 'hl=es', { waitUntil: 'domcontentloaded' });
   // Si fue una búsqueda con varios resultados, abre el primero.
   await page.waitForSelector('h1, div[role="feed"]', { timeout: 20_000 }).catch(() => undefined);
@@ -180,7 +203,9 @@ async function openPlace(page: Page, identifier: string): Promise<string> {
     await first.click();
     await page.waitForTimeout(2500);
   }
-  await page.waitForSelector('h1', { timeout: 20_000 });
+  await page.waitForSelector('h1', { timeout: 20_000 }).catch(() => {
+    throw new Error('No se encontró la ficha del lugar en Google Maps. Pega la URL del lugar en Google Maps (o su nombre y ciudad).');
+  });
   return page.url();
 }
 

@@ -7,6 +7,7 @@ import { reviewSources } from '@/lib/db/schema';
 import { getCurrentProject } from '@/lib/data';
 import { hydrateConnectorCredentials } from '@/lib/connector-credentials';
 import { ingestReviews } from '@/lib/reviews';
+import { normalizeGoogleMapsIdentifier } from '@/lib/reviews/googlemaps';
 
 const TYPES = new Set(['appstore', 'googleplaces', 'googlemaps', 'yelp']);
 
@@ -17,10 +18,12 @@ export async function addReviewSourceAction(formData: FormData) {
   if (!project) return;
 
   const type = String(formData.get('type') ?? '');
-  const identifier = String(formData.get('identifier') ?? '').trim();
+  const rawIdentifier = String(formData.get('identifier') ?? '').trim();
   const label = String(formData.get('label') ?? '').trim();
   const country = String(formData.get('country') ?? '').trim().toLowerCase();
-  if (!TYPES.has(type) || !identifier) return;
+  if (!TYPES.has(type) || !rawIdentifier) return;
+  // Google Maps: se guarda ya normalizado (acepta enlaces de la búsqueda de Google).
+  const identifier = type === 'googlemaps' ? normalizeGoogleMapsIdentifier(rawIdentifier) : rawIdentifier;
 
   const db = await getDb();
   const [src] = await db.insert(reviewSources).values({
