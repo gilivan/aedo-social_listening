@@ -233,13 +233,24 @@ async function openReviewsSortedByNewest(page: Page): Promise<void> {
 
   const sort = page.locator('button[aria-label*="Ordenar" i], button[aria-label*="Sort" i]').first();
   if (await sort.count()) {
+    const firstBefore = await page.locator('div[data-review-id]').first().getAttribute('data-review-id');
     await sort.click();
     const newest = page.locator('[role="menuitemradio"], [role="menuitem"], div.fxNQSd')
       .filter({ hasText: /recientes|newest/i }).first();
     try {
       await newest.waitFor({ timeout: 5_000 });
       await newest.click();
-      await page.waitForTimeout(2500);
+      // Esperar a que la lista realmente se reordene: si se lee antes, se mezclan
+      // las reseñas "más relevantes" con las recientes.
+      await page.waitForFunction(
+        (prev) => {
+          const first = document.querySelector('div[data-review-id]');
+          return !!first && first.getAttribute('data-review-id') !== prev;
+        },
+        firstBefore,
+        { timeout: 15_000 },
+      ).catch(() => console.warn('[gmaps] la lista no cambió tras ordenar por "Más recientes"; puede quedar en orden de relevancia'));
+      await page.waitForTimeout(1500);
     } catch {
       console.warn('[gmaps] no se pudo ordenar por "Más recientes"; se sigue con el orden por defecto');
       await page.keyboard.press('Escape').catch(() => undefined);
