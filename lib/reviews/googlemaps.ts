@@ -275,7 +275,8 @@ export async function fetchGoogleMapsReviewsDetailed(identifier: string, opts: G
     throw new Error('Falta iniciar sesión en Google para leer reseñas de Maps: ejecuta `npm run gmaps:login` en la carpeta de AEDO.');
   }
   const known = opts.known ?? new Set<string>();
-  const max = opts.max ?? (known.size ? 150 : 300);
+  // Menos de 100 guardadas = todavía no hubo una carga inicial completa.
+  const max = opts.max ?? (known.size < 100 ? 300 : 150);
   const log = opts.log ?? (() => undefined);
   const headless = opts.headless ?? true; // "oculto" = fuera de la pantalla, ver launchContext
 
@@ -296,9 +297,12 @@ export async function fetchGoogleMapsReviewsDetailed(identifier: string, opts: G
         const before = collected.size;
         for (const r of batch) if (!collected.has(r.id)) collected.set(r.id, r);
 
-        // Orden por más recientes: si las últimas 10 ya estaban guardadas, lo nuevo ya se leyó.
-        const tail = batch.slice(-10);
-        if (known.size && tail.length >= 10 && tail.every((r) => known.has(r.id))) { log('Se alcanzaron reseñas ya guardadas.'); break; }
+        // Orden por más recientes: cuando aparecen 25 reseñas ya guardadas SEGUIDAS, se llegó
+        // al bloque leído antes. (Unas pocas guardadas sueltas no bastan: una carga previa
+        // pudo haber traído reseñas salteadas.)
+        let run = 0;
+        for (let i = batch.length - 1; i >= 0 && known.has(batch[i].id); i--) run++;
+        if (run >= 25) { log('Se alcanzaron las reseñas ya guardadas.'); break; }
         if (collected.size >= max) { log(`Tope de ${max} reseñas alcanzado.`); break; }
 
         stale = collected.size === before ? stale + 1 : 0;
