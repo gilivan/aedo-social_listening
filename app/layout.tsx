@@ -41,8 +41,9 @@ export default async function RootLayout({
   setServerLocaleTag(locale);
 
   return (
-    <html lang={locale} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full">
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      {/* suppressHydrationWarning: extensiones del navegador (p. ej. ColorZilla) agregan atributos al <body>. */}
+      <body className="min-h-full" suppressHydrationWarning>
         {demo && (
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-sky-500/15 px-4 py-2 text-center text-xs text-sky-200">
             <span>🛰️ <strong>Demo en vivo</strong>: solo lectura, datos de ejemplo. Las funciones interactivas de IA se activan cuando instalas AEDO en tu propio servidor con tu clave.</span>
