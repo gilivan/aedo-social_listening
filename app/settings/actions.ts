@@ -1,4 +1,5 @@
 'use server';
+import { DEFAULT_LANGUAGES, normalizeCountries } from '@/lib/project-countries';
 
 import { randomBytes } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
@@ -71,7 +72,7 @@ function parseProjectForm(formData: FormData) {
     // campi restassero, salvare il progetto azzererebbe le parole chiave.
     name: String(formData.get('name') ?? '').trim(),
     languages: formData.getAll('languages').map(String),
-    countries: formData.getAll('countries').map(String),
+    countries: normalizeCountries(formData.getAll('countries').map(String)),
     telegramChannels: parseKeywords(String(formData.get('telegramChannels') ?? ''))
       .map((c) => c.replace(/^@/, '').replace(/^https?:\/\/t\.me\/(s\/)?/, '')),
     rssFeeds: [...new Set(String(formData.get('rssFeeds') ?? '')
@@ -99,7 +100,7 @@ export async function updateProject(formData: FormData) {
   if (!id || !data.name) return;
   if (!(await assertCanEdit(id))) return;
   await db.update(projects)
-    .set({ ...data, languages: data.languages.length ? data.languages : ['it', 'en'] })
+    .set({ ...data, languages: data.languages.length ? data.languages : DEFAULT_LANGUAGES })
     .where(eq(projects.id, id));
   revalidatePath('/', 'layout');
 }
@@ -121,7 +122,7 @@ export async function createProject(formData: FormData) {
   const [created] = await db.insert(projects)
     .values({
       ...data, semanticContext: brief, keywords: [],
-      ownerId: user.id, languages: data.languages.length ? data.languages : ['it', 'en'],
+      ownerId: user.id, languages: data.languages.length ? data.languages : DEFAULT_LANGUAGES,
     })
     .returning();
   // Il progetto nuovo diventa quello attivo: la pagina Query e il resto

@@ -11,6 +11,7 @@ import { PageHeader, EmptyState } from '@/components/ui';
 import { getT } from '@/lib/i18n';
 import type { projects as projectsTable } from '@/lib/db/schema';
 import { EditableEntity } from '@/components/editable-entity';
+import { PROJECT_COUNTRIES } from '@/lib/project-countries';
 import {
   addEntity, createProject, createImportProject, createTalkwalkerProject, createShareLink, deleteEntity,
   revokeShareLink, setOwnBrand, updateEntity, updateProject, updateImportProject,
@@ -26,13 +27,7 @@ const LANGS = [
   ['fr', 'Francés'], ['de', 'Alemán'], ['pt', 'Portugués'],
 ] as const;
 
-const COUNTRIES = [
-  ['CO', 'Colombia'], ['AR', 'Argentina'], ['CL', 'Chile'], ['PE', 'Perú'], ['EC', 'Ecuador'], ['PA', 'Panamá'],
-  ['IT', 'Italia'], ['US', 'Estados Unidos'], ['GB', 'Reino Unido'], ['FR', 'Francia'],
-  ['DE', 'Alemania'], ['ES', 'España'], ['BR', 'Brasil'], ['MX', 'México'],
-  ['CA', 'Canadá'], ['AU', 'Australia'], ['IN', 'India'], ['NL', 'Países Bajos'],
-  ['PL', 'Polonia'], ['JP', 'Japón'],
-] as const;
+const COUNTRIES = PROJECT_COUNTRIES;
 
 const inputCls = 'w-full rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-3 py-2 text-sm outline-none placeholder:text-slate-600';
 const btnCls = 'rounded-lg bg-sky-500/90 px-5 py-2 text-sm font-medium text-slate-950 transition hover:bg-sky-400';
@@ -454,7 +449,7 @@ function ProjectFields({ project }: { project: Project | null }) {
         </div>
       </fieldset>
       <fieldset className="text-xs text-slate-400">
-        Geografías (aplica a las fuentes de noticias; sin selección = todo el mundo)
+        País de la búsqueda (filtra las fuentes de noticias y orienta a la IA; sin selección = Colombia; para todo el mundo usa el selector en Consultas)
         <div className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-1.5 sm:grid-cols-4">
           {COUNTRIES.map(([code, label]) => (
             <label key={code} className="flex items-center gap-1.5 text-sm text-slate-300">

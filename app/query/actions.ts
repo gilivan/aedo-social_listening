@@ -8,6 +8,7 @@ import { projects } from '@/lib/db/schema';
 import { getCurrentUser, isAdmin } from '@/lib/auth';
 import { buildPlan, probePlan, retagMentions, savePlan, type BuildResult, type PlanProbe } from '@/lib/query-builder';
 import { planFromRules, validatePlan, type QueryPlan } from '@/lib/query-plan';
+import { normalizeCountries } from '@/lib/project-countries';
 
 // Le azioni della pagina Query. Tutte controllano che l'utente possa
 // modificare il progetto: il piano decide che cosa Radar raccoglie.
@@ -69,4 +70,15 @@ export async function savePlanAction(projectId: number, plan: QueryPlan): Promis
   } catch (e) {
     return { error: (e as Error).message };
   }
+}
+
+/** País de la búsqueda (selector en Consultas). Sin selección → Colombia. */
+export async function saveCountriesAction(formData: FormData): Promise<void> {
+  const projectId = Number(formData.get('projectId'));
+  const p = await editable(projectId);
+  if (!p) return;
+  const countries = normalizeCountries(formData.getAll('countries').map(String), formData.get('worldwide') === 'on');
+  const db = await getDb();
+  await db.update(projects).set({ countries }).where(eq(projects.id, projectId));
+  revalidatePath('/', 'layout');
 }

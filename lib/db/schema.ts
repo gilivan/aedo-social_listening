@@ -59,8 +59,8 @@ export const projects = pgTable('projects', {
   allTerms: jsonb('all_terms').$type<string[]>().notNull().default([]),
   excludeTerms: jsonb('exclude_terms').$type<string[]>().notNull().default([]),
   languages: jsonb('languages').$type<string[]>().notNull().default([]),
-  // Codici paese ISO (es. IT, US): filtra le fonti news per area geografica
-  countries: jsonb('countries').$type<string[]>().notNull().default([]),
+  // Codici paese ISO (es. IT, US): filtra le fonti news per area geografica. AEDO: por defecto Colombia.
+  countries: jsonb('countries').$type<string[]>().notNull().default(['CO']),
   /** Messaggi chiave del progetto: si misura quanto vengono ripresi (pull-through). */
   keyMessages: jsonb('key_messages').$type<KeyMessage[]>().notNull().default([]),
   // Canali Telegram pubblici da sorvegliare (username senza @)

@@ -5,6 +5,7 @@ import { claudeAvailable } from '@/lib/claude';
 import { projectPlan, queryStats } from '@/lib/query-builder';
 import { PageHeader, EmptyState } from '@/components/ui';
 import { QueryStudio } from '@/components/query-studio';
+import { CountryPicker } from '@/components/country-picker';
 
 // ---------------------------------------------------------------------------
 // Query: che cosa Radar ascolta, separato da come è fatto il progetto.
@@ -73,6 +74,7 @@ export default async function QueryPage({ searchParams }: {
           {' '}<Link href={`/settings?p=${project.id}`} className="underline">{L('Impostazioni del progetto', 'Configuración del proyecto')}</Link>
         </p>
       )}
+      {!lens && <CountryPicker projectId={project.id} countries={project.countries ?? []} />}
       <QueryStudio
         key={project.id}
         projectId={project.id}
