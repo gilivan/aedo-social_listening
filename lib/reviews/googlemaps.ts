@@ -57,6 +57,10 @@ async function launchContext(hidden: boolean): Promise<BrowserContext> {
     ignoreDefaultArgs: ['--enable-automation'],
     args: [
       '--disable-blink-features=AutomationControlled', '--lang=es-CO',
+      // Una ventana fuera de la pantalla cuenta como "tapada": sin estas opciones
+      // Chrome (sobre todo en macOS) deja de pintar y de cargar al desplazar.
+      '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding',
+      '--disable-background-timer-throttling', '--disable-features=CalculateNativeWinOcclusion',
       ...(hidden && !forceHeadless ? ['--window-position=-2400,-2400', '--window-size=1280,900'] : []),
     ],
   });
