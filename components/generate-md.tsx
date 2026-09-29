@@ -48,7 +48,7 @@ export function GenerateMd({ endpoint, responseKey, buttonLabel, busyLabel, hint
           <Loader2 className="size-4 animate-spin text-sky-400" /> {busyLabel}
         </div>
       )}
-      {error && <p className="text-sm text-red-400">Errore: {error}</p>}
+      {error && <p className="text-sm text-red-400">Error: {error}</p>}
       {content && !busy && (
         <>
           <div className="panel px-6 py-5">
@@ -57,7 +57,7 @@ export function GenerateMd({ endpoint, responseKey, buttonLabel, busyLabel, hint
           </div>
           <button onClick={generate}
             className="self-start text-xs text-sky-400 hover:text-sky-300">
-            ↻ rigenera
+            ↻ regenerar
           </button>
         </>
       )}

@@ -130,7 +130,7 @@ export const newsdata: Connector = {
   label: 'NewsData.io',
   tier: 'freekey',
   enabled: () => Boolean(cfg('NEWSDATA_API_KEY')),
-  disabledReason: 'Missing NEWSDATA_API_KEY (free at newsdata.io/register)',
+  disabledReason: 'Falta NEWSDATA_API_KEY (gratis en newsdata.io/register)',
   async fetchMentions(q) {
     const key = cfg('NEWSDATA_API_KEY');
     if (!key) return [];
@@ -150,7 +150,7 @@ export const newsdata: Connector = {
       const msg = data && !Array.isArray(data.results) ? data.results?.message : undefined;
       // 429 è la quota del giorno finita: lo si dice così, perché "HTTP 429"
       // non spiega che domani riparte da sola.
-      if (res.status === 429) throw new Error('NewsData.io: crediti del giorno esauriti (200 sul piano gratuito), riprende domani');
+      if (res.status === 429) throw new Error('NewsData.io: se agotaron los créditos del día (200 en el plan gratuito); se reanuda mañana');
       throw new Error(`NewsData.io: ${msg ?? `HTTP ${res.status}`}`);
     }
     return data.results.map(toMention).filter((m): m is RawMention => m !== null);

@@ -23,7 +23,7 @@ export function YelpBusinessSearch() {
     try {
       const res = await fetch(`/api/reviews/lookup-yelp?term=${encodeURIComponent(t)}&location=${encodeURIComponent(loc)}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'search failed');
+      if (!res.ok) throw new Error(data.error || 'la búsqueda falló');
       setResults(data.businesses ?? []);
     } catch (e) {
       setError((e as Error).message);
@@ -48,7 +48,7 @@ export function YelpBusinessSearch() {
           <input
             value={picked ? picked.name : term}
             onChange={(e) => { setTerm(e.target.value); setPicked(null); scheduleSearch(e.target.value, location); }}
-            placeholder="Business name"
+            placeholder="Nombre del negocio"
             autoComplete="off"
             className="w-full rounded-lg border border-[var(--border)] bg-[var(--panel-2)] py-1.5 pl-8 pr-2.5 text-sm text-slate-100 outline-none focus:border-sky-500/50"
           />
@@ -56,11 +56,11 @@ export function YelpBusinessSearch() {
         <input
           value={location}
           onChange={(e) => { setLocation(e.target.value); setPicked(null); scheduleSearch(term, e.target.value); }}
-          placeholder="City"
+          placeholder="Ciudad"
           className="w-32 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 outline-none focus:border-sky-500/50"
         />
       </div>
-      {loading && <p className="text-[11px] text-slate-600">Searching…</p>}
+      {loading && <p className="text-[11px] text-slate-600">Buscando…</p>}
       {error && <p className="text-[11px] text-red-400">{error}</p>}
       {!picked && results.length > 0 && (
         <div className="flex flex-col overflow-hidden rounded-lg border border-[var(--border)]">
@@ -86,8 +86,8 @@ export function YelpBusinessSearch() {
       )}
       {picked && (
         <p className="flex items-center gap-1.5 text-[11px] text-emerald-400">
-          <Check className="size-3.5" /> {picked.name} selected
-          <button type="button" onClick={() => { setPicked(null); setTerm(''); }} className="ml-1 text-slate-600 underline hover:text-slate-400">change</button>
+          <Check className="size-3.5" /> {picked.name} seleccionado
+          <button type="button" onClick={() => { setPicked(null); setTerm(''); }} className="ml-1 text-slate-600 underline hover:text-slate-400">cambiar</button>
         </p>
       )}
     </>

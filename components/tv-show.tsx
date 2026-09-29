@@ -20,6 +20,12 @@ const SLIDE_MS_LONG = 15000;
 
 type Slide = { node: React.ReactNode; ms: number };
 
+/** Etiquetas visibles de las emociones (las claves son valores de enum). */
+const EMOTION_ES: Record<string, string> = {
+  joy: 'alegría', trust: 'confianza', fear: 'miedo',
+  anger: 'ira', sadness: 'tristeza', surprise: 'sorpresa',
+};
+
 type Props = {
   projectName: string;
   kpi: { total7: number; avgSentiment: number | null; sources: number };
@@ -47,7 +53,7 @@ function SentimentGauge({ score }: { score: number | null }) {
   const s = score ?? 0;
   const angle = mounted ? s * 80 : -80; // -1..1 → -80°..80°
   const color = s > 0.15 ? '#34d399' : s < -0.15 ? '#f87171' : '#94a3b8';
-  const label = score === null ? 'analyzing' : s > 0.15 ? 'positive' : s < -0.15 ? 'negative' : 'neutral';
+  const label = score === null ? 'analizando' : s > 0.15 ? 'positivo' : s < -0.15 ? 'negativo' : 'neutral';
 
   return (
     <div className="flex flex-col items-center">
@@ -73,7 +79,7 @@ function SentimentGauge({ score }: { score: number | null }) {
         </g>
       </svg>
       <p className="-mt-2 text-3xl font-black lg:text-4xl" style={{ color }}>{label}</p>
-      {score !== null && <p className="text-sm text-slate-500">score {s.toFixed(2)}</p>}
+      {score !== null && <p className="text-sm text-slate-500">puntaje {s.toFixed(2)}</p>}
     </div>
   );
 }
@@ -159,7 +165,7 @@ export function TvShow(props: Props) {
   }, [next, slide, current?.ms]);
 
   useEffect(() => {
-    const tick = () => setClock(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    const tick = () => setClock(new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     tick();
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
@@ -189,15 +195,15 @@ export function TvShow(props: Props) {
       {/* Header */}
       <header className="relative z-10 flex items-center gap-4 px-8 pt-6 lg:px-14">
         <span className="flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1 text-xs font-bold tracking-widest text-red-400">
-          <span className="size-2 animate-pulse rounded-full bg-red-500" /> LIVE
+          <span className="size-2 animate-pulse rounded-full bg-red-500" /> EN VIVO
         </span>
         <div className="leading-none">
           <p className="text-lg font-bold tracking-tight lg:text-xl">{props.projectName}</p>
-          <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">Radar · {APP_BYLINE} · War Room</p>
+          <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">AEDO · {APP_BYLINE} · Sala de situación</p>
         </div>
         <div className="ml-auto flex items-center gap-5">
           <span className="font-mono text-xl tabular-nums text-slate-300 lg:text-2xl">{clock}</span>
-          <button onClick={() => router.push('/')} aria-label="Exit"
+          <button onClick={() => router.push('/')} aria-label="Salir"
             className="rounded-full border border-[var(--border)] p-2 text-slate-500 transition hover:text-slate-200">
             <X className="size-4" />
           </button>
@@ -227,7 +233,7 @@ export function TvShow(props: Props) {
       <footer className="relative z-10 px-8 pb-5 lg:px-14">
         <div className="mb-2.5 flex items-center justify-center gap-2">
           {slides.map((_, i) => (
-            <button key={i} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1}`}
+            <button key={i} onClick={() => setSlide(i)} aria-label={`Diapositiva ${i + 1}`}
               className={`h-1.5 rounded-full transition-all ${i === slide ? 'w-8 bg-sky-400' : 'w-3 bg-white/15 hover:bg-white/30'}`} />
           ))}
         </div>
@@ -265,20 +271,20 @@ function buildSlides(p: Props): Slide[] {
     <div className="flex flex-1 flex-col justify-center">
       <div className="tv-3d grid gap-6 lg:grid-cols-3">
         <div className={`tv-float ${card} px-8 py-9`}>
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Mentions · 7 days</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Menciones · 7 días</p>
           <p className="mt-4 bg-gradient-to-r from-sky-300 to-cyan-200 bg-clip-text text-6xl font-black tracking-tight text-transparent lg:text-8xl">
             <CountUp value={p.kpi.total7} />
           </p>
           <p className="mt-3 text-sm text-slate-500">
-            of which <span className="font-bold text-sky-300"><CountUp value={mentions24h} duration={2000} /></span> in the last 24 hours
+            de las cuales <span className="font-bold text-sky-300"><CountUp value={mentions24h} duration={2000} /></span> en las últimas 24 horas
           </p>
         </div>
         <div className={`tv-float ${card} flex flex-col items-center justify-center px-8 py-9`}>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Sentiment</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Sentimiento</p>
           <SentimentGauge score={p.kpi.avgSentiment} />
         </div>
         <div className={`tv-float ${card} px-8 py-9`}>
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Active sources</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Fuentes activas</p>
           <p className="mt-4 bg-gradient-to-r from-violet-300 to-fuchsia-300 bg-clip-text text-6xl font-black text-transparent lg:text-8xl">
             <CountUp value={p.kpi.sources} duration={2200} />
           </p>
@@ -297,8 +303,8 @@ function buildSlides(p: Props): Slide[] {
   if (p.topTopics.length > 1) {
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle icon={<Orbit className="size-7 text-sky-400" />} note="everything orbiting your topic, sized by volume">
-          The conversation system
+        <SlideTitle icon={<Orbit className="size-7 text-sky-400" />} note="todo lo que orbita tu tema, con tamaño según volumen">
+          El sistema de la conversación
         </SlideTitle>
         <div className="min-h-0 flex-1">
           <SolarSystem topics={p.topTopics} projectName={p.projectName} />
@@ -312,7 +318,7 @@ function buildSlides(p: Props): Slide[] {
   if (p.trends.length > 0) {
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle icon={<Flame className="size-7 text-orange-400" />}>Radar — emerging trends</SlideTitle>
+        <SlideTitle icon={<Flame className="size-7 text-orange-400" />}>AEDO — tendencias emergentes</SlideTitle>
         <div className="grid min-h-0 flex-1 items-center gap-8 lg:grid-cols-5">
           <div className="hidden min-h-0 lg:col-span-3 lg:block"><RadarScreen trends={p.trends} /></div>
           <div className="tv-3d flex flex-col gap-4 lg:col-span-2">
@@ -340,14 +346,14 @@ function buildSlides(p: Props): Slide[] {
   if (p.volumeByDay.length > 0) {
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle>Volume and sentiment</SlideTitle>
+        <SlideTitle>Volumen y sentimiento</SlideTitle>
         <div className="tv-3d grid min-h-0 flex-1 gap-6 lg:grid-cols-3">
           <div className={`${card} flex min-h-0 flex-col px-6 py-5 lg:col-span-2`}>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Mentions by source · 14 days</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Menciones por fuente · 14 días</p>
             <div className="min-h-0 flex-1"><VolumeChart data={p.volumeByDay} /></div>
           </div>
           <div className={`${card} flex min-h-0 flex-col px-6 py-5`}>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Sentiment · 7 days</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Sentimiento · 7 días</p>
             <div className="min-h-0 flex-1">
               {p.sentimentDist.length > 0 && <SentimentPie data={p.sentimentDist} />}
             </div>
@@ -362,20 +368,20 @@ function buildSlides(p: Props): Slide[] {
     const top = [...p.emotions].sort((a, b) => b.share - a.share)[0];
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle icon={<HeartPulse className="size-7 text-pink-400" />} note="the mood behind the mentions, not just the polarity">
-          Emotional map
+        <SlideTitle icon={<HeartPulse className="size-7 text-pink-400" />} note="el estado de ánimo detrás de las menciones, no solo la polaridad">
+          Mapa emocional
         </SlideTitle>
         <div className="grid min-h-0 flex-1 items-center gap-8 lg:grid-cols-5">
           <div className="min-h-0 lg:col-span-3"><EmotionRadar data={p.emotions} /></div>
           <div className="tv-3d flex flex-col gap-4 lg:col-span-2">
             <div className={`${card} px-6 py-5`}>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Dominant emotion</p>
-              <p className="mt-2 text-4xl font-black capitalize text-pink-300 lg:text-5xl">{top.emotion}</p>
-              <p className="mt-1 text-sm text-slate-500">{top.share}% of all classified mentions</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Emoción dominante</p>
+              <p className="mt-2 text-4xl font-black capitalize text-pink-300 lg:text-5xl">{EMOTION_ES[top.emotion] ?? top.emotion}</p>
+              <p className="mt-1 text-sm text-slate-500">{top.share}% de todas las menciones clasificadas</p>
             </div>
             {p.emotions.filter((e) => e.emotion !== top.emotion).sort((a, b) => b.share - a.share).slice(0, 3).map((e) => (
               <div key={e.emotion} className={`${card} flex items-baseline gap-3 px-5 py-3`}>
-                <span className="text-lg font-bold capitalize text-slate-200">{e.emotion}</span>
+                <span className="text-lg font-bold capitalize text-slate-200">{EMOTION_ES[e.emotion] ?? e.emotion}</span>
                 <span className="ml-auto font-mono text-lg tabular-nums text-slate-400">{e.share}%</span>
               </div>
             ))}
@@ -389,8 +395,8 @@ function buildSlides(p: Props): Slide[] {
   if (p.health.score > 0) {
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle icon={<HeartPulse className="size-7 text-emerald-400" />} note="volume, sentiment, reach and diversity in one index">
-          Health index
+        <SlideTitle icon={<HeartPulse className="size-7 text-emerald-400" />} note="volumen, sentimiento, alcance y diversidad en un solo índice">
+          Índice de salud
         </SlideTitle>
         <div className="grid min-h-0 flex-1 items-center gap-8 lg:grid-cols-5">
           <div className="min-h-0 lg:col-span-2">
@@ -417,8 +423,8 @@ function buildSlides(p: Props): Slide[] {
   if (p.geo.length > 1) {
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle icon={<Globe2 className="size-7 text-sky-400" />} note="where the conversation comes from">
-          Around the world
+        <SlideTitle icon={<Globe2 className="size-7 text-sky-400" />} note="de dónde viene la conversación">
+          Alrededor del mundo
         </SlideTitle>
         <div className="min-h-0 flex-1"><GeoBars data={p.geo} /></div>
       </div>,
@@ -430,8 +436,8 @@ function buildSlides(p: Props): Slide[] {
     add(
       <div className="flex min-h-0 flex-1 flex-col">
         <SlideTitle icon={<Users className="size-7 text-violet-400" />}
-          note={`the top 5% of voices carry ${p.topConcentration}% of the reach`}>
-          Who is doing the talking
+          note={`el 5% superior de las voces concentra el ${p.topConcentration}% del alcance`}>
+          Quién lleva la conversación
         </SlideTitle>
         <div className="min-h-0 flex-1"><AuthorPyramidChart tiers={p.pyramid} /></div>
       </div>,
@@ -442,8 +448,8 @@ function buildSlides(p: Props): Slide[] {
   if (p.heat.length > 0 && p.heat.flat().some((v) => v > 0)) {
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle icon={<Clock className="size-7 text-amber-400" />} note="30 days, by day of week and hour">
-          When they talk
+        <SlideTitle icon={<Clock className="size-7 text-amber-400" />} note="30 días, por día de la semana y hora">
+          Cuándo se habla
         </SlideTitle>
         <div className="min-h-0 flex-1"><HeatGrid grid={p.heat} /></div>
       </div>,
@@ -454,7 +460,7 @@ function buildSlides(p: Props): Slide[] {
   if (p.narratives.length > 0 || p.alerts.length > 0) {
     add(
       <div className="flex flex-1 flex-col">
-        <SlideTitle icon={<GitBranch className="size-7 text-sky-400" />}>Narratives and signals</SlideTitle>
+        <SlideTitle icon={<GitBranch className="size-7 text-sky-400" />}>Narrativas y señales</SlideTitle>
         <div className="tv-3d flex flex-1 flex-col justify-center gap-4">
           {p.alerts.slice(0, 1).map((a, i) => (
             <div key={`a${i}`} className="tv-shine flex items-center gap-4 rounded-2xl border border-red-500/40 bg-red-500/10 px-6 py-4">
@@ -472,10 +478,10 @@ function buildSlides(p: Props): Slide[] {
               {n.stance && <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-300">{n.stance}</span>}
               {n.coordinated && (
                 <span className="flex animate-pulse items-center gap-1 rounded-full bg-amber-500/20 px-3 py-1 text-xs font-bold text-amber-400">
-                  <AlertTriangle className="size-3.5" /> COORDINATED
+                  <AlertTriangle className="size-3.5" /> COORDINADA
                 </span>
               )}
-              <span className="ml-auto font-mono text-sm text-slate-500">{n.count} post</span>
+              <span className="ml-auto font-mono text-sm text-slate-500">{n.count} publicaciones</span>
             </div>
           ))}
         </div>
@@ -488,7 +494,7 @@ function buildSlides(p: Props): Slide[] {
     const feed = [...p.latest, ...p.latest];
     add(
       <div className="flex min-h-0 flex-1 flex-col">
-        <SlideTitle>Latest voices</SlideTitle>
+        <SlideTitle>Últimas voces</SlideTitle>
         <div className="relative min-h-0 flex-1 overflow-hidden"
           style={{ maskImage: 'linear-gradient(to bottom, transparent, black 8%, black 88%, transparent)' }}>
           <div className="tv-ticker-y flex flex-col gap-4">
@@ -504,7 +510,7 @@ function buildSlides(p: Props): Slide[] {
                     {m.community && <span className="text-xs text-slate-600">{m.community}</span>}
                     {m.sentiment && (
                       <span className={`ml-auto text-xs ${m.sentiment === 'positive' ? 'text-emerald-400' : m.sentiment === 'negative' ? 'text-red-400' : 'text-slate-500'}`}>
-                        ● {m.sentiment}
+                        ● {({ positive: 'positivo', negative: 'negativo', neutral: 'neutral' } as Record<string, string>)[m.sentiment] ?? m.sentiment}
                       </span>
                     )}
                   </div>

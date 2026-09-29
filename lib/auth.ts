@@ -9,7 +9,7 @@ export type User = typeof users.$inferSelect;
 // Synthetic viewer for the public demo: a read-only "member" (admin-only
 // editing stays hidden), owner of the seeded demo project.
 const DEMO_USER: User = {
-  id: 1, name: 'Demo viewer', email: 'demo@radar.app', passwordHash: '',
+  id: 1, name: 'Visitante demo', email: 'demo@radar.app', passwordHash: '',
   role: 'member', aiEnabled: 1, mustChangePassword: 0, createdAt: new Date(),
 };
 

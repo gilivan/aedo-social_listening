@@ -53,9 +53,9 @@ export function ArticleBody({ text, query = [], keywords = [], label, hideLabel 
         aria-expanded={open}
       >
         <FileText className="size-3.5" />
-        {open ? (hideLabel ?? 'Hide the article') : (label ?? 'Read the full article')}
+        {open ? (hideLabel ?? 'Ocultar el artículo') : (label ?? 'Leer el artículo completo')}
         <span className="text-slate-600">
-          · {Math.round(text.length / 1000)}k chars{hits > 0 && `, ${hits} matches`}
+          · {Math.round(text.length / 1000)}k caracteres{hits > 0 && `, ${hits} coincidencias`}
         </span>
         <ChevronDown className={`size-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
@@ -74,7 +74,7 @@ export function ArticleBody({ text, query = [], keywords = [], label, hideLabel 
             )}
           </p>
           <p className="mt-3 border-t border-[var(--border)] pt-2 text-[10px] text-slate-600">
-            Extracted from the publisher’s page for analysis. Open the original link to read it in context.
+            Extraído de la página del medio para su análisis. Abre el enlace original para leerlo en contexto.
           </p>
         </div>
       )}

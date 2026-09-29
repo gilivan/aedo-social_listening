@@ -59,7 +59,7 @@ export type EmvReport = {
   top: EmvTopItem[];
 };
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 /**
  * SQL condiviso: impression e valore per singola mention, così ogni riga del

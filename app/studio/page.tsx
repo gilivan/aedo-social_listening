@@ -16,7 +16,7 @@ export default async function StudioPage() {
   const contentLocale = await getContentLocale();
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
 
   const [trends, dashboard] = await Promise.all([getTrends(project.id), dashboardData(project.id)]);
   // Spunti: prima i trend emergenti, poi i temi principali
@@ -29,21 +29,21 @@ export default async function StudioPage() {
     <>
       <PageHeader
         title={t('page.studio.title', 'Content Studio')}
-        subtitle="From a concept to content ready for every channel: generate the multi-format kit, explore alternative hooks and refine each draft by voice."
+        subtitle="De un concepto a contenido listo para cada canal: genera el kit multiformato, explora ganchos alternativos y afina cada borrador por tono."
       />
       <div className="mb-4 flex justify-end"><ContentLocaleSwitch current={contentLocale} /></div>
       {!project.brandVoice && (
         <p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-300">
-          Tip: set the “brand tone of voice” in{' '}
-          <Link href="/settings" className="underline">Projects</Link> for tailored drafts.
+          Consejo: define el “tono de voz de la marca” en{' '}
+          <Link href="/settings" className="underline">Proyectos</Link> para obtener borradores a la medida.
         </p>
       )}
       {await claudeAvailable() && !isDemoMode() ? (
         <ContentStudio suggestions={suggestions} />
       ) : (
         <EmptyState message={isDemoMode()
-          ? '✨ Content Studio is a live AI feature — self-host with your own Anthropic key to generate kits, hooks and drafts.'
-          : 'You need the Claude API key for Content Studio.'} />
+          ? '✨ Content Studio es una función de IA en vivo: instala AEDO en tu propio servidor con tu clave de Anthropic para generar kits, ganchos y borradores.'
+          : 'Necesitas la clave de API de Claude para usar Content Studio.'} />
       )}
     </>
   );

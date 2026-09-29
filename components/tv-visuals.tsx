@@ -25,7 +25,7 @@ export function CountUp({ value, duration = 1600 }: { value: number; duration?: 
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [value, duration]);
-  return <>{n.toLocaleString('en-US')}</>;
+  return <>{n.toLocaleString('es-CO')}</>;
 }
 
 /** Ritarda l'avvio di un'animazione CSS finché la slide non è in scena. */
@@ -214,7 +214,7 @@ export function SolarSystem({ topics, projectName }: {
     <div className="relative size-full">
       <canvas ref={ref} className="size-full" />
       <div className="pointer-events-none absolute inset-x-0 bottom-[8%] text-center">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-sky-500/70">at the centre</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-sky-500/70">en el centro</p>
         <p className="mt-1 text-2xl font-black tracking-tight text-slate-100 lg:text-4xl">{projectName}</p>
       </div>
     </div>
@@ -227,6 +227,10 @@ export function SolarSystem({ topics, projectName }: {
 const EMOTION_COLOR: Record<string, string> = {
   joy: '#fbbf24', trust: '#34d399', fear: '#a78bfa',
   anger: '#f87171', sadness: '#60a5fa', surprise: '#f472b6',
+};
+const EMOTION_LABEL: Record<string, string> = {
+  joy: 'alegría', trust: 'confianza', fear: 'miedo',
+  anger: 'ira', sadness: 'tristeza', surprise: 'sorpresa',
 };
 
 export function EmotionRadar({ data }: { data: { emotion: string; value: number; share: number }[] }) {
@@ -262,7 +266,7 @@ export function EmotionRadar({ data }: { data: { emotion: string; value: number;
               style={{ transition: 'all 1.4s cubic-bezier(0.22, 1, 0.36, 1)' }} />
             <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle"
               fill={EMOTION_COLOR[d.emotion] ?? '#94a3b8'} fontSize="14" fontWeight="700">
-              {d.emotion}
+              {EMOTION_LABEL[d.emotion] ?? d.emotion}
             </text>
             <text x={lx} y={ly + 15} textAnchor="middle" dominantBaseline="middle"
               fill="#64748b" fontSize="11">{d.share}%</text>
@@ -372,10 +376,10 @@ export function AuthorPyramidChart({ tiers }: {
                 transition: `width 1.2s cubic-bezier(0.22, 1, 0.36, 1) ${i * 0.12}s`,
                 opacity: 0.9,
               }}>
-              {t.sharePct}% of reach
+              {t.sharePct}% del alcance
             </span>
             <span className="w-28 shrink-0 text-sm text-slate-500">
-              {t.authors.toLocaleString('en-US')} {t.authors === 1 ? 'voice' : 'voices'}
+              {t.authors.toLocaleString('es-CO')} {t.authors === 1 ? 'voz' : 'voces'}
             </span>
           </div>
         );
@@ -387,7 +391,7 @@ export function AuthorPyramidChart({ tiers }: {
 // ---------------------------------------------------------------------------
 // Quando si parla: griglia giorno × ora, celle che si accendono a cascata
 // ---------------------------------------------------------------------------
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
 export function HeatGrid({ grid }: { grid: number[][] }) {
   const max = Math.max(1, ...grid.flat());

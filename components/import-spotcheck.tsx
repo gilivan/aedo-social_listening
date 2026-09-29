@@ -32,7 +32,7 @@ export function SpotCheck({ fileId, projectId }: { fileId: number; projectId: nu
     try {
       const res = await fetch(`/api/import/spotcheck?file=${fileId}&project=${projectId}&n=3`);
       const d = await res.json();
-      if (!res.ok) { setError(d.error ?? 'Controllo non riuscito'); return; }
+      if (!res.ok) { setError(d.error ?? 'No se pudo hacer la verificación'); return; }
       setData(d);
     } catch (e) {
       setError((e as Error).message);
@@ -45,14 +45,14 @@ export function SpotCheck({ fileId, projectId }: { fileId: number; projectId: nu
     return (
       <div className="mt-3 rounded-lg border border-dashed border-[var(--border)] px-3 py-3">
         <p className="mb-2 text-[11px] leading-relaxed text-slate-500">
-          Non sei sicuro che sia andata bene? Prendo tre righe del tuo foglio — la prima, una in
-          mezzo e l&rsquo;ultima — e ti faccio vedere che cosa Radar ha in archivio per ognuna.
-          Tu confronti con il file aperto davanti.
+          ¿No estás seguro de que haya salido bien? Tomo tres filas de tu hoja (la primera, una del
+          medio y la última) y te muestro qué tiene AEDO guardado para cada una.
+          Tú las comparas con el archivo abierto al lado.
         </p>
         <button onClick={run} disabled={busy}
           className="inline-flex items-center gap-1.5 rounded-lg border border-sky-500/40 bg-sky-500/10 px-3 py-1.5 text-xs text-sky-200 hover:bg-sky-500/20 disabled:opacity-50">
           {busy ? <Loader2 className="size-3.5 animate-spin" /> : <FileSearch className="size-3.5" />}
-          {busy ? 'Sto confrontando…' : 'Controlla tre righe a campione'}
+          {busy ? 'Comparando…' : 'Verificar tres filas de muestra'}
         </button>
         {error && <p className="mt-2 text-[11px] text-amber-300">{error}</p>}
       </div>
@@ -74,18 +74,18 @@ export function SpotCheck({ fileId, projectId }: { fileId: number; projectId: nu
         <p className="mb-2 flex items-start gap-1.5 text-xs font-medium text-amber-300">
           <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
           <span>
-            In archivio c&rsquo;è una lettura più vecchia di questo foglio: con le colonne
-            assegnate adesso verrebbero fuori <b>{stale} righe in più</b>.
-            <span className="font-normal text-slate-400"> Premi &ldquo;Reimporta&rdquo; qui sopra
-              e questo foglio tornerà allineato al file.</span>
+            En el archivo hay una lectura más antigua de esta hoja: con las columnas
+            asignadas ahora saldrían <b>{stale} filas más</b>.
+            <span className="font-normal text-slate-400"> Pulsa &ldquo;Reimportar&rdquo; aquí arriba
+              y esta hoja volverá a quedar alineada con el archivo.</span>
           </span>
         </p>
       ) : (
         <p className={`mb-2 flex items-center gap-1.5 text-xs font-medium ${allOk ? 'text-emerald-300' : 'text-amber-300'}`}>
           {allOk ? <Check className="size-3.5" /> : <AlertTriangle className="size-3.5" />}
           {allOk
-            ? `Le ${data.checked} righe che ho controllato sono in archivio identiche al foglio.`
-            : `${data.matched} righe su ${data.checked} ritrovate. Guarda sotto quali valori non corrispondono.`}
+            ? `Las ${data.checked} filas que verifiqué están guardadas idénticas a la hoja.`
+            : `${data.matched} de ${data.checked} filas encontradas. Mira abajo qué valores no coinciden.`}
         </p>
       )}
 
@@ -93,12 +93,12 @@ export function SpotCheck({ fileId, projectId }: { fileId: number; projectId: nu
         {data.rows.map((r) => (
           <div key={r.rowNumber} className="rounded-lg bg-white/[0.02] px-2.5 py-2">
             <p className="mb-1 text-[11px] text-slate-500">
-              Riga <span className="font-semibold text-slate-300">{r.rowNumber}</span> del foglio
+              Fila <span className="font-semibold text-slate-300">{r.rowNumber}</span> de la hoja
               {!r.found && (
                 <span className="ml-1.5 rounded bg-amber-500/15 px-1.5 py-0.5 text-amber-300">
                   {stale > 0
-                    ? 'manca perché l\u2019archivio è più vecchio del foglio'
-                    : 'non è entrata: era vuota oppure identica a un\u2019altra'}
+                    ? 'falta porque el archivo guardado es más antiguo que la hoja'
+                    : 'no se importó: estaba vacía o era idéntica a otra'}
                 </span>
               )}
             </p>
@@ -109,8 +109,8 @@ export function SpotCheck({ fileId, projectId }: { fileId: number; projectId: nu
                   <thead>
                     <tr className="text-slate-600">
                       <th className="py-0.5 pr-2 text-left font-normal">campo</th>
-                      <th className="py-0.5 pr-2 text-left font-normal">nel tuo file</th>
-                      <th className="py-0.5 pr-2 text-left font-normal">in Radar</th>
+                      <th className="py-0.5 pr-2 text-left font-normal">en tu archivo</th>
+                      <th className="py-0.5 pr-2 text-left font-normal">en AEDO</th>
                       <th className="w-6" />
                     </tr>
                   </thead>
@@ -132,7 +132,7 @@ export function SpotCheck({ fileId, projectId }: { fileId: number; projectId: nu
 
             {r.extras.length > 0 && (
               <p className="mt-1 text-[11px] text-slate-600">
-                Conservato anche:{' '}
+                También se guardó:{' '}
                 {r.extras.map((e) => (
                   <span key={e.label} className="text-violet-300">{e.label} = {e.value}; </span>
                 ))}
@@ -144,7 +144,7 @@ export function SpotCheck({ fileId, projectId }: { fileId: number; projectId: nu
 
       <button onClick={() => { setData(null); }}
         className="mt-2 text-[11px] text-slate-500 hover:text-slate-300">
-        rifai il controllo su altre righe
+        repetir la verificación con otras filas
       </button>
     </div>
   );

@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
 
   const q = req.nextUrl.searchParams.get('q') ?? '';
   if (q.trim().length < 2) return NextResponse.json({ pages: [] });

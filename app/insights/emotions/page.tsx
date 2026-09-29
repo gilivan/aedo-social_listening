@@ -4,38 +4,38 @@ import { PageHeader, EmptyState } from '@/components/ui';
 import { getT } from '@/lib/i18n';
 import { EmotionRadar } from '@/components/insight-charts';
 
-export const metadata = { title: 'Emotion radar' };
+export const metadata = { title: 'Radar de emociones' };
 
 const LABEL: Record<string, string> = {
-  joy: 'Joy', trust: 'Trust', fear: 'Fear', anger: 'Anger', sadness: 'Sadness', surprise: 'Surprise',
+  joy: 'Alegría', trust: 'Confianza', fear: 'Miedo', anger: 'Ira', sadness: 'Tristeza', surprise: 'Sorpresa',
 };
 
 export default async function EmotionsInsightPage() {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const data = await emotionDistribution(project.id, 30);
   const top = [...data].sort((a, b) => b.value - a.value)[0];
 
   return (
     <>
       <PageHeader
-        title={t('ins.emotions.title', 'Emotion radar')}
-        info="The emotional fingerprint of the conversation beyond sentiment (joy, trust, fear, anger, sadness, surprise). Data: the AI emotion tag on each mention. Period: last 30 days. Source: your collected mentions across all active sources."
-        subtitle="Beyond positive/negative: the emotional fingerprint of the conversation (last 30 days). It separates a crisis driven by fear from one driven by anger — very different responses. Emotions are AI-tagged on newly analyzed mentions."
+        title={t('ins.emotions.title', 'Radar de emociones')}
+        info="La huella emocional de la conversación más allá del sentimiento (alegría, confianza, miedo, ira, tristeza, sorpresa). Datos: la etiqueta de emoción que la IA asigna a cada mención. Periodo: últimos 30 días. Fuente: las menciones recopiladas en todas las fuentes activas."
+        subtitle="Más allá de positivo/negativo: la huella emocional de la conversación (últimos 30 días). Distingue una crisis impulsada por el miedo de una impulsada por la ira, que requieren respuestas muy distintas. La IA etiqueta las emociones en las menciones recién analizadas."
       />
       {data.length === 0 ? (
-        <EmptyState message="No emotion-tagged mentions yet. Tagging runs automatically as new mentions are analyzed." />
+        <EmptyState message="Todavía no hay menciones etiquetadas con emociones. El etiquetado se ejecuta automáticamente a medida que se analizan nuevas menciones." />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <section className="panel px-4 py-5">
             <EmotionRadar data={data} />
           </section>
           <section className="panel px-5 py-4">
-            <h2 className="mb-3 text-sm font-semibold text-slate-300">Breakdown</h2>
+            <h2 className="mb-3 text-sm font-semibold text-slate-300">Desglose</h2>
             {top && (
               <p className="mb-3 text-xs text-slate-500">
-                Dominant emotion: <span className="text-violet-300">{LABEL[top.emotion] ?? top.emotion}</span> ({top.share}%).
+                Emoción dominante: <span className="text-violet-300">{LABEL[top.emotion] ?? top.emotion}</span> ({top.share}%).
               </p>
             )}
             <div className="flex flex-col gap-2.5">

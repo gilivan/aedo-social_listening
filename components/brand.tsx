@@ -1,12 +1,12 @@
 // Nome e sottotitolo del brand. Personalizzabili senza toccare il codice tramite
 // le variabili d'ambiente NEXT_PUBLIC_BRAND_NAME e NEXT_PUBLIC_BRAND_BYLINE.
-export const APP_NAME = process.env.NEXT_PUBLIC_BRAND_NAME || 'Radar';
+export const APP_NAME = process.env.NEXT_PUBLIC_BRAND_NAME || 'AEDO';
 // Senza punto finale: la firma è resa in maiuscoletto spaziato, dove un punto
 // isolato sembra sporco. Il payoff resta quello del marchio.
-export const APP_BYLINE = process.env.NEXT_PUBLIC_BRAND_BYLINE || 'Signal over noise';
+export const APP_BYLINE = process.env.NEXT_PUBLIC_BRAND_BYLINE || 'La voz de lo que se dice';
 
 /**
- * Il marchio Radar: anelli concentrici interrotti, con il fascio che esce dal
+ * Il marchio (AEDO): anelli concentrici interrotti, con il fascio che esce dal
  * centro verso il punto agganciato in alto a destra — il segnale trovato nel
  * rumore. Disegnato in SVG anziché importato come immagine così resta nitido a
  * ogni dimensione e prende il colore dal testo circostante: sul fondo scuro
@@ -33,28 +33,24 @@ export function BrandMark({ className = 'size-6' }: { className?: string }) {
 }
 
 /**
- * La scritta RADAR disegnata come tracciato, non resa con un font: le "A" del
- * marchio non hanno la traversa (sono triangoli puri) e nessun font di sistema
- * lo fa. Tracciato geometrico a spessore costante, quindi resta identico a ogni
- * dimensione e prende il colore dal testo circostante.
+ * La palabra AEDO dibujada como trazo, no con una fuente: las "A" del
+ * logotipo no tienen travesaño (triángulos puros), como en el diseño original.
+ * Trazo geométrico de grosor constante; toma el color del texto circundante.
  */
 export function BrandWordmark({ className = 'h-4' }: { className?: string }) {
   return (
-    <svg viewBox="-6 -6 678 112" className={`${className} w-auto`} fill="none"
+    <svg viewBox="-6 -6 533 112" className={`${className} w-auto`} fill="none"
       stroke="currentColor" strokeWidth="9" strokeLinecap="butt" strokeLinejoin="miter"
       role="img" aria-label={APP_NAME}>
-      {/* R */}
-      <path d="M4 100V4h44a24 24 0 0 1 0 48H4" />
-      <path d="M40 52 86 100" />
-      {/* A — senza traversa */}
-      <path d="M145 100 188 4l43 96" />
+      {/* A — sin travesaño */}
+      <path d="M4 100 47 4l43 96" />
+      {/* E */}
+      <path d="M227 4H149v96h78" />
+      <path d="M149 52h66" />
       {/* D */}
       <path d="M290 100V4h38a48 48 0 0 1 0 96h-38" />
-      {/* A */}
-      <path d="M435 100 478 4l43 96" />
-      {/* R */}
-      <path d="M580 100V4h44a24 24 0 0 1 0 48h-44" />
-      <path d="M620 52 666 100" />
+      {/* O */}
+      <ellipse cx="478" cy="52" rx="43" ry="48" />
     </svg>
   );
 }
@@ -69,7 +65,7 @@ export function Brand({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
       <span className="flex min-w-0 flex-col leading-none">
         {/* Il logotipo disegnato. Se il nome è stato personalizzato via env il
             tracciato non lo rappresenta più: si torna al testo. */}
-        {APP_NAME === 'Radar'
+        {APP_NAME === 'AEDO'
           ? <BrandWordmark className={`${mark} text-slate-100`} />
           : <span className={`${size === 'lg' ? 'text-2xl' : size === 'sm' ? 'text-base' : 'text-lg'} font-semibold uppercase tracking-[0.2em]`}>{APP_NAME}</span>}
         {/* La firma non deve mai spezzarsi su più righe: se lo spazio manca

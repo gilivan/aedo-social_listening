@@ -9,7 +9,7 @@ export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
 const SYSTEM = `You are a digital PR strategist. You receive an author's recent posts on a topic.
-Write in English, in Markdown:
+Write in Spanish (Latin American), in Markdown:
 ## Profile
 3-4 sentences: what they talk about, in what tone, their stance on the topic, what kind of audience they reach.
 ## How to approach them
@@ -20,11 +20,11 @@ Max 280 words total.`;
 
 export async function POST(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
-  if (!await claudeAvailable()) return NextResponse.json({ error: 'Claude API key not configured' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
+  if (!await claudeAvailable()) return NextResponse.json({ error: 'La clave de API de Claude no está configurada' }, { status: 400 });
 
   const { author, source } = await req.json() as { author: string; source: string };
-  if (!author) return NextResponse.json({ error: 'missing author' }, { status: 400 });
+  if (!author) return NextResponse.json({ error: 'falta el autor' }, { status: 400 });
   const db = await getDb();
 
   // Cache: un profilo per autore ogni 7 giorni
@@ -49,14 +49,14 @@ export async function POST(req: Request) {
       or(eq(mentions.author, author), eq(mentions.authorHandle, author)),
     ))
     .orderBy(desc(mentions.publishedAt)).limit(15);
-  if (posts.length === 0) return NextResponse.json({ error: 'no posts from this author' }, { status: 404 });
+  if (posts.length === 0) return NextResponse.json({ error: 'no hay publicaciones de este autor' }, { status: 404 });
 
   const profile = await callClaude(
     MODELS.sonnet, 'influencer_profile', SYSTEM,
     `Monitored topic: ${project.name}\nAuthor: ${author} (platform: ${source})\n\nTheir recent posts:\n${posts.map((p) => `- [eng ${Math.round(p.engagement)}] ${(p.title ?? p.content).slice(0, 200)}`).join('\n').slice(0, 8000)}`,
     900, true,
   );
-  if (!profile) return NextResponse.json({ error: 'spend cap reached or API error' }, { status: 429 });
+  if (!profile) return NextResponse.json({ error: 'se alcanzó el tope de gasto o hubo un error de la API' }, { status: 429 });
 
   await db.insert(influencerProfiles).values({
     projectId: project.id, author, source, profileMd: profile,

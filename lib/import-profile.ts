@@ -142,13 +142,13 @@ export async function proposeMapping(profiles: ColumnProfile[]): Promise<FieldPr
         column: m.column,
         field: dup ? null : field,
         confidence: dup || !field ? null : (m.confidence ?? 'media'),
-        reason: dup ? `Campo "${field}" già assegnato a un'altra colonna.` : String(m.reason ?? '').slice(0, 200),
+        reason: dup ? `Campo "${field}" ya asignado a otra columna.` : String(m.reason ?? '').slice(0, 200),
       });
     }
     // Colonne che il modello non ha nominato: esplicitamente ignorate.
     for (const p of profiles) {
       if (!out.some((o) => o.column === p.name)) {
-        out.push({ column: p.name, field: null, confidence: null, reason: 'Nessuna corrispondenza proposta.' });
+        out.push({ column: p.name, field: null, confidence: null, reason: 'Sin correspondencia propuesta.' });
       }
     }
     return out;
@@ -325,12 +325,12 @@ export function heuristicMapping(profiles: ColumnProfile[], rowCount: number): F
 
   return profiles.map((p) => {
     const hit = chosen.get(p.name);
-    if (!hit) return { column: p.name, field: null, confidence: null, reason: 'Nessuna corrispondenza riconosciuta.' };
+    if (!hit) return { column: p.name, field: null, confidence: null, reason: 'Sin correspondencia reconocida.' };
     return {
       column: p.name,
       field: hit.field,
       confidence: hit.score >= 80 ? 'alta' : hit.score >= 55 ? 'media' : 'bassa',
-      reason: `Riconosciuta dal nome e dai valori (tipo ${p.kind}, ${p.filled}% piena, ${p.distinct} valori distinti).`,
+      reason: `Reconocida por el nombre y los valores (tipo ${p.kind}, ${p.filled}% llena, ${p.distinct} valores distintos).`,
     };
   });
 }
@@ -359,7 +359,7 @@ export function validateAgainstProfiles(
     if (!incompatible) return a;
     return {
       column: a.column, field: null, confidence: null,
-      reason: `Proposta scartata: la colonna contiene valori di tipo ${kind}, incompatibili con "${a.field}".`,
+      reason: `Propuesta descartada: la columna contiene valores de tipo ${kind}, incompatibles con "${a.field}".`,
     };
   });
 }
@@ -399,24 +399,24 @@ export async function buildProposal(
 
 /** Etichette leggibili per le sigle che ricorrono nei database editoriali. */
 const EXTRA_LABELS: [RegExp, string][] = [
-  [/^pillar$/i, 'Pilastro editoriale'],
-  [/^rubrica$/i, 'Rubrica'],
-  [/^campagna$|^nome campagna$|^campaign$/i, 'Campagna'],
+  [/^pillar$/i, 'Pilar editorial'],
+  [/^rubrica$/i, 'Sección'],
+  [/^campagna$|^nome campagna$|^campaign$/i, 'Campaña'],
   [/^tema$|^topic$|^argomento$/i, 'Tema'],
-  [/^cat\.?\s*trasversale$|^categoria trasversale$/i, 'Area semantica'],
+  [/^cat\.?\s*trasversale$|^categoria trasversale$/i, 'Área semántica'],
   [/^formato$|^format$|^tipo di post$|^media type$/i, 'Formato'],
   [/^brand$/i, 'Brand'],
-  [/^lingua$|^language$/i, 'Lingua'],
-  [/^job title$|^ruolo$/i, 'Ruolo'],
-  [/^settore$|^sector$|^industry$/i, 'Settore'],
-  [/^azienda$|^company$|^companies$/i, 'Azienda'],
-  [/^location$|^luogo$/i, 'Luogo'],
-  [/^fonte$/i, 'Fonte originale'],
+  [/^lingua$|^language$/i, 'Idioma'],
+  [/^job title$|^ruolo$/i, 'Cargo'],
+  [/^settore$|^sector$|^industry$/i, 'Sector'],
+  [/^azienda$|^company$|^companies$/i, 'Empresa'],
+  [/^location$|^luogo$/i, 'Ubicación'],
+  [/^fonte$/i, 'Fuente original'],
   [/^stream$/i, 'Stream'],
-  [/^classificazione engagement$/i, 'Classe di engagement'],
-  [/^pubblicato da$|^published by$/i, 'Pubblicato da'],
-  [/^pubblico$|^audience$/i, 'Pubblico'],
-  [/^canale$|^channel$/i, 'Canale'],
+  [/^classificazione engagement$/i, 'Clase de engagement'],
+  [/^pubblicato da$|^published by$/i, 'Publicado por'],
+  [/^pubblico$|^audience$/i, 'Audiencia'],
+  [/^canale$|^channel$/i, 'Canal'],
 ];
 
 /** Da nome di colonna a etichetta: sigla nota, altrimenti il nome ripulito. */
@@ -439,7 +439,7 @@ export function extraLabel(name: string): string {
  */
 export function keepAsExtra(p: ColumnProfile, rowCount: number): boolean {
   if (p.filled === 0) return false;
-  if (/^Colonna \d+$/.test(p.name)) return false;
+  if (/^Columna \d+$/.test(p.name)) return false;
   if (/(^id$|_id$|^id |permalink|link|url|external)/i.test(p.name)) return false;
   if (p.kind === 'number' || p.kind === 'date' || p.kind === 'time') return false;
   // Una colonna quasi tutta diversa riga per riga è un identificatore o un

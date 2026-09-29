@@ -24,13 +24,13 @@ export async function POST(req: Request) {
   // trim(): elimina spazi/newline accidentali da copia-incolla della password temporanea.
   const password = String(body.password ?? '').trim();
   if (!email || !password) {
-    return NextResponse.json({ error: 'missing credentials' }, { status: 400 });
+    return NextResponse.json({ error: 'faltan las credenciales' }, { status: 400 });
   }
 
   const db = await getDb();
   const [user] = await db.select().from(users).where(eq(users.email, email));
   if (!user || !verifyPasswordHash(password, user.passwordHash)) {
-    return NextResponse.json({ error: 'incorrect email or password' }, { status: 401 });
+    return NextResponse.json({ error: 'correo o contraseña incorrectos' }, { status: 401 });
   }
 
   const res = NextResponse.json({ ok: true, mustChangePassword: user.mustChangePassword === 1 });

@@ -7,7 +7,7 @@ import { normSentimentValue } from '@/lib/data';
 // solo filtrate per canale e confrontate col totale). Ogni numero del deep-dive
 // è un sottoinsieme verificabile dei numeri complessivi del progetto.
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 export type SentDist = { positive: number; neutral: number; negative: number };
 

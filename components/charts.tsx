@@ -20,7 +20,7 @@ export function VolumeChart({ data }: { data: { day: string; source: string; n: 
   const sources = [...new Set(data.map((d) => d.source))];
   const rows = days.map((day) => {
     const row: Record<string, string | number> = {
-      day: new Date(day).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+      day: new Date(day).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' }),
     };
     for (const s of sources) {
       row[s] = data.find((d) => d.day === day && d.source === s)?.n ?? 0;
@@ -46,6 +46,9 @@ export function VolumeChart({ data }: { data: { day: string; source: string; n: 
 const SENTIMENT_COLORS: Record<string, string> = {
   positive: '#34d399', neutral: '#94a3b8', negative: '#f87171', 'analyzing': '#475569',
 };
+const SENTIMENT_LABELS: Record<string, string> = {
+  positive: 'positivo', neutral: 'neutral', negative: 'negativo', analyzing: 'analizando',
+};
 
 export function SentimentPie({ data }: { data: { sentiment: string; n: number }[] }) {
   return (
@@ -56,8 +59,8 @@ export function SentimentPie({ data }: { data: { sentiment: string; n: number }[
             <Cell key={d.sentiment} fill={SENTIMENT_COLORS[d.sentiment] ?? '#64748b'} stroke="none" />
           ))}
         </Pie>
-        <Tooltip contentStyle={TOOLTIP_STYLE} />
-        <Legend formatter={(v) => <span style={{ color: '#94a3b8', fontSize: 12 }}>{v}</span>} />
+        <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v, n) => [v, SENTIMENT_LABELS[String(n)] ?? String(n)]} />
+        <Legend formatter={(v) => <span style={{ color: '#94a3b8', fontSize: 12 }}>{SENTIMENT_LABELS[v] ?? v}</span>} />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -71,13 +74,13 @@ export function ShareOfVoicePie({ data }: { data: { name: string; value: number;
   // fino a coprire la ciambella.
   const present = data.filter((d) => d.value > 0).sort((a, b) => b.value - a.value);
   if (present.length === 0) {
-    return <p className="py-16 text-center text-sm text-slate-500">No mentions associated with the entities yet.</p>;
+    return <p className="py-16 text-center text-sm text-slate-500">Aún no hay menciones asociadas a las entidades.</p>;
   }
 
   const head = present.slice(0, MAX_SLICES);
   const tail = present.slice(MAX_SLICES);
   const slices = tail.length > 0
-    ? [...head, { name: `Other (${tail.length})`, value: tail.reduce((s, d) => s + d.value, 0), color: OVERFLOW_COLOR }]
+    ? [...head, { name: `Otros (${tail.length})`, value: tail.reduce((s, d) => s + d.value, 0), color: OVERFLOW_COLOR }]
     : head;
   const total = slices.reduce((s, d) => s + d.value, 0);
 
@@ -124,13 +127,13 @@ export function BenchmarkTrend({ series }: {
     .sort((a, b) => b.total - a.total)
     .slice(0, ENTITY_COLORS.length);
   if (active.length === 0) {
-    return <p className="py-16 text-center text-sm text-slate-500">No volume to compare yet.</p>;
+    return <p className="py-16 text-center text-sm text-slate-500">Aún no hay volumen para comparar.</p>;
   }
 
   const days = [...new Set(active.flatMap((s) => s.points.map((p) => p.day)))].sort();
   const rows = days.map((day) => {
     const row: Record<string, string | number> = {
-      day: new Date(day).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+      day: new Date(day).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' }),
     };
     for (const s of active) row[s.name] = s.points.find((p) => p.day === day)?.n ?? 0;
     return row;
@@ -164,7 +167,7 @@ export function SearchInterestTrend({ series }: {
   const days = [...new Set(series.flatMap((s) => s.points.map((p) => p.date)))].sort();
   const rows = days.map((day) => {
     const row: Record<string, string | number> = {
-      day: new Date(day).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' }),
+      day: new Date(day).toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit' }),
     };
     for (const s of series) {
       const v = s.points.find((p) => p.date === day)?.value;
@@ -200,7 +203,7 @@ export function HBars({ items, color = '#38bdf8' }: {
         <div key={it.label} className="text-xs">
           <div className="mb-0.5 flex justify-between text-slate-300">
             <span className="truncate pr-2">{it.label}</span>
-            <span className="shrink-0 text-slate-500">{it.value.toLocaleString('it-IT')}{it.extra ? ` · ${it.extra}` : ''}</span>
+            <span className="shrink-0 text-slate-500">{it.value.toLocaleString('es-CO')}{it.extra ? ` · ${it.extra}` : ''}</span>
           </div>
           <div className="h-1.5 rounded bg-white/5">
             <div className="h-1.5 rounded" style={{ width: `${(it.value / max) * 100}%`, backgroundColor: color }} />

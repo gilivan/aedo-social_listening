@@ -12,10 +12,10 @@ type LiPost = {
 
 export const linkedin: Connector = {
   id: 'linkedin',
-  label: 'LinkedIn (page)',
+  label: 'LinkedIn (página)',
   tier: 'premium',
   enabled: () => Boolean(cfg('LINKEDIN_ACCESS_TOKEN') && cfg('LINKEDIN_ORG_ID')),
-  disabledReason: 'Requires LinkedIn Access Token and Organization ID (Community Management API): enter them here',
+  disabledReason: 'Requiere el token de acceso de LinkedIn y el ID de organización (Community Management API): ingrésalos aquí',
   async fetchMentions() {
     const orgId = cfg('LINKEDIN_ORG_ID')!;
     const author = encodeURIComponent(`urn:li:organization:${orgId}`);
@@ -37,7 +37,7 @@ export const linkedin: Connector = {
       externalId: p.id,
       url: `https://www.linkedin.com/feed/update/${p.id}`,
       content: truncate(p.commentary ?? '', 1200),
-      community: 'pagina aziendale',
+      community: 'página de empresa',
       publishedAt: p.publishedAt ? new Date(p.publishedAt) : new Date(),
     } satisfies RawMention)).filter((m) => m.content);
   },

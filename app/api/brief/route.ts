@@ -13,15 +13,15 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST() {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
 
   const status = await aiStatus();
   if (!status.hasKey) {
-    return NextResponse.json({ error: 'no AI key configured — add one in Settings → Budget' }, { status: 400 });
+    return NextResponse.json({ error: 'no hay ninguna clave de IA configurada — agrega una en Ajustes → Presupuesto' }, { status: 400 });
   }
   if (status.capReached) {
     return NextResponse.json({
-      error: `spend cap reached ($${status.spend.toFixed(2)} of $${status.budget}) — raise it in Settings → Budget`,
+      error: `se alcanzó el tope de gasto ($${status.spend.toFixed(2)} de $${status.budget}) — súbelo en Ajustes → Presupuesto`,
     }, { status: 400 });
   }
 
@@ -31,10 +31,10 @@ export async function POST() {
   // sapere quale dei due ha davanti.
   if (!data.total) {
     return NextResponse.json({
-      error: 'nothing has been collected for this project in the last 30 days — check the keywords and sources in Settings, then use “Refresh now”',
+      error: 'no se ha recopilado nada para este proyecto en los últimos 30 días — revisa las palabras clave y las fuentes en Ajustes y luego usa “Actualizar ahora”',
     }, { status: 400 });
   }
   const ok = await generateDailyBrief(project.id, project.name, data);
-  if (!ok) return NextResponse.json({ error: 'the model did not return a brief — try again' }, { status: 400 });
+  if (!ok) return NextResponse.json({ error: 'el modelo no devolvió un brief — inténtalo de nuevo' }, { status: 400 });
   return NextResponse.json({ generated: true, window: data.window, mentions: data.total });
 }

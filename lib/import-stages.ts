@@ -53,7 +53,7 @@ export type StageInput = {
   working: boolean;
 };
 
-const N = (n: number) => n.toLocaleString('it-IT');
+const N = (n: number) => n.toLocaleString('es-CO');
 
 /**
  * A che punto è il lavoro.
@@ -71,35 +71,35 @@ export function stages(input: StageInput): Stage[] {
     {
       id: 'archivio',
       role: 'Archivista',
-      does: 'Apre i file e cataloga i fogli',
+      does: 'Abre los archivos y cataloga las hojas',
       state: 'todo',
-      outcome: files ? `${files} fogli in archivio, righe grezze conservate` : undefined,
+      outcome: files ? `${files} hojas en el archivo, filas originales conservadas` : undefined,
     },
     {
       id: 'colonne',
       role: 'Jr Data Analyst',
-      does: 'Guarda le colonne di ogni foglio e propone che cosa sono',
+      does: 'Revisa las columnas de cada hoja y propone qué son',
       state: 'todo',
-      outcome: files && !incomplete ? 'Tutti i fogli hanno le colonne assegnate' : undefined,
+      outcome: files && !incomplete ? 'Todas las hojas tienen las columnas asignadas' : undefined,
     },
     {
       id: 'scienza',
       role: 'Data Scientist',
-      does: 'Legge tutti i fogli insieme, trova le trappole e chiede solo dove serve',
+      does: 'Lee todas las hojas juntas, detecta las trampas y pregunta solo donde hace falta',
       state: 'todo',
-      outcome: readByScientist ? 'File letti nel loro insieme' : undefined,
+      outcome: readByScientist ? 'Archivos leídos en conjunto' : undefined,
     },
     {
       id: 'qualita',
-      role: 'Controllo qualità',
-      does: 'Importa e verifica che in archivio ci sia quello che c’è nel file',
+      role: 'Control de calidad',
+      does: 'Importa y verifica que en el archivo esté lo mismo que en el documento',
       state: 'todo',
-      outcome: imported ? `${N(inArchive)} righe importate e verificabili riga per riga` : undefined,
+      outcome: imported ? `${N(inArchive)} filas importadas y verificables fila por fila` : undefined,
     },
     {
       id: 'analisi',
       role: 'Analista',
-      does: 'Prende in mano il progetto: grafici, insight, report',
+      does: 'Toma el proyecto: gráficos, insights, reportes',
       state: 'todo',
       outcome: undefined,
     },

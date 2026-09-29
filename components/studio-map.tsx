@@ -129,7 +129,7 @@ export function StudioMap({ rows, yLabel, zLabel, palette, diverging, unplaced }
             if (!c) {
               return (
                 <path key={geo.id} d={geo.d} fill={NO_DATA} stroke={STROKE} strokeWidth={0.4}>
-                  <title>{`${geo.name} — nessun dato`}</title>
+                  <title>{`${geo.name} — sin datos`}</title>
                 </path>
               );
             }
@@ -149,7 +149,7 @@ export function StudioMap({ rows, yLabel, zLabel, palette, diverging, unplaced }
               >
                 <title>
                   {`${countryFlag(c.code)} ${c.name}\n${yLabel}: ${fmt(c.value)}`
-                    + (c.parts.length ? `\n\n${zLabel ?? 'Composizione'}:\n${top}` : '')}
+                    + (c.parts.length ? `\n\n${zLabel ?? 'Composición'}:\n${top}` : '')}
                 </title>
               </path>
             );
@@ -164,7 +164,7 @@ export function StudioMap({ rows, yLabel, zLabel, palette, diverging, unplaced }
             </p>
             <p className="mb-2 text-[11px] text-slate-500">
               {yLabel}: <span className="text-slate-300">{fmt(focus.value)}</span>
-              {total > 0 && !diverging && <> · {Math.round((focus.value / total) * 100)}% del totale</>}
+              {total > 0 && !diverging && <> · {Math.round((focus.value / total) * 100)}% del total</>}
             </p>
             {focus.parts.length > 0 ? (
               <ul className="flex flex-col gap-1">
@@ -186,12 +186,12 @@ export function StudioMap({ rows, yLabel, zLabel, palette, diverging, unplaced }
                   );
                 })}
                 {focus.parts.length > 7 && (
-                  <li className="text-[10px] text-slate-600">e altre {focus.parts.length - 7} voci</li>
+                  <li className="text-[10px] text-slate-600">y {focus.parts.length - 7} elementos más</li>
                 )}
               </ul>
             ) : (
               <p className="text-[11px] leading-snug text-slate-600">
-                Scegli un campo sull’asse Z per vedere di che cosa è fatto questo numero.
+                Elige un campo en el eje Z para ver de qué está compuesto este número.
               </p>
             )}
           </div>
@@ -200,34 +200,34 @@ export function StudioMap({ rows, yLabel, zLabel, palette, diverging, unplaced }
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-1 text-[11px] text-slate-500">
         <span className="flex items-center gap-1.5">
-          <span className="inline-block size-2.5 rounded-sm" style={{ backgroundColor: NO_DATA }} /> nessun dato
+          <span className="inline-block size-2.5 rounded-sm" style={{ backgroundColor: NO_DATA }} /> sin datos
         </span>
         <span className="flex items-center gap-1">
-          {diverging ? 'negativo' : 'meno'}
+          {diverging ? 'negativo' : 'menos'}
           {[0, 1, 2, 3, 4].map((i) => (
             <span key={i} className="inline-block size-2.5 rounded-sm"
               style={{ backgroundColor: shade(min + ((max - min) * i) / 4, min, max, Boolean(diverging), palette) }} />
           ))}
-          {diverging ? 'positivo' : 'più'}
+          {diverging ? 'positivo' : 'más'}
         </span>
-        <span>{byCode.length} paesi con dati</span>
+        <span>{byCode.length} países con datos</span>
         {unplaced ? (
-          <span title="Il paese si sa quando la fonte lo dichiara o quando l'indirizzo ha un dominio nazionale. Un .com non dice da dove viene, e la lingua non è il paese.">
-            {unplaced} mention senza paese, fuori dalla mappa
+          <span title="El país se conoce cuando la fuente lo declara o cuando la dirección tiene un dominio nacional. Un .com no dice de dónde viene, y el idioma no es el país.">
+            {unplaced} menciones sin país, fuera del mapa
           </span>
         ) : null}
         {pinned && (
           <button onClick={() => setPinned(null)} className="pointer-events-auto text-sky-400 hover:text-sky-300">
-            libera la selezione
+            quitar la selección
           </button>
         )}
       </div>
 
       {undrawn.length > 0 && (
         <p className="px-1 text-[11px] text-amber-300/80">
-          {undrawn.length} {undrawn.length === 1 ? 'paese non è' : 'paesi non sono'} sulla mappa
+          {undrawn.length} {undrawn.length === 1 ? 'país no está' : 'países no están'} en el mapa
           ({undrawn.slice(0, 4).map((c) => c.name).join(', ')}
-          {undrawn.length > 4 ? '…' : ''}): {undrawn.length === 1 ? 'resta' : 'restano'} in tabella qui sotto.
+          {undrawn.length > 4 ? '…' : ''}): {undrawn.length === 1 ? 'aparece' : 'aparecen'} en la tabla de abajo.
         </p>
       )}
 
@@ -258,9 +258,9 @@ function MapTable({ rows, yLabel, zLabel, total, diverging, onHover, selected }:
       <table className="w-full min-w-[32rem] text-left text-xs">
         <thead>
           <tr className="border-b border-[var(--border)] text-[10px] uppercase tracking-wider text-slate-600">
-            <th className="px-3 py-2 font-semibold">Paese</th>
+            <th className="px-3 py-2 font-semibold">País</th>
             <th className="px-3 py-2 text-right font-semibold">{yLabel}</th>
-            {!diverging && <th className="px-3 py-2 text-right font-semibold">quota</th>}
+            {!diverging && <th className="px-3 py-2 text-right font-semibold">participación</th>}
             {zLabel && <th className="px-3 py-2 font-semibold">{zLabel}</th>}
           </tr>
         </thead>
@@ -293,7 +293,7 @@ function MapTable({ rows, yLabel, zLabel, total, diverging, onHover, selected }:
       {rows.length > 12 && (
         <button onClick={() => setAll(!all)}
           className="w-full border-t border-[var(--border)] px-3 py-1.5 text-[11px] text-sky-400 hover:bg-white/5">
-          {all ? 'mostra solo i primi 12' : `mostra tutti i ${rows.length} paesi`}
+          {all ? 'mostrar solo los primeros 12' : `mostrar los ${rows.length} países`}
         </button>
       )}
     </div>

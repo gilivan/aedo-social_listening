@@ -22,21 +22,21 @@ import { hydrateConnectorCredentials } from '@/lib/connector-credentials';
 type Project = typeof projectsTable.$inferSelect;
 
 const LANGS = [
-  ['it', 'Italian'], ['en', 'English'], ['es', 'Spanish'],
-  ['fr', 'French'], ['de', 'German'], ['pt', 'Portuguese'],
+  ['it', 'Italiano'], ['en', 'Inglés'], ['es', 'Español'],
+  ['fr', 'Francés'], ['de', 'Alemán'], ['pt', 'Portugués'],
 ] as const;
 
 const COUNTRIES = [
-  ['IT', 'Italy'], ['US', 'United States'], ['GB', 'United Kingdom'], ['FR', 'France'],
-  ['DE', 'Germany'], ['ES', 'Spain'], ['BR', 'Brazil'], ['MX', 'Mexico'],
-  ['CA', 'Canada'], ['AU', 'Australia'], ['IN', 'India'], ['NL', 'Netherlands'],
-  ['PL', 'Poland'], ['JP', 'Japan'],
+  ['IT', 'Italia'], ['US', 'Estados Unidos'], ['GB', 'Reino Unido'], ['FR', 'Francia'],
+  ['DE', 'Alemania'], ['ES', 'España'], ['BR', 'Brasil'], ['MX', 'México'],
+  ['CA', 'Canadá'], ['AU', 'Australia'], ['IN', 'India'], ['NL', 'Países Bajos'],
+  ['PL', 'Polonia'], ['JP', 'Japón'],
 ] as const;
 
 const inputCls = 'w-full rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-3 py-2 text-sm outline-none placeholder:text-slate-600';
 const btnCls = 'rounded-lg bg-sky-500/90 px-5 py-2 text-sm font-medium text-slate-950 transition hover:bg-sky-400';
 
-export const metadata = { title: 'Projects' };
+export const metadata = { title: 'Proyectos' };
 
 export default async function SettingsPage({ searchParams }: {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -44,7 +44,7 @@ export default async function SettingsPage({ searchParams }: {
   const t = await getT();
   const sp = await searchParams;
   const [allProjects, current] = await Promise.all([getProjects(), getCurrentProject()]);
-  if (allProjects.length === 0) return <EmptyState message="No project." />;
+  if (allProjects.length === 0) return <EmptyState message="No hay proyectos." />;
 
   const isNew = sp.p === 'new';
   const newType = sp.type; // 'listening' | 'import' | 'talkwalker' | undefined (chooser)
@@ -76,8 +76,8 @@ export default async function SettingsPage({ searchParams }: {
   return (
     <>
       <PageHeader
-        title={t('page.settings.title', 'Projects')}
-        subtitle="Each project is an independent listening scope: query, languages, geographies and entities to compare"
+        title={t('page.settings.title', 'Proyectos')}
+        subtitle="Cada proyecto es un ámbito de escucha independiente: consulta, idiomas, geografías y entidades para comparar"
       />
 
       {/* Project tabs */}
@@ -106,7 +106,7 @@ export default async function SettingsPage({ searchParams }: {
               : 'border-transparent text-slate-400 hover:bg-white/5 hover:text-slate-200'
           }`}
         >
-          <Plus className="size-4" /> New project
+          <Plus className="size-4" /> Nuevo proyecto
         </Link>
       </div>
 
@@ -119,63 +119,63 @@ export default async function SettingsPage({ searchParams }: {
               !newType ? (
                 /* Passo 0: che tipo di progetto? */
                 <div>
-                  <h2 className="mb-3 text-sm font-semibold text-slate-300">What kind of project?</h2>
+                  <h2 className="mb-3 text-sm font-semibold text-slate-300">¿Qué tipo de proyecto?</h2>
                   <div className="grid gap-3 sm:grid-cols-3">
                     <Link href="/settings?p=new&type=listening"
                       className="group flex flex-col gap-1.5 rounded-xl border border-[var(--border)] bg-white/[0.02] px-4 py-4 transition hover:border-sky-500/50 hover:bg-sky-500/[0.05]">
-                      <span className="flex items-center gap-2 text-sm font-semibold text-slate-100"><Radar className="size-4 text-sky-400" /> Listening</span>
-                      <span className="text-xs leading-snug text-slate-400">Radar collects mentions automatically from the web — news, social, RSS. You set the keywords and sources.</span>
+                      <span className="flex items-center gap-2 text-sm font-semibold text-slate-100"><Radar className="size-4 text-sky-400" /> Escucha</span>
+                      <span className="text-xs leading-snug text-slate-400">AEDO recopila menciones automáticamente de la web: noticias, redes sociales, RSS. Tú defines las palabras clave y las fuentes.</span>
                     </Link>
                     <Link href="/settings?p=new&type=import"
                       className="group flex flex-col gap-1.5 rounded-xl border border-[var(--border)] bg-white/[0.02] px-4 py-4 transition hover:border-sky-500/50 hover:bg-sky-500/[0.05]">
-                      <span className="flex items-center gap-2 text-sm font-semibold text-slate-100"><UploadCloud className="size-4 text-sky-400" /> Import file</span>
-                      <span className="text-xs leading-snug text-slate-400">Bring your own data from an Excel or CSV file — surveys, exports. Radar analyzes it the same way. No scraping.</span>
+                      <span className="flex items-center gap-2 text-sm font-semibold text-slate-100"><UploadCloud className="size-4 text-sky-400" /> Importar archivo</span>
+                      <span className="text-xs leading-snug text-slate-400">Trae tus propios datos desde un archivo Excel o CSV: encuestas, exportaciones. AEDO los analiza igual. Sin scraping.</span>
                     </Link>
                     <Link href="/settings?p=new&type=talkwalker"
                       className="group flex flex-col gap-1.5 rounded-xl border border-[var(--border)] bg-white/[0.02] px-4 py-4 transition hover:border-teal-500/50 hover:bg-teal-500/[0.05]">
                       <span className="flex items-center gap-2 text-sm font-semibold text-slate-100"><Antenna className="size-4 text-teal-400" /> Talkwalker</span>
-                      <span className="text-xs leading-snug text-slate-400">Read mentions live from your corporate Talkwalker account through its API. No scraping, no files — and it spends Talkwalker credits.</span>
+                      <span className="text-xs leading-snug text-slate-400">Lee menciones en vivo desde tu cuenta corporativa de Talkwalker mediante su API. Sin scraping ni archivos, y consume créditos de Talkwalker.</span>
                     </Link>
                   </div>
                 </div>
               ) : newType === 'talkwalker' ? (
                 <form action={createTalkwalkerProject} className="flex flex-col gap-4">
-                  <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-300"><Antenna className="size-4 text-teal-400" /> New Talkwalker project</h2>
+                  <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-300"><Antenna className="size-4 text-teal-400" /> Nuevo proyecto de Talkwalker</h2>
                   <p className="text-xs leading-relaxed text-slate-400">
-                    No keywords here: the search is already written in Talkwalker. Point at the project, and Radar takes what it collects — including the tags and corrections made over there.
+                    Aquí no hay palabras clave: la búsqueda ya está escrita en Talkwalker. Indica el proyecto y AEDO toma lo que este recopila, incluidas las etiquetas y correcciones hechas allá.
                   </p>
                   <TalkwalkerFields project={null} topics={[]} topicsError={null} />
                   <TalkwalkerNotice />
-                  <p className="text-xs text-slate-500">Once created, you can narrow it down to specific topics of that Talkwalker project.</p>
+                  <p className="text-xs text-slate-500">Una vez creado, puedes limitarlo a temas específicos de ese proyecto de Talkwalker.</p>
                   <div className="mt-2 flex items-center gap-3 border-t border-[var(--border)] pt-4">
-                    <SubmitButton className={btnCls} pendingLabel="Creating project…">Create and build the queries →</SubmitButton>
-                    <Link href="/settings?p=new" className="text-xs text-slate-500 hover:text-slate-300">← back</Link>
+                    <SubmitButton className={btnCls} pendingLabel="Creando proyecto…">Crear y construir las consultas →</SubmitButton>
+                    <Link href="/settings?p=new" className="text-xs text-slate-500 hover:text-slate-300">← volver</Link>
                   </div>
                 </form>
               ) : newType === 'import' ? (
                 <form action={createImportProject} className="flex flex-col gap-4">
-                  <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-300"><UploadCloud className="size-4 text-sky-400" /> New import project</h2>
+                  <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-300"><UploadCloud className="size-4 text-sky-400" /> Nuevo proyecto de importación</h2>
                   <label className="text-xs text-slate-400">
-                    Project name
-                    <input name="name" className={`${inputCls} mt-1`} placeholder="e.g. Q2 survey exports" required />
+                    Nombre del proyecto
+                    <input name="name" className={`${inputCls} mt-1`} placeholder="p. ej., Exportaciones de encuestas T2" required />
                   </label>
                   <label className="flex items-center gap-2 text-sm text-slate-300">
                     <input type="checkbox" name="shared" className="accent-sky-500" />
-                    Share this project with the whole team (read-only for others)
+                    Compartir este proyecto con todo el equipo (solo lectura para los demás)
                   </label>
-                  <p className="text-xs text-slate-500">Next you’ll upload an Excel/CSV file and map its columns to Radar’s fields.</p>
+                  <p className="text-xs text-slate-500">Luego subirás un archivo Excel/CSV y asignarás sus columnas a los campos de AEDO.</p>
                   <div className="mt-2 flex items-center gap-3 border-t border-[var(--border)] pt-4">
-                    <SubmitButton className={btnCls} pendingLabel="Creating…">Create &amp; upload file</SubmitButton>
-                    <Link href="/settings?p=new" className="text-xs text-slate-500 hover:text-slate-300">← back</Link>
+                    <SubmitButton className={btnCls} pendingLabel="Creando…">Crear y subir archivo</SubmitButton>
+                    <Link href="/settings?p=new" className="text-xs text-slate-500 hover:text-slate-300">← volver</Link>
                   </div>
                 </form>
               ) : (
                 <form action={createProject} className="flex flex-col gap-4">
-                  <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-300"><Radar className="size-4 text-sky-400" /> New listening project</h2>
+                  <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-300"><Radar className="size-4 text-sky-400" /> Nuevo proyecto de escucha</h2>
                   <ProjectFields project={null} />
                   <div className="mt-2 flex items-center gap-3 border-t border-[var(--border)] pt-4">
-                    <SubmitButton className={btnCls} pendingLabel="Creating project…">Create and build the queries →</SubmitButton>
-                    <Link href="/settings?p=new" className="text-xs text-slate-500 hover:text-slate-300">← back</Link>
+                    <SubmitButton className={btnCls} pendingLabel="Creando proyecto…">Crear y construir las consultas →</SubmitButton>
+                    <Link href="/settings?p=new" className="text-xs text-slate-500 hover:text-slate-300">← volver</Link>
                   </div>
                 </form>
               )
@@ -184,40 +184,40 @@ export default async function SettingsPage({ searchParams }: {
                 {selected.mode === 'talkwalker' ? (
                   <>
                     <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-teal-500/25 bg-teal-500/[0.05] px-4 py-3">
-                      <span className="flex items-center gap-1.5 text-sm font-medium text-teal-200"><Antenna className="size-4" /> Talkwalker project</span>
-                      <span className="text-xs text-slate-400">— mentions come from the corporate Talkwalker API. No other source is queried.</span>
+                      <span className="flex items-center gap-1.5 text-sm font-medium text-teal-200"><Antenna className="size-4" /> Proyecto de Talkwalker</span>
+                      <span className="text-xs text-slate-400">— las menciones vienen de la API corporativa de Talkwalker. No se consulta ninguna otra fuente.</span>
                     </div>
                     <form action={updateTalkwalkerProject} className="flex flex-col gap-4">
                       <input type="hidden" name="id" value={selected.id} />
                       <TalkwalkerFields project={selected} topics={twTopics} topicsError={twTopicsError} />
                       <TalkwalkerNotice />
                       <div className="mt-2 border-t border-[var(--border)] pt-4">
-                        <SubmitButton className={btnCls} pendingLabel="Saving…">Save changes</SubmitButton>
+                        <SubmitButton className={btnCls} pendingLabel="Guardando…">Guardar cambios</SubmitButton>
                       </div>
                     </form>
                   </>
                 ) : selected.mode === 'upload' ? (
                   <>
                     <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-sky-500/25 bg-sky-500/[0.05] px-4 py-3">
-                      <span className="flex items-center gap-1.5 text-sm font-medium text-sky-200"><UploadCloud className="size-4" /> Import project</span>
-                      <span className="text-xs text-slate-400">— data comes from files you upload, not scraping.</span>
+                      <span className="flex items-center gap-1.5 text-sm font-medium text-sky-200"><UploadCloud className="size-4" /> Proyecto de importación</span>
+                      <span className="text-xs text-slate-400">— los datos vienen de archivos que subes, no de scraping.</span>
                       <Link href={`/import?project=${selected.id}`}
                         className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-sky-500 px-3 py-1.5 text-sm font-medium text-slate-950 hover:bg-sky-400">
-                        <UploadCloud className="size-3.5" /> Import a file
+                        <UploadCloud className="size-3.5" /> Importar un archivo
                       </Link>
                     </div>
                     <form action={updateImportProject} className="flex flex-col gap-4">
                       <input type="hidden" name="id" value={selected.id} />
                       <label className="text-xs text-slate-400">
-                        Project name
+                        Nombre del proyecto
                         <input name="name" defaultValue={selected.name} className={`${inputCls} mt-1`} required />
                       </label>
                       <label className="flex items-center gap-2 text-sm text-slate-300">
                         <input type="checkbox" name="shared" defaultChecked={selected.visibility === 'shared'} className="accent-sky-500" />
-                        Share this project with the whole team (read-only for others)
+                        Compartir este proyecto con todo el equipo (solo lectura para los demás)
                       </label>
                       <div className="mt-2 border-t border-[var(--border)] pt-4">
-                        <SubmitButton className={btnCls} pendingLabel="Saving…">Save changes</SubmitButton>
+                        <SubmitButton className={btnCls} pendingLabel="Guardando…">Guardar cambios</SubmitButton>
                       </div>
                     </form>
                   </>
@@ -226,19 +226,19 @@ export default async function SettingsPage({ searchParams }: {
                     <input type="hidden" name="id" value={selected.id} />
                     <ProjectFields project={selected} />
                     <div className="mt-2 flex flex-wrap items-center gap-3 border-t border-[var(--border)] pt-4">
-                      <SubmitButton className={btnCls} pendingLabel="Saving…">Save changes</SubmitButton>
+                      <SubmitButton className={btnCls} pendingLabel="Guardando…">Guardar cambios</SubmitButton>
                     </div>
                   </form>
                 )}
 
                 <hr className="my-5 border-[var(--border)]" />
 
-                <h3 className="mb-1 text-sm font-semibold text-slate-300">Benchmark entities</h3>
+                <h3 className="mb-1 text-sm font-semibold text-slate-300">Entidades de benchmark</h3>
                 <p className="mb-3 text-xs text-slate-500">
-                  Brands or competitors to compare on the Benchmark page: mentions citing these keywords are attributed to the entity.
-                  Saving a query plan updates the subject and the competitors here automatically; the others stay as they are.
-                  Mark one with the <Star className="inline size-3 -translate-y-px text-amber-400" /> to set it as <span className="text-amber-300">your brand</span> —
-                  this unlocks the Brand Health Index (your brand vs the market and the competitors).
+                  Marcas o competidores para comparar en la página Benchmark: las menciones que citan estas palabras clave se atribuyen a la entidad.
+                  Al guardar un plan de consultas se actualizan aquí automáticamente el sujeto y los competidores; las demás quedan como están.
+                  Marca una con la <Star className="inline size-3 -translate-y-px text-amber-400" /> para definirla como <span className="text-amber-300">tu marca</span>:
+                  así se activa el Índice de salud de marca (tu marca vs. el mercado y los competidores).
                 </p>
                 <div className="flex flex-col gap-2">
                   {entities.map((e) => (
@@ -248,56 +248,56 @@ export default async function SettingsPage({ searchParams }: {
                     />
                   ))}
                   {entities.length === 0 && (
-                    <p className="text-xs text-slate-600">No entities: add one to use Benchmark.</p>
+                    <p className="text-xs text-slate-600">No hay entidades: agrega una para usar Benchmark.</p>
                   )}
                 </div>
                 <form action={addEntity} className="mt-3 flex flex-col gap-2 sm:flex-row">
                   <input type="hidden" name="projectId" value={selected.id} />
-                  <input name="name" placeholder="Entity name" className={inputCls} required />
-                  <input name="keywords" placeholder="associated keywords (optional)" className={inputCls} />
-                  <SubmitButton pendingLabel="Adding…"
+                  <input name="name" placeholder="Nombre de la entidad" className={inputCls} required />
+                  <input name="keywords" placeholder="palabras clave asociadas (opcional)" className={inputCls} />
+                  <SubmitButton pendingLabel="Agregando…"
                     className="shrink-0 rounded-lg border border-[var(--border)] px-4 py-2 text-sm text-slate-300 hover:bg-white/5">
-                    Add
+                    Agregar
                   </SubmitButton>
                 </form>
 
                 <hr className="my-5 border-[var(--border)]" />
 
                 <h3 className="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-300">
-                  <Link2 className="size-4 text-sky-400" /> Sharing
+                  <Link2 className="size-4 text-sky-400" /> Compartir
                 </h3>
                 <p className="mb-3 text-xs text-slate-500">
-                  Create a read-only link to show the report to managers or clients without sharing the password. It expires on its own.
+                  Crea un enlace de solo lectura para mostrar el informe a directivos o clientes sin compartir la contraseña. Vence automáticamente.
                 </p>
                 <div className="flex flex-col gap-2">
                   {activeShares.map((s) => (
                     <div key={s.id} className="flex flex-wrap items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-xs">
                       <code className="truncate text-sky-300">{shareBase ? `${shareBase}/share/${s.token}` : `/share/${s.token}`}</code>
-                      <span className="text-slate-500">expires {s.expiresAt.toLocaleDateString('en-US')}</span>
+                      <span className="text-slate-500">vence el {s.expiresAt.toLocaleDateString('es-CO')}</span>
                       <span className="ml-auto flex items-center gap-1">
                         <CopyButton text={shareBase ? `${shareBase}/share/${s.token}` : `/share/${s.token}`} />
                         <form action={revokeShareLink}>
                           <input type="hidden" name="id" value={s.id} />
-                          <button type="submit" className="rounded-md px-2 py-1 text-red-400/80 hover:bg-red-500/10">revoke</button>
+                          <button type="submit" className="rounded-md px-2 py-1 text-red-400/80 hover:bg-red-500/10">revocar</button>
                         </form>
                       </span>
                     </div>
                   ))}
                   {activeShares.length === 0 && (
-                    <p className="text-xs text-slate-600">No active link.</p>
+                    <p className="text-xs text-slate-600">No hay enlaces activos.</p>
                   )}
                 </div>
                 <form action={createShareLink} className="mt-3 flex items-center gap-2">
                   <input type="hidden" name="projectId" value={selected.id} />
                   <select name="days" defaultValue="7"
                     className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2 py-2 text-sm outline-none">
-                    <option value="1">1 day</option>
-                    <option value="7">7 days</option>
-                    <option value="30">30 days</option>
+                    <option value="1">1 día</option>
+                    <option value="7">7 días</option>
+                    <option value="30">30 días</option>
                   </select>
-                  <SubmitButton pendingLabel="Creating link…"
+                  <SubmitButton pendingLabel="Creando enlace…"
                     className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm text-slate-300 hover:bg-white/5">
-                    Create shareable link
+                    Crear enlace para compartir
                   </SubmitButton>
                 </form>
 
@@ -310,8 +310,8 @@ export default async function SettingsPage({ searchParams }: {
             )}
           </section>
           <p className="mt-2 px-1 text-[11px] text-slate-600">
-            Note: every active project consumes API quota on each update — with the current budget, keep few of them.
-            Source status and budget are now in <span className="text-slate-400">Settings → Sources &amp; budget</span>.
+            Nota: cada proyecto activo consume cuota de API en cada actualización; con el presupuesto actual, mantén pocos.
+            El estado de las fuentes y el presupuesto ahora están en <span className="text-slate-400">Configuración → Fuentes y presupuesto</span>.
           </p>
         </div>
       </div>
@@ -336,30 +336,30 @@ function TalkwalkerFields({ project, topics, topicsError }: {
   return (
     <>
       <label className="text-xs text-slate-400">
-        Project name (in Radar)
+        Nombre del proyecto (en AEDO)
         <input name="name" defaultValue={project?.name} className={`${inputCls} mt-1`}
-          placeholder="e.g. Corporate reputation" required />
+          placeholder="p. ej., Reputación corporativa" required />
       </label>
       <label className="flex items-center gap-2 text-sm text-slate-300">
         <input type="checkbox" name="shared" defaultChecked={project?.visibility === 'shared'} className="accent-sky-500" />
-        Share this project with the whole team (read-only for others)
+        Compartir este proyecto con todo el equipo (solo lectura para los demás)
       </label>
       <label className="text-xs text-slate-400">
-        Talkwalker project id
+        ID del proyecto de Talkwalker
         <input name="talkwalkerProject" defaultValue={project?.talkwalkerProject ?? ''}
-          className={`${inputCls} mt-1`} placeholder="e.g. kpnutesu_123456" required />
+          className={`${inputCls} mt-1`} placeholder="p. ej., kpnutesu_123456" required />
         <span className="mt-1 block text-[11px] text-slate-500">
-          Ask your CSM, or read it from the URL of the project inside Talkwalker.
+          Pídeselo a tu CSM o tómalo de la URL del proyecto dentro de Talkwalker.
         </span>
       </label>
 
       {project && (
       <fieldset className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)]/40 px-4 py-3">
-        <legend className="px-1 text-xs text-slate-400">Where the data comes from</legend>
+        <legend className="px-1 text-xs text-slate-400">De dónde vienen los datos</legend>
         {topics.length > 0 ? (
           <>
             <p className="mb-2 text-[11px] text-slate-500">
-              Topics configured in that Talkwalker project. <strong>Tick none to take everything</strong> it collects — you can always narrow later.
+              Temas configurados en ese proyecto de Talkwalker. <strong>No marques ninguno para tomar todo</strong> lo que recopila; siempre puedes acotarlo después.
             </p>
             <div className="grid gap-1.5 sm:grid-cols-2">
               {topics.map((t) => (
@@ -374,18 +374,18 @@ function TalkwalkerFields({ project, topics, topicsError }: {
         ) : (
           <p className="text-[11px] leading-relaxed text-slate-500">
             {topicsError
-              ? `Topics could not be read from Talkwalker: ${topicsError}. Radar will take everything the project collects.`
-              : 'Once the token is set, the topics configured in this Talkwalker project appear here to tick. Until then Radar takes everything the project collects.'}
+              ? `No se pudieron leer los temas de Talkwalker: ${topicsError}. AEDO tomará todo lo que recopila el proyecto.`
+              : 'Cuando configures el token, aquí aparecerán para marcar los temas de este proyecto de Talkwalker. Mientras tanto, AEDO toma todo lo que recopila el proyecto.'}
           </p>
         )}
       </fieldset>
       )}
 
       <label className="text-xs text-slate-400">
-        <span className="text-violet-300">✨ Topic description</span> — optional: it doesn’t change what is fetched, it guides the AI relevance stars
+        <span className="text-violet-300">✨ Descripción del tema</span> — opcional: no cambia lo que se obtiene, orienta las estrellas de relevancia de la IA
         <textarea name="semanticContext" defaultValue={project?.semanticContext ?? ''} rows={2}
           className={`${inputCls} mt-1 resize-y`}
-          placeholder="e.g. Reputation of the group across insurance and mobility" />
+          placeholder="p. ej., Reputación del grupo en seguros y movilidad" />
       </label>
     </>
   );
@@ -395,7 +395,7 @@ function TalkwalkerFields({ project, topics, topicsError }: {
 function TalkwalkerNotice() {
   return (
     <p className="rounded-lg border border-amber-500/25 bg-amber-500/[0.06] px-3 py-2 text-[11px] leading-relaxed text-amber-200/90">
-      Each refresh runs one Talkwalker search per block of 40 keywords: <strong>10 credits per call plus 1 per result</strong>, taken from your Talkwalker contract. The token goes in Settings → Sources.
+      Cada actualización hace una búsqueda en Talkwalker por cada bloque de 40 palabras clave: <strong>10 créditos por llamada más 1 por resultado</strong>, descontados de tu contrato de Talkwalker. El token se configura en Configuración → Fuentes.
     </p>
   );
 }
@@ -404,43 +404,43 @@ function ProjectFields({ project }: { project: Project | null }) {
   return (
     <>
       <label className="text-xs text-slate-400">
-        Project name
+        Nombre del proyecto
         <input name="name" defaultValue={project?.name} className={`${inputCls} mt-1`}
-          placeholder="e.g. Renewable energy" required />
+          placeholder="p. ej., Energías renovables" required />
       </label>
       <label className="flex items-center gap-2 text-sm text-slate-300">
         <input type="checkbox" name="shared" defaultChecked={project?.visibility === 'shared'} className="accent-sky-500" />
-        Share this project with the whole team (read-only for others)
+        Compartir este proyecto con todo el equipo (solo lectura para los demás)
       </label>
       {project ? (
         // La query non si scrive più qui: ha una pagina sua, dove si
         // costruisce a parole, si prova e si modifica.
         <div className="flex flex-wrap items-center gap-3 rounded-lg border border-sky-500/25 bg-sky-500/[0.05] px-4 py-3">
           <div className="min-w-0 flex-1 text-xs text-slate-300">
-            <p className="font-medium text-sky-200">What this project listens to</p>
+            <p className="font-medium text-sky-200">Qué escucha este proyecto</p>
             <p className="mt-0.5 text-slate-400">
               {project.queryPlan
-                ? `${project.queryPlan.queries.filter((q) => q.enabled).length} active queries built from: “${project.queryPlan.brief.slice(0, 140)}${project.queryPlan.brief.length > 140 ? '…' : ''}”`
+                ? `${project.queryPlan.queries.filter((q) => q.enabled).length} consultas activas construidas a partir de: “${project.queryPlan.brief.slice(0, 140)}${project.queryPlan.brief.length > 140 ? '…' : ''}”`
                 : project.keywords.length
-                  ? `Old-style query (${project.keywords.slice(0, 4).join(', ')}${project.keywords.length > 4 ? '…' : ''}). Open the query builder to turn it into building blocks.`
-                  : 'No query yet: the project collects nothing until you build one.'}
+                  ? `Consulta antigua (${project.keywords.slice(0, 4).join(', ')}${project.keywords.length > 4 ? '…' : ''}). Abre el constructor de consultas para convertirla en bloques.`
+                  : 'Todavía no hay consulta: el proyecto no recopila nada hasta que construyas una.'}
             </p>
           </div>
           <Link href={`/query?project=${project.id}`}
             className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-sky-500 px-3 py-1.5 text-sm font-medium text-slate-950 hover:bg-sky-400">
-            Open the query builder
+            Abrir el constructor de consultas
           </Link>
         </div>
       ) : (
         <label className="text-xs text-slate-400">
-          <span className="text-sky-300">What do you want to monitor?</span> — in plain words; next step, Radar turns it into queries you can test and edit
+          <span className="text-sky-300">¿Qué quieres monitorear?</span> — con tus propias palabras; en el siguiente paso, AEDO lo convierte en consultas que puedes probar y editar
           <textarea name="semanticContext" rows={3}
             className={`${inputCls} mt-1 resize-y`}
-            placeholder="e.g. The company Acme in relation to worker protests, and its competitors Alfa, Beta and Gamma" />
+            placeholder="p. ej., La empresa Acme en relación con protestas de trabajadores, y sus competidores Alfa, Beta y Gamma" />
         </label>
       )}
       <fieldset className="text-xs text-slate-400">
-        Languages (news editions and search)
+        Idiomas (ediciones de noticias y búsqueda)
         <div className="mt-1.5 flex flex-wrap gap-3">
           {LANGS.map(([code, label]) => (
             <label key={code} className="flex items-center gap-1.5 text-sm text-slate-300">
@@ -453,7 +453,7 @@ function ProjectFields({ project }: { project: Project | null }) {
         </div>
       </fieldset>
       <fieldset className="text-xs text-slate-400">
-        Geographies (applies to news sources; no selection = worldwide)
+        Geografías (aplica a las fuentes de noticias; sin selección = todo el mundo)
         <div className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-1.5 sm:grid-cols-4">
           {COUNTRIES.map(([code, label]) => (
             <label key={code} className="flex items-center gap-1.5 text-sm text-slate-300">
@@ -465,21 +465,21 @@ function ProjectFields({ project }: { project: Project | null }) {
         </div>
       </fieldset>
       <label className="text-xs text-slate-400">
-        Telegram channels to watch (comma-separated usernames, e.g. @reuters)
+        Canales de Telegram a seguir (nombres de usuario separados por comas, p. ej., @reuters)
         <input name="telegramChannels" defaultValue={(project?.telegramChannels ?? []).map((c) => `@${c}`).join(', ')}
-          className={`${inputCls} mt-1`} placeholder="e.g. @channel1, @channel2 (optional)" />
+          className={`${inputCls} mt-1`} placeholder="p. ej., @canal1, @canal2 (opcional)" />
       </label>
       <label className="text-xs text-slate-400">
-        RSS/Atom feeds to follow (URLs comma- or newline-separated) — outlets, blogs, Google Alerts…
+        Feeds RSS/Atom a seguir (URL separadas por comas o saltos de línea): medios, blogs, Google Alerts…
         <textarea name="rssFeeds" defaultValue={(project?.rssFeeds ?? []).join('\n')} rows={2}
           className={`${inputCls} mt-1 resize-y`}
-          placeholder="e.g. https://example.com/feed.xml (optional, max 15)" />
+          placeholder="p. ej., https://example.com/feed.xml (opcional, máx. 15)" />
       </label>
       <label className="text-xs text-slate-400">
-        Brand tone of voice — used by Content Studio to write drafts
+        Tono de voz de la marca: Content Studio lo usa para escribir borradores
         <textarea name="brandVoice" defaultValue={project?.brandVoice ?? ''} rows={2}
           className={`${inputCls} mt-1 resize-y`}
-          placeholder="e.g. Professional but direct, informal, avoid unnecessary jargon (optional)" />
+          placeholder="p. ej., Profesional pero directo, cercano, sin jerga innecesaria (opcional)" />
       </label>
     </>
   );

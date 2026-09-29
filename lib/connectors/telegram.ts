@@ -57,7 +57,7 @@ async function fetchChannel(channel: string): Promise<RawMention[]> {
 
 export const telegram: Connector = {
   id: 'telegram',
-  label: 'Telegram (channels)',
+  label: 'Telegram (canales)',
   tier: 'free',
   enabled: () => true,
   async fetchMentions() {

@@ -57,7 +57,7 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
   const key = lockKey(opts.projectId);
   const lock = await getMeta<string>(key);
   if (lock && Date.now() - new Date(lock).getTime() < LOCK_TTL_MS) {
-    return { skipped: true, reason: 'pipeline already running' };
+    return { skipped: true, reason: 'ya hay una actualización en curso' };
   }
   await setMeta(key, new Date().toISOString());
 

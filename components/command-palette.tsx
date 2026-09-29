@@ -85,14 +85,14 @@ export function CommandPalette({ locale = 'en' }: { locale?: Locale }) {
 
   return (
     <div className="fixed inset-0 z-[90] flex items-start justify-center px-4 pt-[12vh]"
-      role="dialog" aria-modal="true" aria-label={t('nav.search', 'Search')}>
+      role="dialog" aria-modal="true" aria-label={t('nav.search', 'Buscar')}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
       <div className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--border)] bg-[#0c1226] shadow-2xl">
         <div className="flex items-center gap-2.5 border-b border-[var(--border)] px-4 py-3">
           <Search className="size-4 shrink-0 text-slate-500" />
           <input
             ref={inputRef} value={q} onChange={(e) => { setQ(e.target.value); setCursor(0); }}
-            placeholder={t('nav.searchPlaceholder', 'Go to…')}
+            placeholder={t('nav.searchPlaceholder', 'Ir a…')}
             className="w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-600"
             onKeyDown={(e) => {
               if (e.key === 'ArrowDown') { e.preventDefault(); setCursor(Math.min(active + 1, results.length - 1)); }
@@ -105,7 +105,7 @@ export function CommandPalette({ locale = 'en' }: { locale?: Locale }) {
 
         {results.length === 0 ? (
           <p className="px-4 py-6 text-center text-xs text-slate-600">
-            {t('nav.searchEmpty', 'Nothing with that name.')}
+            {t('nav.searchEmpty', 'Nada con ese nombre.')}
           </p>
         ) : (
           <ul className="max-h-[52vh] overflow-y-auto py-1.5">
@@ -144,7 +144,7 @@ export function CommandHint({ locale = 'en' }: { locale?: Locale }) {
       onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
       className="flex w-full items-center gap-2 rounded-lg border border-[var(--border)] bg-white/[0.02] px-3 py-1.5 text-left text-xs text-slate-500 transition hover:bg-white/5 hover:text-slate-300">
       <Search className="size-3.5 shrink-0" />
-      <span className="flex-1 truncate">{t('nav.searchPlaceholder', 'Go to…')}</span>
+      <span className="flex-1 truncate">{t('nav.searchPlaceholder', 'Ir a…')}</span>
       <kbd className="shrink-0 rounded border border-[var(--border)] px-1 py-0.5 text-[10px]">
         {mac ? '⌘' : 'Ctrl'}K
       </kbd>

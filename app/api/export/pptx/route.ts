@@ -25,7 +25,7 @@ const SENTIMENT_COLORS: Record<string, string> = {
 
 export async function GET(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
   const url = new URL(req.url);
   const { sections, days: rangeDays } = parseExportOptions(url);
   const has = (s: string) => sections.has(s as never);
@@ -37,15 +37,15 @@ export async function GET(req: Request) {
   const pptx = new PptxGenJS();
   pptx.defineLayout({ name: 'WIDE', width: 13.33, height: 7.5 });
   pptx.layout = 'WIDE';
-  pptx.author = 'Radar By Scognamiglio 2026';
+  pptx.author = 'AEDO';
   // Marcatura leggibile da una macchina (AI Act art. 50, par. 2).
   pptx.subject = AI_DISCLOSURE_META.subject;
-  pptx.title = `Radar — ${project.name}`;
+  pptx.title = `AEDO — ${project.name}`;
   pptx.defineSlideMaster({
     title: 'DARK',
     background: { color: BG },
     objects: [
-      { text: { text: 'Radar · By Scognamiglio 2026', options: { x: 0.4, y: 7.05, fontSize: 10, color: MUTED } } },
+      { text: { text: 'AEDO · EL GRUPO', options: { x: 0.4, y: 7.05, fontSize: 10, color: MUTED } } },
       {
         text: {
           text: AI_DISCLOSURE_SHORT,
@@ -54,7 +54,7 @@ export async function GET(req: Request) {
       },
       {
         text: {
-          text: new Date().toLocaleDateString('en-US'),
+          text: new Date().toLocaleDateString('es-CO'),
           options: { x: 11.9, y: 7.05, fontSize: 10, color: MUTED, align: 'right', w: 1.1 },
         },
       },
@@ -73,27 +73,27 @@ export async function GET(req: Request) {
 
   // ── 1. Copertina
   const s1 = newSlide();
-  s1.addText('RADAR', { x: 0.5, y: 2.1, w: 12.3, h: 0.5, fontSize: 20, color: ACCENT, align: 'center', charSpacing: 8 });
-  s1.addText('BY SCOGNAMIGLIO 2026', { x: 0.5, y: 2.55, w: 12.3, h: 0.3, fontSize: 10, color: MUTED, align: 'center', charSpacing: 4 });
+  s1.addText('AEDO', { x: 0.5, y: 2.1, w: 12.3, h: 0.5, fontSize: 20, color: ACCENT, align: 'center', charSpacing: 8 });
+  s1.addText('EL GRUPO', { x: 0.5, y: 2.55, w: 12.3, h: 0.3, fontSize: 10, color: MUTED, align: 'center', charSpacing: 4 });
   s1.addText(project.name, { x: 0.5, y: 2.8, w: 12.3, h: 1.1, fontSize: 48, bold: true, color: TEXT, align: 'center' });
-  s1.addText('Media intelligence report', { x: 0.5, y: 4.0, w: 12.3, h: 0.5, fontSize: 20, color: MUTED, align: 'center' });
+  s1.addText('Informe de inteligencia de medios', { x: 0.5, y: 4.0, w: 12.3, h: 0.5, fontSize: 20, color: MUTED, align: 'center' });
   s1.addText(
-    `${new Date().toLocaleDateString('en-US', { dateStyle: 'full' })}  ·  Query: ${project.keywords.join(', ')}`,
+    `${new Date().toLocaleDateString('es-CO', { dateStyle: 'full' })}  ·  Consulta: ${project.keywords.join(', ')}`,
     { x: 0.5, y: 4.6, w: 12.3, h: 0.5, fontSize: 14, color: MUTED, align: 'center' },
   );
 
   // ── 2. KPI
   const kpi = data.dashboard.kpi;
-  const sentimentLabel = kpi.avgSentiment === null ? 'analyzing'
-    : kpi.avgSentiment > 0.15 ? 'positive' : kpi.avgSentiment < -0.15 ? 'negative' : 'neutral';
+  const sentimentLabel = kpi.avgSentiment === null ? 'en análisis'
+    : kpi.avgSentiment > 0.15 ? 'positivo' : kpi.avgSentiment < -0.15 ? 'negativo' : 'neutral';
   if (has('kpi')) {
   const s2 = newSlide();
-  s2.addText('At a glance', titleOpts);
+  s2.addText('De un vistazo', titleOpts);
   const kpis: [string, string][] = [
-    ['Mentions (7 days)', kpi.total7.toLocaleString('en-US')],
-    ['Avg sentiment', sentimentLabel],
-    ['Active sources', String(kpi.sources)],
-    ['Topics detected', String(data.dashboard.topTopics.length)],
+    ['Menciones (7 días)', kpi.total7.toLocaleString('es-CO')],
+    ['Sentimiento prom.', sentimentLabel],
+    ['Fuentes activas', String(kpi.sources)],
+    ['Temas detectados', String(data.dashboard.topTopics.length)],
   ];
   kpis.forEach(([label, value], i) => {
     const x = 0.5 + i * 3.15;
@@ -102,7 +102,7 @@ export async function GET(req: Request) {
     s2.addText(value, { x: x + 0.2, y: 2.35, w: 2.5, h: 0.9, fontSize: 30, bold: true, color: TEXT });
   });
   if (data.dashboard.topTopics.length) {
-    s2.addText('Top topics', { x: 0.5, y: 4.1, w: 6, h: 0.4, fontSize: 14, bold: true, color: MUTED });
+    s2.addText('Temas principales', { x: 0.5, y: 4.1, w: 6, h: 0.4, fontSize: 14, bold: true, color: MUTED });
     s2.addText(
       data.dashboard.topTopics.slice(0, 10).map((t) => `${t.topic} (${t.n})`).join('   ·   '),
       { x: 0.5, y: 4.55, w: 12.3, h: 1.4, fontSize: 15, color: ACCENT },
@@ -192,14 +192,14 @@ export async function GET(req: Request) {
     const h = data.health;
     const primary = h.brand ? h.brand.health : h.theme;
     const sh = newSlide();
-    sh.addText(h.brand ? `Brand Health Index — ${h.brand.name}` : 'Market Health Index', titleOpts);
+    sh.addText(h.brand ? `Índice de salud de marca — ${h.brand.name}` : 'Índice de salud del mercado', titleOpts);
     sh.addShape('roundRect', { x: 0.5, y: 1.6, w: 4.2, h: 4.6, fill: { color: PANEL }, line: { color: '1E2A4A' }, rectRadius: 0.1 });
     sh.addText(String(primary.score), { x: 0.5, y: 2.3, w: 4.2, h: 1.6, fontSize: 92, bold: true, color: gcol(primary.score), align: 'center' });
     sh.addText(primary.grade.toUpperCase(), { x: 0.5, y: 3.95, w: 4.2, h: 0.5, fontSize: 20, bold: true, color: gcol(primary.score), align: 'center', charSpacing: 2 });
-    sh.addText(h.brand ? `Market health: ${h.theme.score}  (${primary.score - h.theme.score >= 0 ? '+' : ''}${primary.score - h.theme.score} vs market)` : `${h.theme.total.toLocaleString('en-US')} mentions · 14 days`,
+    sh.addText(h.brand ? `Salud del mercado: ${h.theme.score}  (${primary.score - h.theme.score >= 0 ? '+' : ''}${primary.score - h.theme.score} vs. mercado)` : `${h.theme.total.toLocaleString('es-CO')} menciones · 14 días`,
       { x: 0.5, y: 4.6, w: 4.2, h: 0.5, fontSize: 12, color: MUTED, align: 'center' });
     sh.addChart('bar', [{
-      name: 'Score',
+      name: 'Puntaje',
       labels: primary.components.map((c) => c.label),
       values: primary.components.map((c) => c.value),
     }], {
@@ -210,9 +210,9 @@ export async function GET(req: Request) {
     });
     if (h.compare.length > 1) {
       const sc = newSlide();
-      sc.addText('Health ranking — your brand vs competitors', titleOpts);
+      sc.addText('Ranking de salud — tu marca vs. competidores', titleOpts);
       sc.addChart('bar', [{
-        name: 'Health score',
+        name: 'Puntaje de salud',
         labels: h.compare.map((c) => c.name),
         values: h.compare.map((c) => c.score),
       }], {
@@ -228,16 +228,16 @@ export async function GET(req: Request) {
   if (has('crisis') && data.crisis.peak) {
     const rc = data.crisis.risk >= 75 ? 'F87171' : data.crisis.risk >= 50 ? 'FB923C' : data.crisis.risk >= 25 ? 'FBBF24' : '34D399';
     const cr = newSlide();
-    cr.addText('Crisis radar & peak anatomy', titleOpts);
+    cr.addText('Radar de crisis y anatomía del pico', titleOpts);
     cr.addShape('roundRect', { x: 0.5, y: 1.6, w: 4.2, h: 4.6, fill: { color: PANEL }, line: { color: '1E2A4A' }, rectRadius: 0.1 });
     cr.addText(String(data.crisis.risk), { x: 0.5, y: 2.3, w: 4.2, h: 1.6, fontSize: 92, bold: true, color: rc, align: 'center' });
     cr.addText(data.crisis.level.toUpperCase(), { x: 0.5, y: 3.95, w: 4.2, h: 0.5, fontSize: 20, bold: true, color: rc, align: 'center', charSpacing: 2 });
-    cr.addText('Risk index · 0–100', { x: 0.5, y: 4.6, w: 4.2, h: 0.4, fontSize: 12, color: MUTED, align: 'center' });
+    cr.addText('Índice de riesgo · 0–100', { x: 0.5, y: 4.6, w: 4.2, h: 0.4, fontSize: 12, color: MUTED, align: 'center' });
     const p = data.crisis.peak;
     cr.addText([
-      { text: `Peak day: ${p.day}\n`, options: { fontSize: 15, bold: true, color: TEXT } },
-      { text: `${p.volume} mentions · ${p.negShare}% negative · avg sentiment ${p.sentiment}\n\n`, options: { fontSize: 13, color: MUTED } },
-      { text: `Topics: ${p.topics.map((t) => `${t.topic} (${t.n})`).join(', ')}\n\n`, options: { fontSize: 13, color: ACCENT } },
+      { text: `Día pico: ${p.day}\n`, options: { fontSize: 15, bold: true, color: TEXT } },
+      { text: `${p.volume} menciones · ${p.negShare}% negativas · sentimiento prom. ${p.sentiment}\n\n`, options: { fontSize: 13, color: MUTED } },
+      { text: `Temas: ${p.topics.map((t) => `${t.topic} (${t.n})`).join(', ')}\n\n`, options: { fontSize: 13, color: ACCENT } },
       ...p.content.map((c) => ({ text: `• ${c.title}\n`, options: { fontSize: 12, color: TEXT } })),
     ], { x: 5.1, y: 1.7, w: 7.7, h: 4.5, valign: 'top' });
   }
@@ -245,7 +245,7 @@ export async function GET(req: Request) {
   // ── Emerging trends
   if (has('trends') && data.trends.length) {
     const st = newSlide();
-    st.addText('Radar — emerging trends', titleOpts);
+    st.addText('AEDO — tendencias emergentes', titleOpts);
     st.addText(
       data.trends.slice(0, 6).map((t) => ({
         text: `×${t.score.toFixed(0)}  ${t.topic}${t.explanation ? ` — ${t.explanation}` : ''}`,
@@ -260,7 +260,7 @@ export async function GET(req: Request) {
   const sources = [...new Set(data.dashboard.volumeByDay.map((r) => r.source))];
   if (has('volume') && days.length) {
     const s3 = newSlide();
-    s3.addText('Volume by source (14 days)', titleOpts);
+    s3.addText('Volumen por fuente (14 días)', titleOpts);
     s3.addChart('bar', sources.map((src) => ({
       name: sourceLabel(src),
       labels: days.map((d) => d.slice(5)),
@@ -276,9 +276,9 @@ export async function GET(req: Request) {
   // ── 4. Sentiment (torta nativa)
   if (has('sentiment') && data.dashboard.sentimentDist.length) {
     const s4 = newSlide();
-    s4.addText('Sentiment (7 days)', titleOpts);
+    s4.addText('Sentimiento (7 días)', titleOpts);
     s4.addChart('doughnut', [{
-      name: 'Sentiment',
+      name: 'Sentimiento',
       labels: data.dashboard.sentimentDist.map((r) => r.sentiment),
       values: data.dashboard.sentimentDist.map((r) => r.n),
     }], {
@@ -291,10 +291,10 @@ export async function GET(req: Request) {
   // ── 4·constellation. Semantic constellation
   if (has('constellation') && data.constellation.nodes.length) {
     const sc = newSlide();
-    sc.addText('Semantic constellation — key terms & co-occurrence', titleOpts);
+    sc.addText('Constelación semántica — términos clave y coocurrencia', titleOpts);
     const top = data.constellation.nodes.slice(0, 14);
     sc.addChart('bar', [{
-      name: 'Frequency',
+      name: 'Frecuencia',
       labels: top.map((n) => n.term),
       values: top.map((n) => n.freq),
     }], {
@@ -304,7 +304,7 @@ export async function GET(req: Request) {
       valGridLine: { color: '1E2A4A' }, catGridLine: { style: 'none' },
     });
     if (data.constellation.edges.length) {
-      sc.addText('Strongest links', { x: 8.1, y: 1.3, w: 4.7, h: 0.4, fontSize: 14, bold: true, color: MUTED });
+      sc.addText('Vínculos más fuertes', { x: 8.1, y: 1.3, w: 4.7, h: 0.4, fontSize: 14, bold: true, color: MUTED });
       sc.addTable([
         ['A + B', 'n'].map((t) => ({ text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 12 } })),
         ...data.constellation.edges.slice(0, 12).map((e) => [
@@ -318,10 +318,10 @@ export async function GET(req: Request) {
   // ── 4·pyramid. Author influence pyramid
   if (has('pyramid') && data.pyramid.tiers.length) {
     const sp = newSlide();
-    sp.addText('Author influence pyramid — reach concentration', titleOpts);
+    sp.addText('Pirámide de influencia de autores — concentración del alcance', titleOpts);
     const tcol: Record<string, string> = { mega: 'FBBF24', macro: 'A78BFA', micro: '38BDF8', longtail: '64748B' };
     sp.addChart('bar', [{
-      name: 'Share of reach %',
+      name: '% del alcance',
       labels: data.pyramid.tiers.map((t) => `${t.label} (${t.authors})`),
       values: data.pyramid.tiers.map((t) => t.sharePct),
     }], {
@@ -335,15 +335,15 @@ export async function GET(req: Request) {
   // ── 4·network. Influencer network (top autori)
   if (has('network') && data.network.nodes.length) {
     const sn = newSlide();
-    sn.addText('Influencer network — top voices by community', titleOpts);
+    sn.addText('Red de influenciadores — voces principales por comunidad', titleOpts);
     const top = [...data.network.nodes].sort((a, b) => b.engagement - a.engagement).slice(0, 16);
     sn.addTable([
-      ['Author', 'Focus topic', 'Posts', 'Engagement'].map((t) => ({ text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 13 } })),
+      ['Autor', 'Tema principal', 'Publicaciones', 'Engagement'].map((t) => ({ text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 13 } })),
       ...top.map((n) => [
         { text: n.label, options: { color: TEXT, fontSize: 12 } },
         { text: n.community, options: { color: MUTED, fontSize: 12 } },
         { text: String(n.posts), options: { color: TEXT, fontSize: 12, align: 'right' as const } },
-        { text: n.engagement.toLocaleString('en-US'), options: { color: TEXT, fontSize: 12, align: 'right' as const } },
+        { text: n.engagement.toLocaleString('es-CO'), options: { color: TEXT, fontSize: 12, align: 'right' as const } },
       ]),
     ], { x: 0.5, y: 1.3, w: 12.3, colW: [4, 4.3, 2, 2], border: { type: 'solid', color: '1E2A4A', pt: 1 } });
   }
@@ -352,10 +352,10 @@ export async function GET(req: Request) {
   if (has('flow') && data.flow.links.length) {
     const lbl = new Map(data.flow.nodes.map((n) => [n.key, n.label]));
     const sf = newSlide();
-    sf.addText('Conversation flow — Source → Topic → Sentiment', titleOpts);
+    sf.addText('Flujo de la conversación — Fuente → Tema → Sentimiento', titleOpts);
     const top = [...data.flow.links].sort((a, b) => b.value - a.value).slice(0, 18);
     sf.addTable([
-      ['From', 'To', 'Mentions'].map((t) => ({ text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 13 } })),
+      ['Desde', 'Hacia', 'Menciones'].map((t) => ({ text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 13 } })),
       ...top.map((l) => [
         { text: String(lbl.get(l.source) ?? l.source), options: { color: TEXT, fontSize: 12 } },
         { text: String(lbl.get(l.target) ?? l.target), options: { color: TEXT, fontSize: 12 } },
@@ -367,11 +367,11 @@ export async function GET(req: Request) {
   // ── 4·momentum. Momentum quadrant
   if (has('momentum') && data.momentum.length) {
     const sq = newSlide();
-    sq.addText('Momentum quadrant — topics by volume × acceleration', titleOpts);
+    sq.addText('Cuadrante de momentum — temas por volumen × aceleración', titleOpts);
     const qcol: Record<string, string> = { 'Rising stars': '34D399', 'Emerging': '38BDF8', 'Steady': 'A78BFA', 'Declining': 'F87171' };
     const rows = [...data.momentum].sort((a, b) => b.volume - a.volume).slice(0, 20);
     sq.addTable([
-      ['Topic', 'Volume', 'Acceleration', 'Quadrant'].map((t) => ({
+      ['Tema', 'Volumen', 'Aceleración', 'Cuadrante'].map((t) => ({
         text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 13 },
       })),
       ...rows.map((p) => [
@@ -386,9 +386,9 @@ export async function GET(req: Request) {
   // ── 4a. Emotion radar
   if (has('emotions') && data.emotions.length) {
     const se = newSlide();
-    se.addText('Emotion radar — emotional fingerprint (30 days)', titleOpts);
+    se.addText('Radar de emociones — huella emocional (30 días)', titleOpts);
     se.addChart('radar', [{
-      name: 'Share %',
+      name: '% de participación',
       labels: data.emotions.map((e) => e.emotion),
       values: data.emotions.map((e) => e.share),
     }], {
@@ -402,10 +402,10 @@ export async function GET(req: Request) {
   // ── 4b. Geographic map (per area/lingua)
   if (has('geo') && data.geo.length) {
     const s4b = newSlide();
-    s4b.addText('Geographic map — conversation by area (language-inferred)', titleOpts);
+    s4b.addText('Mapa geográfico — conversación por zona (inferida por idioma)', titleOpts);
     const geo = data.geo.slice(0, 12);
     s4b.addChart('bar', [{
-      name: 'Mentions',
+      name: 'Menciones',
       labels: geo.map((g) => g.country),
       values: geo.map((g) => g.volume),
     }], {
@@ -415,10 +415,10 @@ export async function GET(req: Request) {
       valGridLine: { color: '1E2A4A' }, catGridLine: { style: 'none' },
     });
     s4b.addTable([
-      ['Area', 'Mentions', 'Share', 'Sentiment'].map((t) => ({
+      ['Zona', 'Menciones', 'Part.', 'Sentimiento'].map((t) => ({
         text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 12 },
       })),
-      ...geo.map((g) => [g.country, String(g.volume), `${g.share}%`, g.sentiment === null ? 'n/a' : g.sentiment.toFixed(2)]
+      ...geo.map((g) => [g.country, String(g.volume), `${g.share}%`, g.sentiment === null ? 'N/D' : g.sentiment.toFixed(2)]
         .map((t) => ({ text: t, options: { color: TEXT, fontSize: 11 } }))),
     ], { x: 8.2, y: 1.3, w: 4.6, colW: [2.2, 0.9, 0.7, 0.8], border: { type: 'solid', color: '1E2A4A', pt: 1 } });
   }
@@ -426,7 +426,7 @@ export async function GET(req: Request) {
   // ── 4·sov. Share of Voice over time (area impilata)
   if (has('sov') && data.sov.entities.length && data.sov.days.length) {
     const ss = newSlide();
-    ss.addText('Share of Voice over time (30 days)', titleOpts);
+    ss.addText('Share of Voice en el tiempo (30 días)', titleOpts);
     const labels = data.sov.days.map((d) => String(d.day).slice(5));
     ss.addChart('area', data.sov.entities.map((e) => ({
       name: e,
@@ -444,9 +444,9 @@ export async function GET(req: Request) {
   const totalBench = data.benchmark.reduce((s, r) => s + r.total, 0);
   if (has('benchmark') && totalBench > 0) {
     const s5 = newSlide();
-    s5.addText('Benchmark — share of voice (14 days)', titleOpts);
+    s5.addText('Benchmark — Share of Voice (14 días)', titleOpts);
     s5.addChart('pie', [{
-      name: 'Share of voice',
+      name: 'Share of Voice',
       labels: data.benchmark.map((r) => r.entity.name),
       values: data.benchmark.map((r) => r.total),
     }], {
@@ -455,7 +455,7 @@ export async function GET(req: Request) {
       showLegend: true, legendPos: 'b', legendColor: MUTED, dataLabelColor: TEXT, showPercent: true,
     });
     s5.addTable([
-      ['Entity', 'Mentions', 'SOV', 'Sentiment'].map((t) => ({
+      ['Entidad', 'Menciones', 'SOV', 'Sentimiento'].map((t) => ({
         text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 13 },
       })),
       ...data.benchmark.map((r) => [
@@ -470,9 +470,9 @@ export async function GET(req: Request) {
   // ── 6. Audience
   if (has('audience') && data.audience.communities.length) {
     const s6 = newSlide();
-    s6.addText('Audience — where the conversation happens', titleOpts);
+    s6.addText('Audiencia — dónde ocurre la conversación', titleOpts);
     s6.addChart('bar', [{
-      name: 'Mentions',
+      name: 'Menciones',
       labels: data.audience.communities.slice(0, 8).map((c) => c.community ?? '—'),
       values: data.audience.communities.slice(0, 8).map((c) => c.n),
     }], {
@@ -480,12 +480,12 @@ export async function GET(req: Request) {
       chartColors: [ACCENT], catAxisLabelColor: MUTED, valAxisLabelColor: MUTED,
       showLegend: false, valGridLine: { color: '1E2A4A' }, catGridLine: { style: 'none' },
     });
-    s6.addText('Languages', { x: 7.3, y: 1.4, w: 5.5, h: 0.4, fontSize: 14, bold: true, color: MUTED });
+    s6.addText('Idiomas', { x: 7.3, y: 1.4, w: 5.5, h: 0.4, fontSize: 14, bold: true, color: MUTED });
     s6.addText(
       data.audience.languages.map((l) => `${l.language.toUpperCase()} (${l.n})`).join('  ·  ') || '—',
       { x: 7.3, y: 1.85, w: 5.5, h: 1.2, fontSize: 13, color: TEXT },
     );
-    s6.addText('Most influential authors', { x: 7.3, y: 3.2, w: 5.5, h: 0.4, fontSize: 14, bold: true, color: MUTED });
+    s6.addText('Autores más influyentes', { x: 7.3, y: 3.2, w: 5.5, h: 0.4, fontSize: 14, bold: true, color: MUTED });
     s6.addText(
       data.audience.authors.slice(0, 8).map((a) => `${a.author} — ${sourceLabel(a.source)}`).join('\n') || '—',
       { x: 7.3, y: 3.65, w: 5.5, h: 3, fontSize: 12, color: TEXT, lineSpacing: 18 },
@@ -495,9 +495,9 @@ export async function GET(req: Request) {
   // ── 7. Contenuti top
   if (has('content') && data.ratings.length) {
     const s7 = newSlide();
-    s7.addText('Top content by engagement', titleOpts);
+    s7.addText('Contenido principal por engagement', titleOpts);
     s7.addTable([
-      ['Content', 'Source', 'Engagement', 'AI score', 'Risk'].map((t) => ({
+      ['Contenido', 'Fuente', 'Engagement', 'Puntaje IA', 'Riesgo'].map((t) => ({
         text: t, options: { bold: true, color: TEXT, fill: { color: PANEL }, fontSize: 12 },
       })),
       ...data.ratings.slice(0, 9).map((r) => [
@@ -518,7 +518,7 @@ export async function GET(req: Request) {
     };
     // Slide di apertura con la tesi
     const st0 = newSlide();
-    st0.addText('Point of View', { x: 0.5, y: 2.4, w: 12.3, h: 0.5, fontSize: 16, color: ACCENT, align: 'center', charSpacing: 4 });
+    st0.addText('Punto de vista', { x: 0.5, y: 2.4, w: 12.3, h: 0.5, fontSize: 16, color: ACCENT, align: 'center', charSpacing: 4 });
     st0.addText(pv.headline, { x: 1.2, y: 2.4, w: 10.9, h: 1.6, fontSize: 30, bold: true, color: TEXT, align: 'center' });
     if ((pv.intro ?? []).length) {
       st0.addText(pv.intro.map((par) => par.text).join('\n\n'),
@@ -540,21 +540,21 @@ export async function GET(req: Request) {
         s.addText(stat.value, { x: x + 0.25, y: 4.95, w: 3.45, h: 0.75, fontSize: 30, bold: true, color: kc });
         s.addText(stat.label, { x: x + 0.25, y: 5.7, w: 3.45, h: 0.55, fontSize: 11, color: MUTED });
       });
-      s.addText(`${b.confidence} confidence`, { x: 0.5, y: 6.5, w: 6, h: 0.3, fontSize: 10, color: MUTED });
+      s.addText(`Confianza ${b.confidence}`, { x: 0.5, y: 6.5, w: 6, h: 0.3, fontSize: 10, color: MUTED });
     }
 
     // Contro-segnali + implicazioni
     if (pv.counterSignals.length || pv.implications.length) {
       const sc = newSlide();
-      sc.addText('Counter-signals & implications', titleOpts);
+      sc.addText('Contraseñales e implicaciones', titleOpts);
       if (pv.counterSignals.length) {
-        sc.addText('What argues against', { x: 0.5, y: 1.3, w: 6, h: 0.35, fontSize: 14, bold: true, color: 'FBBF24' });
+        sc.addText('Qué argumenta en contra', { x: 0.5, y: 1.3, w: 6, h: 0.35, fontSize: 14, bold: true, color: 'FBBF24' });
         sc.addText(pv.counterSignals.map((c) => ({
           text: c.point, options: { fontSize: 13, color: TEXT, bullet: { code: '2022' }, breakLine: true },
         })), { x: 0.5, y: 1.75, w: 6, h: 4.6, lineSpacing: 20, valign: 'top' });
       }
       if (pv.implications.length) {
-        sc.addText('So what', { x: 6.9, y: 1.3, w: 6, h: 0.35, fontSize: 14, bold: true, color: ACCENT });
+        sc.addText('¿Y qué significa?', { x: 6.9, y: 1.3, w: 6, h: 0.35, fontSize: 14, bold: true, color: ACCENT });
         sc.addText(pv.implications.map((t) => ({
           text: t, options: { fontSize: 13, color: TEXT, bullet: { code: '2022' }, breakLine: true },
         })), { x: 6.9, y: 1.75, w: 6, h: 4.6, lineSpacing: 20, valign: 'top' });
@@ -565,10 +565,10 @@ export async function GET(req: Request) {
   // ── Narrazioni
   if (has('narratives') && data.narratives.length) {
     const sn = newSlide();
-    sn.addText('Narratives', titleOpts);
+    sn.addText('Narrativas', titleOpts);
     sn.addText(
       data.narratives.slice(0, 6).map((n) => ({
-        text: `${n.title}  [${n.stance ?? 'neutral'}${n.coordinated ? ', coordinated' : ''}] · ${n.mentionCount} posts`,
+        text: `${n.title}  [${n.stance ?? 'neutral'}${n.coordinated ? ', coordinada' : ''}] · ${n.mentionCount} publicaciones`,
         options: { fontSize: 14, color: TEXT, bullet: { code: '2022' }, breakLine: true },
       })),
       { x: 0.5, y: 1.3, w: 12.3, h: 5.6, lineSpacing: 22, valign: 'top' },
@@ -578,10 +578,10 @@ export async function GET(req: Request) {
   // ── Timeline
   if (has('timeline') && data.timeline.length) {
     const stl = newSlide();
-    stl.addText('Sector timeline', titleOpts);
+    stl.addText('Línea de tiempo del sector', titleOpts);
     stl.addText(
       data.timeline.slice(0, 12).map((e) => ({
-        text: `${new Date(e.eventDate).toLocaleDateString('en-US')} — ${e.title}`,
+        text: `${new Date(e.eventDate).toLocaleDateString('es-CO')} — ${e.title}`,
         options: { fontSize: 13, color: TEXT, bullet: { code: '2022' }, breakLine: true },
       })),
       { x: 0.5, y: 1.3, w: 12.3, h: 5.6, lineSpacing: 20, valign: 'top' },
@@ -591,12 +591,12 @@ export async function GET(req: Request) {
   // ── Alerts
   if (has('alerts') && data.alerts.length) {
     const sa = newSlide();
-    sa.addText('Recent alerts', titleOpts);
+    sa.addText('Alertas recientes', titleOpts);
     sa.addText(
       data.alerts.slice(0, 8).map((a) => {
         const ex = (a.data as { explanation?: string } | null)?.explanation;
         return {
-          text: `[${new Date(a.createdAt).toLocaleDateString('en-US')}] ${a.message}${ex ? ` — ${ex}` : ''}`,
+          text: `[${new Date(a.createdAt).toLocaleDateString('es-CO')}] ${a.message}${ex ? ` — ${ex}` : ''}`,
           options: { fontSize: 13, color: TEXT, bullet: { code: '2022' }, breakLine: true },
         };
       }),
@@ -607,7 +607,7 @@ export async function GET(req: Request) {
   // ── 8. Brief
   if (has('brief') && data.briefs[0]) {
     const s8 = newSlide();
-    s8.addText(`Daily brief — ${new Date(data.briefs[0].briefDate).toLocaleDateString('en-US')}`, titleOpts);
+    s8.addText(`Brief diario — ${new Date(data.briefs[0].briefDate).toLocaleDateString('es-CO')}`, titleOpts);
     const lines = briefToBlocks(data.briefs[0].content).slice(0, 18).map((b) => ({
       text: b.text,
       options: {
@@ -625,15 +625,15 @@ export async function GET(req: Request) {
   const ppl = data.people;
   if (has('people') && ppl.ranking.length > 1) {
     const sp = newSlide();
-    sp.addText('People — the team at a glance', titleOpts);
+    sp.addText('Personas — el equipo de un vistazo', titleOpts);
     sp.addTable(
       [
-        ['Person', 'Audience', 'Posts / month', 'Avg engagement'].map((t) => ({
+        ['Persona', 'Audiencia', 'Publicaciones / mes', 'Engagement prom.'].map((t) => ({
           text: t, options: { bold: true, color: TEXT, fill: { color: PANEL } },
         })),
         ...ppl.ranking.slice(0, 12).map((r) => [
           r.name,
-          r.followers === null ? '—' : r.followers.toLocaleString('en-US'),
+          r.followers === null ? '—' : r.followers.toLocaleString('es-CO'),
           r.perMonth === null ? '—' : String(r.perMonth),
           r.engagement === null ? '—' : String(Math.round(r.engagement)),
         ].map((t) => ({ text: t, options: { color: TEXT } }))),
@@ -643,7 +643,7 @@ export async function GET(req: Request) {
   }
   if (has('peopleGrowth') && ppl.cards.some((x) => x.followers)) {
     const sg2 = newSlide();
-    sg2.addText('Audience growth per person', titleOpts);
+    sg2.addText('Crecimiento de audiencia por persona', titleOpts);
     const rows = ppl.cards.filter((x) => x.followers)
       .sort((a, b) => b.followers!.gained - a.followers!.gained).slice(0, 12);
     const max = Math.max(1, ...rows.map((x) => Math.abs(x.followers!.gained)));
@@ -655,7 +655,7 @@ export async function GET(req: Request) {
         x: 4.5, y: y + rowH * 0.22, w: Math.max(0.08, (Math.abs(x.followers!.gained) / max) * 6.6), h: rowH * 0.56,
         fill: { color: x.followers!.gained >= 0 ? '34D399' : 'F87171' }, rectRadius: 0.03, line: { color: BG, width: 0 },
       });
-      sg2.addText(`${x.followers!.gained >= 0 ? '+' : ''}${x.followers!.gained.toLocaleString('en-US')}  ·  now ${x.followers!.latest.toLocaleString('en-US')}`,
+      sg2.addText(`${x.followers!.gained >= 0 ? '+' : ''}${x.followers!.gained.toLocaleString('es-CO')}  ·  hoy ${x.followers!.latest.toLocaleString('es-CO')}`,
         { x: 11.1, y, w: 1.8, h: rowH, fontSize: 10, color: MUTED, align: 'right', valign: 'middle' });
     });
   }
@@ -666,11 +666,11 @@ export async function GET(req: Request) {
     const sg = newSlide();
     sg.addText(chart.title, titleOpts);
     sg.addText(
-      `${chart.yLabel} per ${chart.xLabel}${chart.zLabel ? `, diviso per ${chart.zLabel}` : ''}  ·  ultimi ${chart.days} giorni`,
+      `${chart.yLabel} por ${chart.xLabel}${chart.zLabel ? `, dividido por ${chart.zLabel}` : ''}  ·  últimos ${chart.days} días`,
       { x: 0.5, y: 1.05, w: 12.3, h: 0.35, fontSize: 12, color: MUTED },
     );
     if (!chart.rows.length) {
-      sg.addText('Nessun dato con questi campi nel periodo del grafico.',
+      sg.addText('No hay datos con estos campos en el periodo del gráfico.',
         { x: 0.5, y: 2.5, w: 12.3, h: 0.5, fontSize: 16, color: MUTED });
       continue;
     }
@@ -688,11 +688,11 @@ export async function GET(req: Request) {
         x: 4.5, y: y + rowH * 0.22, w: Math.max(0.08, (value / max) * 6.6), h: rowH * 0.56,
         fill: { color: ENTITY_COLORS[i % ENTITY_COLORS.length] }, rectRadius: 0.03, line: { color: BG, width: 0 },
       });
-      sg.addText(Number.isInteger(value) ? value.toLocaleString('en-US') : value.toFixed(2),
+      sg.addText(Number.isInteger(value) ? value.toLocaleString('es-CO') : value.toFixed(2),
         { x: 11.3, y, w: 1.5, h: rowH, fontSize: 11, color: MUTED, align: 'right', valign: 'middle' });
     });
     if (byX.size > top.length) {
-      sg.addText(`Altre ${byX.size - top.length} voci non mostrate.`,
+      sg.addText(`${byX.size - top.length} elementos más no mostrados.`,
         { x: 0.5, y: 6.6, w: 12.3, h: 0.3, fontSize: 10, color: MUTED });
     }
   }
@@ -701,7 +701,7 @@ export async function GET(req: Request) {
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      'Content-Disposition': `attachment; filename="social-radar-${slugify(project.name)}-${todayStamp()}.pptx"`,
+      'Content-Disposition': `attachment; filename="aedo-${slugify(project.name)}-${todayStamp()}.pptx"`,
     },
   });
 }

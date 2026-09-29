@@ -402,16 +402,16 @@ export function ConversationGalaxy({ title, core, grade, total, avgSentiment, so
   }, [stars, sources, core, topics, trends]);
 
   const sentiments: { key: string; label: string; color: string }[] = [
-    { key: 'positive', label: 'positive', color: '#7fe0b0' },
+    { key: 'positive', label: 'positivo', color: '#7fe0b0' },
     { key: 'neutral', label: 'neutral', color: '#9fb6dd' },
-    { key: 'negative', label: 'negative', color: '#e08878' },
+    { key: 'negative', label: 'negativo', color: '#e08878' },
   ];
   const anySel = selSrc.size > 0 || selSent.size > 0;
 
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-1.5">
-        <span className="mr-1 text-[11px] uppercase tracking-wide text-slate-600">Sources:</span>
+        <span className="mr-1 text-[11px] uppercase tracking-wide text-slate-600">Fuentes:</span>
         {sources.map((s, i) => {
           const on = selSrc.has(i);
           return (
@@ -421,7 +421,7 @@ export function ConversationGalaxy({ title, core, grade, total, avgSentiment, so
             </button>
           );
         })}
-        <span className="ml-2 mr-1 text-[11px] uppercase tracking-wide text-slate-600">Sentiment:</span>
+        <span className="ml-2 mr-1 text-[11px] uppercase tracking-wide text-slate-600">Sentimiento:</span>
         {sentiments.map((s) => {
           const on = selSent.has(s.key);
           return (
@@ -433,38 +433,38 @@ export function ConversationGalaxy({ title, core, grade, total, avgSentiment, so
         })}
         {anySel && (
           <button onClick={() => { setSelSrc(new Set()); setSelSent(new Set()); }}
-            className="ml-1 rounded-full px-2.5 py-1 text-xs text-sky-400 hover:text-sky-300">clear ✕</button>
+            className="ml-1 rounded-full px-2.5 py-1 text-xs text-sky-400 hover:text-sky-300">limpiar ✕</button>
         )}
 
-        <span className="ml-2 mr-1 text-[11px] uppercase tracking-wide text-slate-600">Layers:</span>
+        <span className="ml-2 mr-1 text-[11px] uppercase tracking-wide text-slate-600">Capas:</span>
         <button onClick={() => setShowTopics((v) => !v)}
-          title="Show/hide the outer belt of dominant topics (what the conversation is about)"
+          title="Mostrar/ocultar el cinturón exterior de temas dominantes (de qué trata la conversación)"
           className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${showTopics ? 'border-sky-400 bg-sky-500/15 text-slate-100' : 'border-[var(--border)] text-slate-400 hover:text-slate-200'}`}>
-          <span className="size-2.5 rounded-full" style={{ backgroundColor: '#9fb6dd' }} />Topics
+          <span className="size-2.5 rounded-full" style={{ backgroundColor: '#9fb6dd' }} />Temas
         </button>
         <button onClick={() => setShowTrends((v) => !v)}
-          title="Show/hide the emerging trends as pulsing golden comets"
+          title="Mostrar/ocultar las tendencias emergentes como cometas dorados que laten"
           className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition ${showTrends ? 'border-sky-400 bg-sky-500/15 text-slate-100' : 'border-[var(--border)] text-slate-400 hover:text-slate-200'}`}>
-          <span className="size-2.5 rounded-full" style={{ backgroundColor: '#fbbf24' }} />Trends
+          <span className="size-2.5 rounded-full" style={{ backgroundColor: '#fbbf24' }} />Tendencias
         </button>
       </div>
 
       <div className="relative w-full overflow-hidden rounded-xl border border-[var(--border)] bg-black" style={{ height: 600 }}>
         <div ref={mountRef} className="size-full cursor-grab touch-none active:cursor-grabbing" />
         <div className="pointer-events-none absolute left-4 top-4 text-sm">
-          <p className="text-xs uppercase tracking-widest text-slate-500">Conversation galaxy</p>
+          <p className="text-xs uppercase tracking-widest text-slate-500">Galaxia de la conversación</p>
           <p className="mt-0.5 text-lg font-semibold text-slate-100">{title}</p>
           <div className="mt-2 flex gap-4 text-xs text-slate-400">
-            <span>health <span className="font-semibold text-slate-100">{core}</span> · {grade}</span>
-            <span><span className="text-slate-200">{total.toLocaleString('en-US')}</span> mentions</span>
-            <span>sentiment <span className={avgSentiment > 0.15 ? 'text-emerald-400' : avgSentiment < -0.15 ? 'text-red-400' : 'text-sky-300'}>{avgSentiment > 0 ? '+' : ''}{avgSentiment}</span></span>
+            <span>salud <span className="font-semibold text-slate-100">{core}</span> · {grade}</span>
+            <span><span className="text-slate-200">{total.toLocaleString('es-CO')}</span> menciones</span>
+            <span>sentimiento <span className={avgSentiment > 0.15 ? 'text-emerald-400' : avgSentiment < -0.15 ? 'text-red-400' : 'text-sky-300'}>{avgSentiment > 0 ? '+' : ''}{avgSentiment}</span></span>
           </div>
         </div>
         <p className="pointer-events-none absolute bottom-3 left-4 max-w-[70%] text-[11px] text-slate-600">
-drag to orbit · scroll to zoom toward the cursor (point at an outer belt to fly to it) · right-drag or two fingers to pan · planets = sources · moons = sentiment · outer belt = topics · golden comets = trends
+arrastra para orbitar · desplázate para hacer zoom hacia el cursor (apunta a un cinturón exterior para volar hasta él) · clic derecho o dos dedos para mover · planetas = fuentes · lunas = sentimiento · cinturón exterior = temas · cometas dorados = tendencias
         </p>
         <p className="pointer-events-none absolute bottom-3 right-4 text-[10px] text-slate-700">
-          Textures © Solar System Scope · CC BY 4.0
+          Texturas © Solar System Scope · CC BY 4.0
         </p>
 
         {hatch && <EggHatch onClose={() => setHatch(false)} />}
@@ -495,10 +495,10 @@ function EggHatch({ onClose }: { onClose: () => void }) {
         .egg-mask{-webkit-mask:radial-gradient(circle at 50% 46%,#000 52%,transparent 70%);mask:radial-gradient(circle at 50% 46%,#000 52%,transparent 70%)}
       `}</style>
       <div className="relative" style={{ width: 340, height: 340 }}>
-        <img src="/egg/chick.jpg" alt="chick" draggable={false}
+        <img src="/egg/chick.jpg" alt="pollito" draggable={false}
           className="egg-mask absolute left-1/2 top-1/2 w-[320px] -translate-x-1/2 -translate-y-1/2 opacity-0"
           style={{ animation: 'chickIn .8s cubic-bezier(.2,1.5,.4,1) 1.7s forwards' }} />
-        <img src="/egg/egg.jpg" alt="egg" draggable={false}
+        <img src="/egg/egg.jpg" alt="huevo" draggable={false}
           className="egg-mask absolute left-1/2 top-1/2 w-[220px] -translate-x-1/2 -translate-y-1/2"
           style={{ animation: 'eggWobble .28s ease-in-out 0s 5, eggOut .5s ease-in 1.5s forwards', transformOrigin: '50% 80%' }} />
         {shards.map((s, i) => (
@@ -509,10 +509,10 @@ function EggHatch({ onClose }: { onClose: () => void }) {
       </div>
       <p className="mt-2 max-w-md px-6 text-center text-lg font-semibold text-slate-100 opacity-0"
         style={{ transform: 'translateY(14px)', animation: 'eggTextIn .7s ease 2.5s forwards' }}>
-        Massimo Scognamiglio &amp; Anthropic Claude had a lot of fun together 🐣
+        Massimo Scognamiglio y Anthropic Claude se divirtieron mucho juntos 🐣
       </p>
       <p className="mt-3 text-xs text-slate-500 opacity-0" style={{ animation: 'eggTextIn .6s ease 3.2s forwards' }}>
-        (tap anywhere to close)
+        (toca en cualquier parte para cerrar)
       </p>
     </div>
   );

@@ -10,7 +10,7 @@ import { getRecentAlerts } from '@/lib/alerts';
 import { callClaude, claudeAvailable, MODELS } from '@/lib/claude';
 import { A2_TO_NUM, countryFlag, countryName } from '@/lib/country-codes';
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 // ---------------------------------------------------------------------------
 // 2. Mappa Temi × Sentiment (volume, sentiment medio, crescita)
@@ -161,7 +161,7 @@ export type Cluster = { family: string; share: number; sentiment: string; exampl
 
 const CLUSTER_SYSTEM = `You are a conversation analyst. Classify the conversation about a topic into FAMILIES OF DISCOURSE (the "frame" it is discussed with), choosing from this list:
 price/cost, quality/product, scandal/controversy, irony/meme, politics/regulation, customer care/support, ethics/values, innovation/technology, business/market, safety/risks.
-Based on the provided topics and content, return a JSON array of 4-7 objects { "family": "<one of the families>", "share": <estimated percentage 0-100>, "sentiment": "positive|neutral|negative", "example": "<example sentence in English, max 12 words>" }. The shares must sum to ~100. Respond ONLY with the JSON array.`;
+Based on the provided topics and content, return a JSON array of 4-7 objects { "family": "<one of the families>", "share": <estimated percentage 0-100>, "sentiment": "positive|neutral|negative", "example": "<example sentence in Spanish, max 12 words>" }. The shares must sum to ~100. Respond ONLY with the JSON array.`;
 
 export async function getClusters(projectId: number, force = false): Promise<Cluster[] | null> {
   const key = `clusters:${projectId}:${new Date().toISOString().slice(0, 10)}`;
@@ -206,7 +206,7 @@ export type CausalChain = { cause: string; date: string | null; effects: string[
 
 const CAUSAL_SYSTEM = `You are a media intelligence analyst. Reconstruct the CAUSE → EFFECT chains of the period: which events/news produced measurable consequences (volume spikes, sentiment shifts, new narratives).
 Base it ONLY on the provided data (timeline events, alerts, trends, narratives). Return a JSON array of 3-5 objects:
-{ "cause": "<triggering event/news, in English>", "date": "YYYY-MM-DD or null", "effects": ["<numeric/observed consequence>", ...], "narratives": ["<narrative that emerged>", ...] }.
+{ "cause": "<triggering event/news, in Spanish>", "date": "YYYY-MM-DD or null", "effects": ["<numeric/observed consequence>", ...], "narratives": ["<narrative that emerged>", ...] }.
 Be concrete and honest: if a link is weak, don't invent it. Respond ONLY with the JSON array.`;
 
 export async function getCausalChains(projectId: number, force = false): Promise<CausalChain[] | null> {
@@ -279,10 +279,10 @@ export async function authorPyramid(projectId: number, days = 14): Promise<Autho
   const b2 = Math.max(b1 + 1, Math.round(n * 0.2));
   const b3 = Math.max(b2 + 1, Math.round(n * 0.5));
   const defs: { key: string; label: string; from: number; to: number }[] = [
-    { key: 'mega', label: 'Mega voices', from: 0, to: b1 },
+    { key: 'mega', label: 'Megavoces', from: 0, to: b1 },
     { key: 'macro', label: 'Macro', from: b1, to: b2 },
     { key: 'micro', label: 'Micro', from: b2, to: b3 },
-    { key: 'longtail', label: 'Long tail', from: b3, to: n },
+    { key: 'longtail', label: 'Cola larga', from: b3, to: n },
   ];
   const tiers: AuthorTier[] = defs
     .map((d) => {
@@ -366,7 +366,7 @@ export async function conversationGalaxy(projectId: number, days = 14): Promise<
   const project = await getCurrentProject();
 
   return {
-    title: project?.name ?? 'Radar',
+    title: project?.name ?? 'AEDO',
     core: health.score, grade: health.grade,
     total, avgSentiment: Math.round(avgSentiment * 100) / 100,
     sources, stars, topics, trends,
@@ -388,7 +388,7 @@ export type CrisisAnatomy = {
 };
 
 function riskLevel(r: number): string {
-  return r >= 75 ? 'Critical' : r >= 50 ? 'Elevated' : r >= 25 ? 'Watch' : 'Calm';
+  return r >= 75 ? 'Crítico' : r >= 50 ? 'Elevado' : r >= 25 ? 'Vigilancia' : 'Calma';
 }
 
 export async function crisisAnatomy(projectId: number, days = 14): Promise<CrisisAnatomy> {
@@ -405,7 +405,7 @@ export async function crisisAnatomy(projectId: number, days = 14): Promise<Crisi
     GROUP BY day ORDER BY day
   `)).rows as { day: string; n: number; neg: number; s: number | null }[];
 
-  if (daily.length === 0) return { risk: 0, level: 'Calm', drivers: [], peak: null };
+  if (daily.length === 0) return { risk: 0, level: 'Calma', drivers: [], peak: null };
 
   const totalVol = daily.reduce((a, d) => a + Number(d.n), 0);
   const recent = daily.slice(-2);
@@ -428,9 +428,9 @@ export async function crisisAnatomy(projectId: number, days = 14): Promise<Crisi
   const cAlert = Math.min(20, highAlerts * 10);
   const risk = Math.max(0, Math.min(100, cNeg + cSpike + cAlert));
   const drivers: CrisisDriver[] = [
-    { label: 'Negative share (48h)', value: cNeg },
-    { label: 'Volume spike', value: cSpike },
-    { label: 'Active severe alerts', value: cAlert },
+    { label: 'Cuota negativa (48 h)', value: cNeg },
+    { label: 'Pico de volumen', value: cSpike },
+    { label: 'Alertas graves activas', value: cAlert },
   ];
 
   // Picco: giorno di massimo volume.
@@ -772,7 +772,7 @@ export type BrandHealth = {
 };
 
 function grade(score: number): string {
-  return score >= 80 ? 'Excellent' : score >= 65 ? 'Good' : score >= 50 ? 'Fair' : 'At risk';
+  return score >= 80 ? 'Excelente' : score >= 65 ? 'Buena' : score >= 50 ? 'Regular' : 'En riesgo';
 }
 
 // Filtro keyword opzionale: se presente, limita alle mention che citano
@@ -825,10 +825,10 @@ export async function healthFor(projectId: number, days = 14, keywords?: string[
   const reach = Math.round((Number(agg?.resonant ?? 0) / Math.max(1, total)) * 100);
 
   const components: HealthComponent[] = [
-    { key: 'sentiment', label: 'Sentiment', value: sentiment, weight: 0.35 },
-    { key: 'positivity', label: 'Positive share', value: positivity, weight: 0.25 },
+    { key: 'sentiment', label: 'Sentimiento', value: sentiment, weight: 0.35 },
+    { key: 'positivity', label: 'Cuota positiva', value: positivity, weight: 0.25 },
     { key: 'momentum', label: 'Momentum', value: momentum, weight: 0.2 },
-    { key: 'reach', label: 'Resonance', value: reach, weight: 0.2 },
+    { key: 'reach', label: 'Resonancia', value: reach, weight: 0.2 },
   ];
   const score = total === 0 ? 0 : Math.round(components.reduce((s, c) => s + c.value * c.weight, 0));
 

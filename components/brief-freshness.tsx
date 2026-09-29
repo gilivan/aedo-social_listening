@@ -20,7 +20,7 @@ async function collected(projectId: number, days: number): Promise<number> {
 
 /** Data di oggi in ora italiana, nello stesso formato usato per salvare i brief. */
 export function todayKey(): string {
-  return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' });
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
 }
 
 /**
@@ -35,7 +35,7 @@ export async function BriefFreshness({ latestDate }: { latestDate: string | Date
   const today = todayKey();
   const latest = latestDate
     ? (typeof latestDate === 'string' ? latestDate.slice(0, 10)
-      : new Date(latestDate).toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' }))
+      : new Date(latestDate).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }))
     : null;
   if (latest === today) return null;   // tutto a posto: nessun rumore
 
@@ -52,12 +52,12 @@ export async function BriefFreshness({ latestDate }: { latestDate: string | Date
   // un problema di AI né di cron, e generare un brief non risolverebbe niente.
   const noData = recent === 0;
   const why = noData
-    ? 'Nothing has been collected for this project in the last 30 days, so there is nothing to brief on. Check the keywords and sources in Settings, then use “Refresh now”.'
+    ? 'No se ha recopilado nada para este proyecto en los últimos 30 días, así que no hay material para un brief. Revisa las palabras clave y las fuentes en Ajustes y luego usa “Actualizar ahora”.'
     : !status.hasKey
-      ? 'No AI key is configured, so it cannot be written.'
+      ? 'No hay ninguna clave de IA configurada, así que no se puede redactar.'
       : status.capReached
-        ? `The spend cap was reached ($${status.spend.toFixed(2)} of $${status.budget}), so the nightly cycle skipped it. Raise the cap in Settings → Budget.`
-        : 'The nightly cycle has not produced it yet — it runs at 07:00. You can generate it now: if the last day was quiet the briefing widens to the last week and says so.';
+        ? `Se alcanzó el tope de gasto ($${status.spend.toFixed(2)} de $${status.budget}), así que el ciclo nocturno lo omitió. Sube el tope en Ajustes → Presupuesto.`
+        : 'El ciclo nocturno aún no lo ha generado; se ejecuta a las 07:00. Puedes generarlo ahora: si el último día fue tranquilo, el brief se amplía a la última semana y lo indica.';
 
   return (
     <div className="panel mb-4 border-amber-500/40 px-5 py-4">
@@ -66,14 +66,14 @@ export async function BriefFreshness({ latestDate }: { latestDate: string | Date
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-amber-300">
             {latest
-              ? `Today's brief is missing — the latest one is from ${latest}${
-                daysOld === 1 ? ' (yesterday)' : daysOld && daysOld > 1 ? ` (${daysOld} days old)` : ''}.`
-              : 'No brief has been written yet.'}
+              ? `Falta el brief de hoy: el más reciente es del ${latest}${
+                daysOld === 1 ? ' (ayer)' : daysOld && daysOld > 1 ? ` (hace ${daysOld} días)` : ''}.`
+              : 'Todavía no se ha redactado ningún brief.'}
           </p>
           <p className="mt-0.5 text-xs leading-relaxed text-slate-400">{why}</p>
         </div>
         {status.ready && !noData && (
-          <GenerateRefresh endpoint="/api/brief" label="Generate today's brief" busyLabel="Writing the brief…" />
+          <GenerateRefresh endpoint="/api/brief" label="Generar el brief de hoy" busyLabel="Redactando el brief…" />
         )}
       </div>
     </div>

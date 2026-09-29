@@ -54,7 +54,7 @@ export const discord: Connector = {
   label: 'Discord',
   tier: 'freekey',
   enabled: () => Boolean(cfg('DISCORD_BOT_TOKEN') && cfg('DISCORD_CHANNEL_IDS')),
-  disabledReason: 'Requires a Discord bot token (invited to your server, with the Message Content Intent enabled) and the channel IDs to read: enter them here',
+  disabledReason: 'Requiere un token de bot de Discord (invitado a tu servidor, con el Message Content Intent habilitado) y los IDs de los canales que quieres leer: ingrésalos aquí',
   async fetchMentions() {
     const token = cfg('DISCORD_BOT_TOKEN');
     const ids = (cfg('DISCORD_CHANNEL_IDS') ?? '').split(',').map((s) => s.trim()).filter(Boolean).slice(0, 10);

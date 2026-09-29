@@ -15,50 +15,50 @@ export type ActionResult = { ok: boolean; msg: string };
 /** Admin: set the API spend budget (USD). */
 export async function updateApiBudget(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const user = await getCurrentUser();
-  if (!isAdmin(user)) return { ok: false, msg: 'Admins only.' };
+  if (!isAdmin(user)) return { ok: false, msg: 'Solo para administradores.' };
   const amount = Number(formData.get('budget'));
-  if (!Number.isFinite(amount) || amount <= 0) return { ok: false, msg: 'Enter a positive amount.' };
+  if (!Number.isFinite(amount) || amount <= 0) return { ok: false, msg: 'Ingresa un monto positivo.' };
   await setMeta('api_budget_usd', Math.round(amount * 100) / 100);
   revalidatePath('/impostazioni/fonti');
-  return { ok: true, msg: `Budget set to $${amount.toFixed(2)}.` };
+  return { ok: true, msg: `Presupuesto fijado en $${amount.toFixed(2)}.` };
 }
 
 /** Admin: choose the AI engine (Anthropic / OpenAI / Grok) that powers every AI feature. */
 export async function updateAiProvider(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const user = await getCurrentUser();
-  if (!isAdmin(user)) return { ok: false, msg: 'Admins only.' };
+  if (!isAdmin(user)) return { ok: false, msg: 'Solo para administradores.' };
   const provider = String(formData.get('provider') ?? '').trim();
   const { AI_PROVIDERS } = await import('@/lib/ai-provider');
-  if (!(provider in AI_PROVIDERS)) return { ok: false, msg: 'Unknown provider.' };
+  if (!(provider in AI_PROVIDERS)) return { ok: false, msg: 'Proveedor desconocido.' };
   await setMeta('ai_provider', provider);
   revalidatePath('/impostazioni/budget');
-  return { ok: true, msg: `AI engine set to ${AI_PROVIDERS[provider as keyof typeof AI_PROVIDERS].label}.` };
+  return { ok: true, msg: `Motor de IA configurado: ${AI_PROVIDERS[provider as keyof typeof AI_PROVIDERS].label}.` };
 }
 
 /** Admin: override the fast/smart model ids for one provider (blank = default). */
 export async function updateAiModels(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const user = await getCurrentUser();
-  if (!isAdmin(user)) return { ok: false, msg: 'Admins only.' };
+  if (!isAdmin(user)) return { ok: false, msg: 'Solo para administradores.' };
   const provider = String(formData.get('provider') ?? '').trim();
   const { AI_PROVIDERS } = await import('@/lib/ai-provider');
-  if (!(provider in AI_PROVIDERS)) return { ok: false, msg: 'Unknown provider.' };
+  if (!(provider in AI_PROVIDERS)) return { ok: false, msg: 'Proveedor desconocido.' };
   const fast = String(formData.get('fast') ?? '').trim();
   const smart = String(formData.get('smart') ?? '').trim();
   await setMeta(`ai_models_${provider}`, { fast, smart });
   revalidatePath('/impostazioni/budget');
-  return { ok: true, msg: 'Models saved.' };
+  return { ok: true, msg: 'Modelos guardados.' };
 }
 
 /** Admin: reset the spend counter (starts a new window). Requires the admin's own password. */
 export async function resetApiSpend(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const user = await getCurrentUser();
-  if (!isAdmin(user) || !user) return { ok: false, msg: 'Admins only.' };
+  if (!isAdmin(user) || !user) return { ok: false, msg: 'Solo para administradores.' };
   const password = String(formData.get('password') ?? '');
-  if (!password) return { ok: false, msg: 'Enter your account password.' };
-  if (!verifyPasswordHash(password, user.passwordHash)) return { ok: false, msg: 'Incorrect password.' };
+  if (!password) return { ok: false, msg: 'Ingresa la contraseña de tu cuenta.' };
+  if (!verifyPasswordHash(password, user.passwordHash)) return { ok: false, msg: 'Contraseña incorrecta.' };
   await setMeta('spend_reset_at', new Date().toISOString());
   revalidatePath('/impostazioni/fonti');
-  return { ok: true, msg: 'Spend counter reset. The all-time total is unchanged.' };
+  return { ok: true, msg: 'Contador de gasto reiniciado. El total histórico no cambia.' };
 }
 
 function parseKeywords(raw: string): string[] {
@@ -218,18 +218,18 @@ export async function updateImportProject(formData: FormData) {
  */
 export async function deleteProject(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   const user = await getCurrentUser();
-  if (!user) return { ok: false, msg: 'Not signed in.' };
+  if (!user) return { ok: false, msg: 'No has iniciado sesión.' };
   const db = await getDb();
   const id = Number(formData.get('id'));
-  if (!id) return { ok: false, msg: 'No project selected.' };
-  if (!(await assertCanEdit(id))) return { ok: false, msg: 'You cannot edit this project.' };
+  if (!id) return { ok: false, msg: 'No hay ningún proyecto seleccionado.' };
+  if (!(await assertCanEdit(id))) return { ok: false, msg: 'No puedes editar este proyecto.' };
 
   const password = String(formData.get('password') ?? '');
-  if (!password) return { ok: false, msg: 'Enter your account password to confirm.' };
-  if (!verifyPasswordHash(password, user.passwordHash)) return { ok: false, msg: 'Incorrect password. Nothing was deleted.' };
+  if (!password) return { ok: false, msg: 'Ingresa la contraseña de tu cuenta para confirmar.' };
+  if (!verifyPasswordHash(password, user.passwordHash)) return { ok: false, msg: 'Contraseña incorrecta. No se eliminó nada.' };
 
   const all = await db.select({ id: projects.id }).from(projects);
-  if (all.length <= 1) return { ok: false, msg: 'This is the only project: Radar needs at least one.' };
+  if (all.length <= 1) return { ok: false, msg: 'Este es el único proyecto: AEDO necesita al menos uno.' };
 
   await db.delete(projects).where(eq(projects.id, id));
   revalidatePath('/', 'layout');

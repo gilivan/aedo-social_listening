@@ -26,32 +26,32 @@ export const maxDuration = 120;
 
 /** L'ordine delle colonne del normalizzato. È il contratto del file esportato. */
 const COLUMNS: { key: keyof NormalizedRow | 'file'; header: string; width: number }[] = [
-  { key: 'publishedAt', header: 'Data e ora', width: 19 },
-  { key: 'source', header: 'Fonte', width: 14 },
-  { key: 'author', header: 'Autore', width: 20 },
+  { key: 'publishedAt', header: 'Fecha y hora', width: 19 },
+  { key: 'source', header: 'Fuente', width: 14 },
+  { key: 'author', header: 'Autor', width: 20 },
   { key: 'authorHandle', header: 'Handle', width: 18 },
-  { key: 'community', header: 'Community', width: 18 },
-  { key: 'title', header: 'Titolo', width: 40 },
-  { key: 'content', header: 'Testo', width: 70 },
-  { key: 'language', header: 'Lingua', width: 8 },
-  { key: 'sentiment', header: 'Sentiment', width: 11 },
-  { key: 'sentimentScore', header: 'Punteggio sentiment', width: 12 },
-  { key: 'reach', header: 'Reach', width: 12 },
-  { key: 'likes', header: 'Like', width: 10 },
-  { key: 'comments', header: 'Commenti', width: 10 },
-  { key: 'shares', header: 'Condivisioni', width: 12 },
-  { key: 'views', header: 'Visualizzazioni', width: 14 },
+  { key: 'community', header: 'Comunidad', width: 18 },
+  { key: 'title', header: 'Título', width: 40 },
+  { key: 'content', header: 'Texto', width: 70 },
+  { key: 'language', header: 'Idioma', width: 8 },
+  { key: 'sentiment', header: 'Sentimiento', width: 11 },
+  { key: 'sentimentScore', header: 'Puntaje de sentimiento', width: 12 },
+  { key: 'reach', header: 'Alcance', width: 12 },
+  { key: 'likes', header: 'Me gusta', width: 10 },
+  { key: 'comments', header: 'Comentarios', width: 10 },
+  { key: 'shares', header: 'Compartidos', width: 12 },
+  { key: 'views', header: 'Visualizaciones', width: 14 },
   { key: 'engagementScore', header: 'Engagement', width: 12 },
-  { key: 'url', header: 'Link', width: 45 },
-  { key: 'file', header: 'File di origine', width: 26 },
+  { key: 'url', header: 'Enlace', width: 45 },
+  { key: 'file', header: 'Archivo de origen', width: 26 },
 ];
 
 async function guard(projectId: number) {
-  if (!isAdmin(await getCurrentUser())) return 'Solo gli amministratori possono importare';
-  if (!projectId) return 'Progetto mancante';
+  if (!isAdmin(await getCurrentUser())) return 'Solo los administradores pueden importar';
+  if (!projectId) return 'Falta el proyecto';
   const db = await getDb();
   const [p] = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, projectId));
-  if (!p) return 'Progetto non trovato';
+  if (!p) return 'Proyecto no encontrado';
   return null;
 }
 
@@ -62,12 +62,12 @@ export async function POST(req: Request) {
   const fileId = Number(body.fileId);
   const err = await guard(projectId);
   if (err) return NextResponse.json({ error: err }, { status: 400 });
-  if (!fileId) return NextResponse.json({ error: 'File mancante' }, { status: 400 });
+  if (!fileId) return NextResponse.json({ error: 'Falta el archivo' }, { status: 400 });
 
   // La mappatura può arrivare dal client: è la bozza in corso di modifica, non
   // ancora salvata — ed è proprio quella che l'utente vuole provare.
   const map = (body.mapping ?? await fileMapping(fileId, projectId)) as unknown as ColumnMap | null;
-  if (!map?.content) return NextResponse.json({ error: 'Assegna prima la colonna del testo' }, { status: 400 });
+  if (!map?.content) return NextResponse.json({ error: 'Primero asigna la columna del texto' }, { status: 400 });
 
   // Si leggono più righe di quante se ne mostrano: quelle senza testo vengono
   // scartate, e con un limite stretto l'anteprima poteva uscire vuota.
@@ -97,7 +97,7 @@ export async function GET(req: Request) {
       ? and(eq(importFiles.projectId, projectId), eq(importFiles.id, only))
       : eq(importFiles.projectId, projectId),
   );
-  if (!files.length) return NextResponse.json({ error: 'Nessun file da esportare' }, { status: 404 });
+  if (!files.length) return NextResponse.json({ error: 'No hay archivos para exportar' }, { status: 404 });
 
   const all: (NormalizedRow & { file: string })[] = [];
   const skipped: string[] = [];
@@ -113,15 +113,15 @@ export async function GET(req: Request) {
   if (!all.length) {
     return NextResponse.json({
       error: skipped.length
-        ? `Nessuna riga esportabile: ${skipped.join(', ')} ${skipped.length > 1 ? 'non sono mappati' : 'non è mappato'} o ${skipped.length > 1 ? 'hanno' : 'ha'} le righe grezze eliminate.`
-        : 'Nessuna riga esportabile.',
+        ? `No hay filas exportables: ${skipped.join(', ')} ${skipped.length > 1 ? 'no están mapeados' : 'no está mapeado'} o ${skipped.length > 1 ? 'tienen' : 'tiene'} las filas originales eliminadas.`
+        : 'No hay filas exportables.',
     }, { status: 400 });
   }
 
   // Una sola tabella, ordinata nel tempo: è il senso di "sommare N file".
   all.sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime());
 
-  const base = `radar-normalizzato-${slugify(project?.name ?? 'progetto')}-${todayStamp()}`;
+  const base = `aedo-normalizado-${slugify(project?.name ?? 'proyecto')}-${todayStamp()}`;
 
   if (format === 'csv') {
     const esc = (v: unknown) => {
@@ -141,9 +141,9 @@ export async function GET(req: Request) {
   }
 
   const wb = new ExcelJS.Workbook();
-  wb.creator = 'Radar By Scognamiglio 2026';
+  wb.creator = 'AEDO';
   wb.created = new Date();
-  const ws = wb.addWorksheet('Normalizzato');
+  const ws = wb.addWorksheet('Normalizado');
   ws.columns = COLUMNS.map((c) => ({ header: c.header, key: String(c.key), width: c.width }));
   ws.getRow(1).eachCell((c) => {
     c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
@@ -157,18 +157,18 @@ export async function GET(req: Request) {
 
   // Un foglio con la provenienza: quante righe ha messo ciascun file, e quali
   // sono stati saltati. Senza, un export incompleto sarebbe indistinguibile.
-  const info = wb.addWorksheet('Provenienza');
+  const info = wb.addWorksheet('Procedencia');
   info.columns = [
-    { header: 'File', key: 'f', width: 34 },
-    { header: 'Righe normalizzate', key: 'n', width: 20 },
+    { header: 'Archivo', key: 'f', width: 34 },
+    { header: 'Filas normalizadas', key: 'n', width: 20 },
   ];
   info.getRow(1).font = { bold: true };
   const perFile = new Map<string, number>();
   for (const r of all) perFile.set(r.file, (perFile.get(r.file) ?? 0) + 1);
   for (const [f, n] of perFile) info.addRow({ f, n });
   info.addRow({});
-  info.addRow({ f: 'TOTALE', n: all.length });
-  for (const s of skipped) info.addRow({ f: `${s} — saltato (non mappato o righe grezze eliminate)`, n: 0 });
+  info.addRow({ f: 'TOTAL', n: all.length });
+  for (const s of skipped) info.addRow({ f: `${s} — omitido (no mapeado o filas originales eliminadas)`, n: 0 });
 
   const buffer = await wb.xlsx.writeBuffer();
   return new NextResponse(buffer as ArrayBuffer, {

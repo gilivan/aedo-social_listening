@@ -70,7 +70,7 @@ test('lo stesso foglio caricato due volte viene detto per nome', () => {
   const cols = [{ name: 'Data', reads: 'date' as const, from: '2025-01-01', to: '2025-12-01' }];
   const rels = sheetRelations([sheet('Post', cols), sheet('Post', cols)]);
   assert.equal(rels[0].kind, 'doppio-caricamento', 'e viene detto prima di tutto il resto');
-  assert.match(rels[0].note, /due volte/);
+  assert.match(rels[0].note, /dos veces/);
   assert.equal(rels.length, 1, 'una coppia si guarda una volta sola');
 });
 

@@ -25,23 +25,23 @@ async function editable(projectId: number) {
 /** Dalla richiesta scritta alla proposta di piano (AI, o regole se l'AI manca). */
 export async function buildPlanAction(projectId: number, brief: string): Promise<BuildResult | { error: string }> {
   const p = await editable(projectId);
-  if (!p) return { error: 'Non puoi modificare questo progetto.' };
-  if (brief.trim().length < 8) return { error: 'Scrivi che cosa vuoi monitorare, anche in poche parole.' };
+  if (!p) return { error: 'No puedes modificar este proyecto.' };
+  if (brief.trim().length < 8) return { error: 'Escribe qué quieres monitorear, aunque sea en pocas palabras.' };
   try {
     return await buildPlan(brief, { name: p.name, languages: p.languages, countries: p.countries ?? [] });
   } catch (e) {
-    return { plan: planFromRules(brief), warnings: [`Proposta non riuscita (${(e as Error).message}): lettura a regole.`] };
+    return { plan: planFromRules(brief), warnings: [`No se pudo generar la propuesta (${(e as Error).message}): lectura por reglas.`] };
   }
 }
 
 /** La prova sul campo di un piano non ancora salvato. */
 export async function probePlanAction(projectId: number, plan: QueryPlan): Promise<PlanProbe | { error: string }> {
   const p = await editable(projectId);
-  if (!p) return { error: 'Non puoi modificare questo progetto.' };
+  if (!p) return { error: 'No puedes modificar este proyecto.' };
   try {
     return await probePlan(validatePlan(plan).plan, { name: p.name, languages: p.languages, countries: p.countries ?? [] });
   } catch (e) {
-    return { error: `Prova non riuscita: ${(e as Error).message}` };
+    return { error: `La prueba falló: ${(e as Error).message}` };
   }
 }
 
@@ -52,9 +52,9 @@ export async function probePlanAction(projectId: number, plan: QueryPlan): Promi
  */
 export async function savePlanAction(projectId: number, plan: QueryPlan): Promise<{ ok: true; warnings: string[]; plan: QueryPlan } | { error: string }> {
   const p = await editable(projectId);
-  if (!p) return { error: 'Non puoi modificare questo progetto.' };
-  if (p.mode === 'upload') return { error: 'Un progetto che importa file non ha query.' };
-  if (process.env.DEMO_MODE === '1') return { error: 'Public demo: saving is off. Self-host Radar to activate your own queries.' };
+  if (!p) return { error: 'No puedes modificar este proyecto.' };
+  if (p.mode === 'upload') return { error: 'Un proyecto que importa archivos no tiene consultas.' };
+  if (process.env.DEMO_MODE === '1') return { error: 'Demo pública: el guardado está desactivado. Instala AEDO en tu propio servidor para activar tus consultas.' };
   try {
     const saved = await savePlan(projectId, plan);
     after(async () => {

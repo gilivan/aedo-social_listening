@@ -11,7 +11,7 @@ import { getCurrentProject } from '@/lib/data';
 import { fieldLabel, type StudioSpec } from '@/lib/studio';
 import { InsightStudioCards } from '@/components/insight-studio-cards';
 
-export const metadata = { title: 'Explore insights' };
+export const metadata = { title: 'Explorar insights' };
 export const dynamic = 'force-dynamic';
 
 // Hub degli insight: 16 visualizzazioni raggruppate per DOMANDA a cui rispondono.
@@ -23,61 +23,61 @@ const GROUPS: {
   items: { href: string; label: string; icon: typeof Activity; question: string }[];
 }[] = [
   {
-    title: 'Shape of the conversation',
-    hint: 'What is being talked about, and how the themes hang together',
+    title: 'Forma de la conversación',
+    hint: 'De qué se habla y cómo se conectan los temas',
     items: [
-      { href: '/insights/topics', label: 'Topics × Sentiment', icon: ScatterChart, question: 'Which themes are big, which are loved or hated, which are growing?' },
-      { href: '/insights/constellation', label: 'Semantic constellation', icon: Sparkles, question: 'Which words travel together, and with what tone?' },
-      { href: '/insights/flow', label: 'Conversation flow', icon: Waypoints, question: 'Which source feeds which topic, and how does it end up in sentiment?' },
-      { href: '/insights/clusters', label: 'Conversation clusters', icon: Boxes, question: 'Which families of discourse (the framings) split the conversation?' },
+      { href: '/insights/topics', label: 'Temas × Sentimiento', icon: ScatterChart, question: '¿Qué temas son grandes, cuáles gustan o se odian, cuáles están creciendo?' },
+      { href: '/insights/constellation', label: 'Constelación semántica', icon: Sparkles, question: '¿Qué palabras aparecen juntas y con qué tono?' },
+      { href: '/insights/flow', label: 'Flujo de la conversación', icon: Waypoints, question: '¿Qué fuente alimenta qué tema y cómo termina en sentimiento?' },
+      { href: '/insights/clusters', label: 'Clusters de conversación', icon: Boxes, question: '¿En qué familias de discurso (los encuadres) se divide la conversación?' },
     ],
   },
   {
-    title: 'People',
-    hint: 'Who carries the conversation',
+    title: 'Personas',
+    hint: 'Quién sostiene la conversación',
     items: [
-      { href: '/insights/network', label: 'Influencer network', icon: Network, question: 'Who are the loudest voices, and which topic tribes do they form?' },
-      { href: '/insights/pyramid', label: 'Author pyramid', icon: Triangle, question: 'Is reach concentrated in a few big voices or spread widely?' },
+      { href: '/insights/network', label: 'Red de influenciadores', icon: Network, question: '¿Cuáles son las voces más fuertes y qué tribus temáticas forman?' },
+      { href: '/insights/pyramid', label: 'Pirámide de autores', icon: Triangle, question: '¿El alcance se concentra en pocas voces grandes o está muy repartido?' },
     ],
   },
   {
-    title: 'Momentum & health',
-    hint: 'Where it is heading, and how healthy it is',
+    title: 'Momentum y salud',
+    hint: 'Hacia dónde va y qué tan sana está',
     items: [
-      { href: '/insights/health', label: 'Health Index', icon: Gauge, question: 'One 0–100 score: how healthy is the conversation — and your brand in it?' },
-      { href: '/insights/momentum', label: 'Momentum quadrant', icon: LayoutGrid, question: 'Which topics are rising stars and which are fading?' },
-      { href: '/insights/sov', label: 'Share of Voice', icon: Activity, question: 'How much of the conversation does each player own over time?' },
-      { href: '/insights/waterfall', label: 'Sentiment waterfall', icon: TrendingDown, question: 'Day by day, what pushed the mood up or down?' },
-      { href: '/insights/emotions', label: 'Emotion radar', icon: HeartPulse, question: 'Beyond positive/negative: joy, trust, fear, anger, sadness, surprise?' },
+      { href: '/insights/health', label: 'Índice de salud', icon: Gauge, question: 'Un puntaje de 0 a 100: ¿qué tan sana está la conversación y tu marca en ella?' },
+      { href: '/insights/momentum', label: 'Cuadrante de momentum', icon: LayoutGrid, question: '¿Qué temas son estrellas en ascenso y cuáles se están apagando?' },
+      { href: '/insights/sov', label: 'Share of Voice', icon: Activity, question: '¿Qué parte de la conversación le pertenece a cada actor a lo largo del tiempo?' },
+      { href: '/insights/waterfall', label: 'Cascada de sentimiento', icon: TrendingDown, question: 'Día a día, ¿qué hizo subir o bajar el ánimo?' },
+      { href: '/insights/emotions', label: 'Radar de emociones', icon: HeartPulse, question: 'Más allá de positivo/negativo: ¿alegría, confianza, miedo, ira, tristeza, sorpresa?' },
     ],
   },
   {
-    title: 'Context',
-    hint: 'Where and when it happens',
+    title: 'Contexto',
+    hint: 'Dónde y cuándo ocurre',
     items: [
-      { href: '/insights/heatmap', label: 'Hourly heatmap', icon: Grid3x3, question: 'Which days and hours does the conversation actually live?' },
+      { href: '/insights/heatmap', label: 'Mapa de calor por hora', icon: Grid3x3, question: '¿En qué días y horas vive realmente la conversación?' },
     ],
   },
   {
-    title: 'Your channels',
-    hint: 'How your own posts do, against everything said about you',
+    title: 'Tus canales',
+    hint: 'Cómo les va a tus publicaciones frente a todo lo que se dice de ti',
     items: [
-      { href: '/insights/owned', label: 'Owned vs Earned', icon: Scale, question: 'Are your own posts working, or is the conversation happening entirely without you?' },
+      { href: '/insights/owned', label: 'Propios vs. ganados', icon: Scale, question: '¿Tus publicaciones funcionan o la conversación ocurre totalmente sin ti?' },
     ],
   },
   {
-    title: 'Risk',
-    hint: 'What could go wrong, and what caused what',
+    title: 'Riesgo',
+    hint: 'Qué podría salir mal y qué causó qué',
     items: [
-      { href: '/insights/crisis', label: 'Crisis radar', icon: ShieldAlert, question: 'How exposed are you right now, and what drove the last spike?' },
-      { href: '/insights/causal', label: 'Cause & effect', icon: Workflow, question: 'Which events produced measurable consequences?' },
+      { href: '/insights/crisis', label: 'Radar de crisis', icon: ShieldAlert, question: '¿Qué tan expuesto estás ahora mismo y qué impulsó el último pico?' },
+      { href: '/insights/causal', label: 'Causa y efecto', icon: Workflow, question: '¿Qué eventos produjeron consecuencias medibles?' },
     ],
   },
   {
-    title: 'The whole picture',
-    hint: 'Everything at once, for a wall or a demo',
+    title: 'El panorama completo',
+    hint: 'Todo a la vez, para una pantalla o una demo',
     items: [
-      { href: '/insights/galaxy', label: 'Conversation Galaxy', icon: Orbit, question: 'The entire conversation as a living solar system.' },
+      { href: '/insights/galaxy', label: 'Galaxia de la conversación', icon: Orbit, question: 'Toda la conversación como un sistema solar vivo.' },
     ],
   },
 ];
@@ -99,9 +99,9 @@ export default async function InsightsHubPage() {
       const spec = r.spec as unknown as StudioSpec;
       const src = spec.source === 'metrics' ? 'metrics' : 'mentions';
       const parts = [
-        `${fieldLabel(src, spec.y)} per ${fieldLabel(src, spec.x)}`,
-        ...(spec.z ? [`diviso per ${fieldLabel(src, spec.z)}`] : []),
-        `ultimi ${spec.days} giorni`,
+        `${fieldLabel(src, spec.y)} por ${fieldLabel(src, spec.x)}`,
+        ...(spec.z ? [`dividido por ${fieldLabel(src, spec.z)}`] : []),
+        `últimos ${spec.days} días`,
       ];
       return { id: r.id, title: r.title, question: `${parts.join(' · ')}.` };
     });
@@ -109,17 +109,17 @@ export default async function InsightsHubPage() {
   return (
     <>
       <PageHeader
-        title="Explore insights"
-        info={`All ${total} advanced visualizations, grouped by the question they answer rather than by chart type. Each one runs on the mentions your project has collected; the AI-powered ones (clusters, cause & effect) are generated on demand and cached for the day.`}
-        subtitle={`${total} ways to read the same conversation${mine.length ? `, più ${mine.length} che hai costruito tu` : ''}, grouped by the question you are trying to answer. Every card says what it is for — pick the question, not the chart.`}
+        title="Explorar insights"
+        info={`Las ${total} visualizaciones avanzadas, agrupadas por la pregunta que responden y no por tipo de gráfico. Cada una usa las menciones que ha recopilado tu proyecto; las que funcionan con IA (clusters, causa y efecto) se generan bajo demanda y se guardan en caché durante el día.`}
+        subtitle={`${total} formas de leer la misma conversación${mine.length ? `, más ${mine.length} que construiste tú` : ''}, agrupadas por la pregunta que quieres responder. Cada tarjeta dice para qué sirve: elige la pregunta, no el gráfico.`}
       />
       <div className="flex flex-col gap-6">
         {mine.length > 0 && (
           <section>
             <div className="mb-2 flex items-baseline gap-2">
-              <h2 className="text-sm font-semibold text-slate-200">I tuoi grafici</h2>
+              <h2 className="text-sm font-semibold text-slate-200">Tus gráficos</h2>
               <span className="text-[11px] text-slate-600">
-                costruiti da te in <Link href="/graph" className="text-violet-400 hover:underline">Studio Graph</Link> — solo questi si possono togliere
+                construidos por ti en <Link href="/graph" className="text-violet-400 hover:underline">Studio Graph</Link> — solo estos se pueden quitar
               </span>
             </div>
             <InsightStudioCards charts={mine} />

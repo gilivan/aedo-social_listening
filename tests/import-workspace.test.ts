@@ -167,12 +167,12 @@ test('le righe grezze restano, e purgarle blocca la ri-derivazione', async () =>
   await store.purgeRaw(b.id, projectId);
   // Le mention restano: si perde solo la possibilità di rimappare.
   assert.equal(await countMentions(b.id), 2);
-  await assert.rejects(() => store.deriveMentions(b.id, projectId), /righe grezze/);
+  await assert.rejects(() => store.deriveMentions(b.id, projectId), /filas originales/);
 });
 
 test('senza colonna del testo la derivazione si rifiuta di procedere', async () => {
   const e = await store.registerFile(projectId, await sheet([['post', '01/03/2024', 1, 1]]), 'senza-mappa.xlsx');
   await store.updateMapping(e.fileId, projectId, { date: 'data' } as Record<string, string>);
-  await assert.rejects(() => store.deriveMentions(e.fileId, projectId), /colonna del testo/);
+  await assert.rejects(() => store.deriveMentions(e.fileId, projectId), /columna de texto/);
   await store.deleteFile(e.fileId, projectId);
 });

@@ -71,50 +71,50 @@ type PreviewRow = {
 };
 
 const FIELDS: { key: string; label: string; hint: string; help: string; required?: boolean }[] = [
-  { key: 'content', label: 'Testo', hint: 'ciò che viene analizzato', required: true,
-    help: 'Il testo del post o dell’articolo. È l’unico campo obbligatorio: da qui nascono sentiment, temi ed emozioni. Se manca, la riga non viene importata — a meno che ci sia un titolo, che uso al suo posto.' },
-  { key: 'date', label: 'Data', hint: 'per i grafici temporali', 
-    help: 'Quando è stato pubblicato. Senza, ogni riga finisce a oggi e tutti i grafici temporali diventano una colonna sola. Leggo i formati italiani, americani e i seriali di Excel.' },
-  { key: 'time', label: 'Ora', hint: 'solo se in colonna separata',
-    help: 'Serve SOLO se ora e data stanno in due colonne diverse. Se la colonna data contiene già l’orario, lascia vuoto qui.' },
-  { key: 'title', label: 'Titolo', hint: 'headline, se distinta',
-    help: 'La headline, quando è separata dal testo. Fa anche da rete di sicurezza: se il testo di una riga è vuoto, uso il titolo invece di scartarla.' },
-  { key: 'author', label: 'Autore', hint: 'chi ha scritto',
-    help: 'Il nome di chi pubblica. Alimenta le classifiche di autori, la piramide di influenza e — se i nomi sono persone che segui — le schede personali.' },
+  { key: 'content', label: 'Texto', hint: 'lo que se analiza', required: true,
+    help: 'El texto del post o del artículo. Es el único campo obligatorio: de aquí salen el sentimiento, los temas y las emociones. Si falta, la fila no se importa, a menos que haya un título, que uso en su lugar.' },
+  { key: 'date', label: 'Fecha', hint: 'para los gráficos temporales', 
+    help: 'Cuándo se publicó. Sin ella, cada fila queda con la fecha de hoy y todos los gráficos temporales se vuelven una sola columna. Leo formatos latinos, estadounidenses y los seriales de Excel.' },
+  { key: 'time', label: 'Hora', hint: 'solo si está en columna aparte',
+    help: 'Sirve SOLO si la hora y la fecha están en dos columnas distintas. Si la columna de fecha ya incluye la hora, deja esto vacío.' },
+  { key: 'title', label: 'Título', hint: 'titular, si va aparte',
+    help: 'El titular, cuando está separado del texto. También sirve de respaldo: si el texto de una fila está vacío, uso el título en lugar de descartarla.' },
+  { key: 'author', label: 'Autor', hint: 'quién escribió',
+    help: 'El nombre de quien publica. Alimenta los rankings de autores, la pirámide de influencia y, si los nombres son personas que sigues, las fichas personales.' },
   { key: 'authorHandle', label: 'Handle', hint: '@username',
-    help: 'Lo username (@nome). Utile quando lo stesso autore compare con nomi scritti in modo diverso.' },
-  { key: 'source', label: 'Fonte', hint: 'piattaforma o testata',
-    help: 'La piattaforma o la testata. Diventa un filtro nell’Ascolto e una serie nei grafici per canale. Attenzione: una colonna che si chiama "Source" ma contiene Organic/Sponsored NON è la fonte — guarda i valori.' },
-  { key: 'url', label: 'Link', hint: "URL all'originale",
-    help: 'Il collegamento al contenuto originale, per aprirlo dalla scheda della mention.' },
-  { key: 'language', label: 'Lingua', hint: 'it, en, "Italiano"…',
-    help: 'Riconosco sia i codici (it, en, it-IT) sia i nomi estesi (Italiano, English). Diventa un filtro e serve a non tradurre ciò che è già nella tua lingua.' },
-  { key: 'community', label: 'Community', hint: 'gruppo, pagina, subreddit',
-    help: 'Il gruppo, la pagina o il subreddit in cui è uscito. Alimenta la vista Pubblico: dove avviene la conversazione.' },
-  { key: 'sentiment', label: 'Sentiment', hint: 'già calcolato: evita il costo AI',
-    help: 'Se il file porta già il sentiment, assegnalo: risparmi l’analisi AI su ogni riga. Capisco parole (Positivo/Negative/neutro) e punteggi, sia -1..+1 sia 0..100.' },
-  { key: 'reach', label: 'Reach', hint: 'impression potenziali',
-    help: 'Quante persone potevano vedere il contenuto. Non confonderlo con i follower dell’autore: sono cose diverse e il reach è per singolo contenuto.' },
-  { key: 'likes', label: 'Like', hint: 'reazioni',
-    help: 'Reazioni, mi piace, preferiti. Insieme a commenti e condivisioni compone il punteggio di engagement con cui si ordinano i contenuti migliori.' },
-  { key: 'comments', label: 'Commenti', hint: 'risposte',
-    help: 'Numero di commenti o risposte. Nel punteggio di engagement pesa il doppio di un like: costa più fatica.' },
-  { key: 'shares', label: 'Condivisioni', hint: 'retweet, repost',
-    help: 'Condivisioni, retweet, repost. Nel punteggio pesano il triplo di un like: è il segnale più forte di adesione.' },
-  { key: 'views', label: 'Visualizzazioni', hint: 'views',
-    help: 'Visualizzazioni video. Pesano poco nel punteggio (una ogni 200) perché una vista non è un’interazione.' },
-  { key: 'engagement', label: 'Engagement totale', hint: 'solo se manca il dettaglio',
-    help: 'Usalo SOLO se il file non ha like, commenti e condivisioni separati: quando ci sono, il totale viene calcolato da quelli. E non assegnare qui un TASSO percentuale: "Engagement Rate 15,4%" non sono 15 interazioni.' },
+    help: 'El nombre de usuario (@nombre). Útil cuando el mismo autor aparece con nombres escritos de forma distinta.' },
+  { key: 'source', label: 'Fuente', hint: 'plataforma o medio',
+    help: 'La plataforma o el medio. Se vuelve un filtro en Escucha y una serie en los gráficos por canal. Atención: una columna que se llama "Source" pero contiene Organic/Sponsored NO es la fuente; mira los valores.' },
+  { key: 'url', label: 'Enlace', hint: 'URL del original',
+    help: 'El enlace al contenido original, para abrirlo desde la ficha de la mención.' },
+  { key: 'language', label: 'Idioma', hint: 'es, en, "Español"…',
+    help: 'Reconozco tanto los códigos (es, en, es-CO) como los nombres completos (Español, English). Se vuelve un filtro y sirve para no traducir lo que ya está en tu idioma.' },
+  { key: 'community', label: 'Comunidad', hint: 'grupo, página, subreddit',
+    help: 'El grupo, la página o el subreddit donde salió. Alimenta la vista Audiencia: dónde ocurre la conversación.' },
+  { key: 'sentiment', label: 'Sentimiento', hint: 'ya calculado: evita el costo de IA',
+    help: 'Si el archivo ya trae el sentimiento, asígnalo: te ahorras el análisis de IA en cada fila. Entiendo palabras (Positivo/Negative/neutro) y puntajes, tanto -1..+1 como 0..100.' },
+  { key: 'reach', label: 'Alcance', hint: 'impresiones potenciales',
+    help: 'Cuántas personas podían ver el contenido. No lo confundas con los seguidores del autor: son cosas distintas y el alcance es por contenido.' },
+  { key: 'likes', label: 'Me gusta', hint: 'reacciones',
+    help: 'Reacciones, me gusta, favoritos. Junto con comentarios y compartidos forma el puntaje de engagement con el que se ordenan los mejores contenidos.' },
+  { key: 'comments', label: 'Comentarios', hint: 'respuestas',
+    help: 'Número de comentarios o respuestas. En el puntaje de engagement pesa el doble que un me gusta: cuesta más esfuerzo.' },
+  { key: 'shares', label: 'Compartidos', hint: 'retweet, repost',
+    help: 'Compartidos, retweets, reposts. En el puntaje pesan el triple que un me gusta: es la señal más fuerte de adhesión.' },
+  { key: 'views', label: 'Visualizaciones', hint: 'vistas',
+    help: 'Visualizaciones de video. Pesan poco en el puntaje (una por cada 200) porque una vista no es una interacción.' },
+  { key: 'engagement', label: 'Engagement total', hint: 'solo si falta el detalle',
+    help: 'Úsalo SOLO si el archivo no tiene me gusta, comentarios y compartidos por separado: cuando existen, el total se calcula a partir de ellos. Y no asignes aquí una TASA porcentual: "Engagement Rate 15,4%" no son 15 interacciones.' },
 ];
 const FIELD_LABEL: Record<string, string> = Object.fromEntries(FIELDS.map((f) => [f.key, f.label]));
 
 const STATUS: Record<ImportFile['status'], { label: string; cls: string; step: number }> = {
-  uploaded: { label: 'da assegnare', cls: 'bg-amber-500/15 text-amber-300', step: 1 },
-  mapped: { label: 'pronto', cls: 'bg-sky-500/15 text-sky-300', step: 2 },
-  imported: { label: 'importato', cls: 'bg-emerald-500/15 text-emerald-300', step: 3 },
+  uploaded: { label: 'por asignar', cls: 'bg-amber-500/15 text-amber-300', step: 1 },
+  mapped: { label: 'listo', cls: 'bg-sky-500/15 text-sky-300', step: 2 },
+  imported: { label: 'importado', cls: 'bg-emerald-500/15 text-emerald-300', step: 3 },
 };
 
-const num = (n: number) => n.toLocaleString('it-IT');
+const num = (n: number) => n.toLocaleString('es-CO');
 
 /** Un foglio è pronto quando ha ciò che serve al SUO tipo di lettura. */
 const isReady = (f: ImportFile) => (f.kind === 'metrics'
@@ -148,7 +148,7 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
     const res = await fetch(`/api/import/files?project=${project.id}`);
     const d = await res.json();
     if (res.ok) setFiles(d.files ?? []);
-    else setError(d.error ?? 'Errore di caricamento');
+    else setError(d.error ?? 'Error al cargar');
   }, [project.id]);
 
   useEffect(() => { load(); }, [load]);
@@ -167,7 +167,7 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
     const timer = sheets?.length ? null : creepingProgress(setProgress);
     try {
       if (!sheets?.length) {
-        setPhase('Apertura del file e inventario dei fogli…');
+        setPhase('Abriendo el archivo y haciendo el inventario de hojas…');
         const d = await post(f, []);
         if (!d) return;
         if (d.needsChoice && d.sheets) { setPending({ file: f, sheets: d.sheets }); return; }
@@ -188,7 +188,7 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
 
       for (let i = 0; i < sheets.length; i += CHUNK) {
         const group = sheets.slice(i, i + CHUNK);
-        setPhase(`Lettura dei fogli ${done + 1}–${Math.min(done + group.length, sheets.length)} di ${sheets.length}: righe, colonne e riconoscimento…`);
+        setPhase(`Leyendo las hojas ${done + 1}–${Math.min(done + group.length, sheets.length)} de ${sheets.length}: filas, columnas y reconocimiento…`);
         const d = await post(f, group);
         if (!d) return;
         firstId ??= d.fileId;
@@ -202,7 +202,7 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
       if (firstId) setOpen(firstId);
       setShowLog(true);
       if (failed.length) {
-        setError(`${failed.length} fogli non sono entrati: ${failed.map((x) => `${x.sheet} (${x.reason})`).join('; ')}. Gli altri ${done - failed.length} sì.`);
+        setError(`${failed.length} hojas no se importaron: ${failed.map((x) => `${x.sheet} (${x.reason})`).join('; ')}. Las otras ${done - failed.length} sí.`);
       }
     } catch (e) { setError((e as Error).message); }
     finally { if (timer) clearInterval(timer); setProgress(0); setBusy(''); }
@@ -227,11 +227,11 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
 
     if (!d) {
       setError(res.status === 413
-        ? 'Il file è troppo grande per essere caricato in una volta.'
-        : `Il server non ha risposto (${res.status}). Se il file ha molti fogli, importane qualcuno per volta.`);
+        ? 'El archivo es demasiado grande para cargarlo de una sola vez.'
+        : `El servidor no respondió (${res.status}). Si el archivo tiene muchas hojas, impórtalas de a pocas.`);
       return null;
     }
-    if (!res.ok) { setError(d.error ?? "Errore nell'upload"); return null; }
+    if (!res.ok) { setError(d.error ?? 'Error en la carga'); return null; }
     return d;
   };
 
@@ -259,14 +259,14 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
     setBusy(`${action}-${fileId}`); setError('');
     const heavy = action === 'derive';
     let timer: ReturnType<typeof setInterval> | null = null;
-    if (heavy) { setProgress(2); setPhase('Lettura delle righe e scrittura in archivio…'); timer = creepingProgress(setProgress); }
+    if (heavy) { setProgress(2); setPhase('Leyendo las filas y guardándolas en el archivo…'); timer = creepingProgress(setProgress); }
     try {
       const res = await fetch('/api/import/files', {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ projectId: project.id, fileId, action, ...payload }),
       });
       const d = await res.json();
-      if (!res.ok) { setError(d.error ?? 'Operazione fallita'); return; }
+      if (!res.ok) { setError(d.error ?? 'La operación falló'); return; }
       await load();
       if (heavy) setShowLog(true);
     } catch (e) { setError((e as Error).message); }
@@ -283,12 +283,12 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
     try {
       let done = 0;
       for (const f of todo) {
-        setPhase(`Import di ${f.sheetName ?? f.filename} (${done + 1} di ${todo.length})…`);
+        setPhase(`Importando ${f.sheetName ?? f.filename} (${done + 1} de ${todo.length})…`);
         const res = await fetch('/api/import/files', {
           method: 'PATCH', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ projectId: project.id, fileId: f.id, action: 'derive', kind: f.kind }),
         });
-        if (!res.ok) { setError(`${f.filename}: ${(await res.json()).error ?? 'import fallito'}`); break; }
+        if (!res.ok) { setError(`${f.filename}: ${(await res.json()).error ?? 'la importación falló'}`); break; }
         done++;
         setProgress(Math.round((done / todo.length) * 100));
       }
@@ -306,8 +306,8 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
       });
       const d = await res.json();
       setAnalyzeMsg(res.ok
-        ? `Analizzate ${d.analyzed} righe${d.pending ? ` · ${d.pending} ancora in coda` : ''}.`
-        : (d.error ?? 'Analisi fallita'));
+        ? `${d.analyzed} filas analizadas${d.pending ? ` · ${d.pending} aún en cola` : ''}.`
+        : (d.error ?? 'El análisis falló'));
     } catch (e) { setAnalyzeMsg((e as Error).message); }
     finally { setBusy(''); }
   };
@@ -347,7 +347,7 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
           method: 'PATCH', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ projectId: project.id, fileId: f.id, action: 'delete' }),
         });
-        if (!res.ok) { setError((await res.json()).error ?? 'Eliminazione fallita'); break; }
+        if (!res.ok) { setError((await res.json()).error ?? 'No se pudo eliminar'); break; }
       }
       await load();
     } catch (e) { setError((e as Error).message); }
@@ -399,23 +399,23 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
     if (busy) {
       return {
         mood: 'me',
-        title: busy === 'upload' ? 'Sto leggendo il file' : 'Sto lavorando',
-        text: phase || 'Non serve che tu faccia niente: quando ho finito te lo dico qui. Puoi lasciare la pagina aperta.',
+        title: busy === 'upload' ? 'Estoy leyendo el archivo' : 'Estoy trabajando',
+        text: phase || 'No necesitas hacer nada: cuando termine te lo digo aquí. Puedes dejar la página abierta.',
       };
     }
     if (pending) {
       return {
         mood: 'you',
-        did: `Ho aperto ${pending.file.name}: contiene ${pending.sheets.length} fogli.`,
-        title: 'Scegli quali fogli importare',
-        text: 'Qui sotto trovi cosa c’è dentro ciascuno — righe, colonne e le prime intestazioni. Ho già spuntato quelli visibili con dei dati: togli o aggiungi quello che vuoi e conferma.',
+        did: `Abrí ${pending.file.name}: contiene ${pending.sheets.length} hojas.`,
+        title: 'Elige qué hojas importar',
+        text: 'Aquí abajo ves qué hay en cada una: filas, columnas y los primeros encabezados. Ya marqué las visibles que tienen datos: quita o agrega lo que quieras y confirma.',
       };
     }
     if (files.length === 0) {
       return {
         mood: 'you',
-        title: 'Carica il primo file',
-        text: 'Excel o CSV, quanti ne vuoi. Non serve prepararli né rinominare le colonne: li leggo come sono, capisco cosa contengono e te lo faccio vedere prima di importare niente.',
+        title: 'Carga el primer archivo',
+        text: 'Excel o CSV, todos los que quieras. No hace falta prepararlos ni renombrar las columnas: los leo tal como están, entiendo qué contienen y te lo muestro antes de importar nada.',
       };
     }
 
@@ -424,13 +424,13 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
       const one = notReady[0];
       return {
         mood: 'you',
-        did: `Ho letto ${files.length} fogli e capito da solo cosa contengono.`,
+        did: `Leí ${files.length} hojas y entendí por mi cuenta qué contienen.`,
         title: notReady.length === 1
-          ? `Manca una cosa su “${one.sheetName ?? one.filename}”`
-          : `${notReady.length} fogli aspettano una tua scelta`,
+          ? `Falta algo en “${one.sheetName ?? one.filename}”`
+          : `${notReady.length} hojas esperan una decisión tuya`,
         text: one.kind === 'metrics'
-          ? 'Su un foglio di misure servono la colonna della data e almeno una colonna di valori: te le ho già proposte, devi solo confermare. Premi un nome qui sotto e ti ci porto.'
-          : 'Mi serve sapere qual è la colonna del testo. Premi un nome qui sotto e ti ci porto: se il foglio è fatto di numeri e non di contenuti, puoi anche dirmi che è di misure.',
+          ? 'En una hoja de métricas se necesitan la columna de fecha y al menos una columna de valores: ya te las propuse, solo tienes que confirmar. Pulsa un nombre aquí abajo y te llevo.'
+          : 'Necesito saber cuál es la columna del texto. Pulsa un nombre aquí abajo y te llevo: si la hoja tiene números y no contenidos, también puedes decirme que es de métricas.',
         // Qui si risolve, non si viene indirizzati altrove: per ogni foglio
         // che aspetta ci sono le due sole uscite possibili — sistemarlo o
         // toglierlo. Con quaranta fogli, mandare a cercare la scheda giusta
@@ -439,8 +439,8 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
           id: f.id,
           label: f.sheetName ?? f.filename,
           why: f.kind === 'metrics'
-            ? 'manca la data o le colonne di valore'
-            : 'manca la colonna del testo',
+            ? 'falta la fecha o las columnas de valores'
+            : 'falta la columna del texto',
           onFix: () => openSheet(f.id),
           onDrop: () => act(f.id, 'delete'),
         })),
@@ -452,10 +452,10 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
     if (ready.length) {
       return {
         mood: 'you',
-        did: `Ho capito tutti i ${files.length} fogli: colonne assegnate e campi da conservare.`,
-        title: `Sei pronto: importo ${ready.length} ${ready.length === 1 ? 'foglio' : 'fogli'}?`,
-        text: 'Prima di premere puoi aprire un foglio e usare “Verifica il risultato”: ti mostro le prime righe esattamente come verranno salvate, senza scrivere ancora niente in archivio.',
-        action: { label: `Importa ${ready.length} ${ready.length === 1 ? 'foglio' : 'fogli'}`, onClick: importAll },
+        did: `Entendí las ${files.length} hojas: columnas asignadas y campos por conservar.`,
+        title: `Todo listo: ¿importo ${ready.length} ${ready.length === 1 ? 'hoja' : 'hojas'}?`,
+        text: 'Antes de pulsar puedes abrir una hoja y usar “Verificar el resultado”: te muestro las primeras filas exactamente como se guardarán, sin escribir nada todavía en el archivo.',
+        action: { label: `Importar ${ready.length} ${ready.length === 1 ? 'hoja' : 'hojas'}`, onClick: importAll },
       };
     }
 
@@ -472,13 +472,13 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
       const one = drifted[0];
       return {
         mood: 'you',
-        did: `${num(rows)} righe sono in archivio e si possono già graficare.`,
+        did: `${num(rows)} filas están en el archivo y ya se pueden graficar.`,
         title: drifted.length === 1
-          ? `“${one.sheetName ?? one.filename}” è da reimportare`
-          : `${drifted.length} fogli sono da reimportare`,
-        text: `Quando ${drifted.length === 1 ? 'questo foglio è stato importato' : 'questi fogli sono stati importati'} le colonne erano assegnate diversamente, così in archivio ci sono meno righe di quante il file ne contenga (${num(stats.drifted)} in meno). Il file originale è ancora qui: basta reimportarlo, non devi ricaricare niente.`,
+          ? `Hay que reimportar “${one.sheetName ?? one.filename}”`
+          : `Hay que reimportar ${drifted.length} hojas`,
+        text: `Cuando ${drifted.length === 1 ? 'se importó esta hoja' : 'se importaron estas hojas'} las columnas estaban asignadas de otra forma, así que en el archivo hay menos filas de las que contiene el original (${num(stats.drifted)} menos). El archivo original sigue aquí: basta con reimportarlo, no tienes que volver a cargar nada.`,
         action: {
-          label: `Reimporta ${one.sheetName ?? one.filename}`,
+          label: `Reimportar ${one.sheetName ?? one.filename}`,
           onClick: () => act(one.id, 'derive', { kind: one.kind }),
         },
       };
@@ -500,25 +500,25 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
       .map((f) => f.person as string))];
 
     const go = hasContent
-      ? { label: 'Apri il progetto', href: '/listening', hint: `${num(stats.mentions)} contenuti da leggere, filtrare e analizzare` }
-      : { label: 'Vai alle misure', href: '/measures', hint: `${num(stats.points)} punti di serie storica, già in grafico` };
+      ? { label: 'Abrir el proyecto', href: '/listening', hint: `${num(stats.mentions)} contenidos para leer, filtrar y analizar` }
+      : { label: 'Ir a las métricas', href: '/measures', hint: `${num(stats.points)} puntos de serie histórica, ya graficados` };
 
     const links = [
-      ...(hasContent ? [{ label: 'Dashboard', href: '/' }] : []),
-      ...(stats.points > 0 ? [{ label: 'Misure', href: '/measures' }] : []),
-      ...(hasPeople ? [{ label: 'Persone', href: '/people' }] : []),
-      { label: 'Costruisci un grafico', href: '/graph' },
-      { label: 'Costruisci un report', href: '/report' },
+      ...(hasContent ? [{ label: 'Tablero', href: '/' }] : []),
+      ...(stats.points > 0 ? [{ label: 'Métricas', href: '/measures' }] : []),
+      ...(hasPeople ? [{ label: 'Personas', href: '/people' }] : []),
+      { label: 'Construir un gráfico', href: '/graph' },
+      { label: 'Construir un reporte', href: '/report' },
     ];
 
     return {
       mood: 'done',
-      did: `${num(rows)} righe in archivio da ${imported.length} fogli.`
+      did: `${num(rows)} filas en el archivo desde ${imported.length} hojas.`
         + (persone.length
-          ? ` Riconosciut${persone.length === 1 ? 'a' : 'e'} ${persone.length === 1 ? 'una persona' : `${persone.length} persone`} dal nome dei fogli: ${persone.slice(0, 6).join(', ')}${persone.length > 6 ? ` e altre ${persone.length - 6}` : ''}.`
+          ? ` ${persone.length === 1 ? 'Se reconoció una persona' : `Se reconocieron ${persone.length} personas`} por el nombre de las hojas: ${persone.slice(0, 6).join(', ')}${persone.length > 6 ? ` y ${persone.length - 6} más` : ''}.`
           : ''),
-      title: 'Il progetto è pronto',
-      text: 'Qui hai finito: da adesso i dati sono nei grafici, negli insight e nei report come quelli raccolti da Radar stesso. Se prima vuoi essere sicuro che sia andata bene, apri “Cosa ho letto dai tuoi file” qui sotto e usa “Controlla tre righe a campione”.',
+      title: 'El proyecto está listo',
+      text: 'Aquí terminaste: desde ahora los datos están en los gráficos, los insights y los reportes, igual que los que recopila AEDO. Si antes quieres asegurarte de que todo salió bien, abre “Lo que leí de tus archivos” aquí abajo y usa “Verificar tres filas de muestra”.',
       go,
       links,
     };
@@ -536,17 +536,17 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
         <p className="mb-2 flex items-center gap-1.5 text-[11px] text-slate-500">
           <Archive className="size-3.5 shrink-0" />
           <span className="font-medium text-slate-400">Archivista</span>
-          <span className="text-slate-600">— apre i file e cataloga i fogli</span>
+          <span className="text-slate-600">— abre los archivos y cataloga las hojas</span>
         </p>
         <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--border)] bg-white/[0.02] px-6 py-7 text-center hover:border-sky-500/50">
           {busy === 'upload'
             ? <Loader2 className="size-7 animate-spin text-sky-400" />
             : <UploadCloud className="size-7 text-slate-500" />}
           <span className="text-sm text-slate-300">
-            {busy === 'upload' ? 'Lettura, profilazione e proposta in corso…' : 'Aggiungi un file .xlsx o .csv'}
+            {busy === 'upload' ? 'Leyendo, perfilando y proponiendo…' : 'Agrega un archivo .xlsx o .csv'}
           </span>
           <span className="text-[11px] text-slate-600">
-            Puoi caricarne quanti vuoi. I file restano come materiale grezzo: puoi rimappare e reimportare senza ricaricarli.
+            Puedes cargar todos los que quieras. Los archivos quedan como material en bruto: puedes reasignar y reimportar sin volver a cargarlos.
           </span>
           <input type="file" accept=".xlsx,.csv" className="hidden" disabled={!!busy}
             onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = ''; }} />
@@ -566,11 +566,11 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
         // da chi non era presente al caricamento. La risposta sta in alto,
         // anche quando il file è uno solo.
         <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 px-1 text-[11px] text-slate-500">
-          <span className="text-slate-600">{sources.length === 1 ? 'Il progetto viene da:' : 'Il progetto viene da:'}</span>
+          <span className="text-slate-600">{sources.length === 1 ? 'El proyecto viene de:' : 'El proyecto viene de:'}</span>
           {sources.map((s2, i) => (
             <span key={s2.name} className="text-slate-400">
               <span className="text-slate-300">{s2.name}</span>
-              <span className="text-slate-600"> ({s2.files.length === 1 ? '1 foglio' : `${s2.files.length} fogli`})</span>
+              <span className="text-slate-600"> ({s2.files.length === 1 ? '1 hoja' : `${s2.files.length} hojas`})</span>
               {i < sources.length - 1 && <span className="text-slate-700"> ·</span>}
             </span>
           ))}
@@ -582,16 +582,16 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
       {files.length > 0 && (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-1 text-[11px] text-slate-500">
           <LineChart className="size-3.5 shrink-0" />
-          <span className="font-medium text-slate-400">Jr Data Analyst</span>
+          <span className="font-medium text-slate-400">Analista de datos Jr</span>
           <span className="min-w-0 flex-1 text-slate-600">
-            — foglio per foglio: che cos’è ogni colonna. Apri una scheda per correggere quello che ho proposto.
+            — hoja por hoja: qué es cada columna. Abre una ficha para corregir lo que propuse.
           </span>
           {files.length > waiting && (
             <button onClick={() => setShowAll(!showAll)}
               className="shrink-0 rounded-lg border border-[var(--border)] px-2.5 py-1 text-slate-400 transition hover:bg-white/5">
               {showAll
-                ? `nascondi i ${files.length - waiting} fogli a posto`
-                : `${files.length - waiting} fogli sono a posto — mostrali`}
+                ? `ocultar las ${files.length - waiting} hojas listas`
+                : `${files.length - waiting} hojas están listas: mostrarlas`}
             </button>
           )}
         </div>
@@ -635,26 +635,26 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
         <section className={`panel px-5 py-4 ${here.id === 'qualita' ? 'border-sky-500/40 bg-sky-500/[0.04]' : ''}`}>
           <p className="mb-3 flex items-center gap-1.5 text-[11px] text-slate-500">
             <ShieldCheck className="size-3.5 shrink-0" />
-            <span className="font-medium text-slate-400">Controllo qualità</span>
-            <span className="text-slate-600">— quello che c’è in archivio adesso, non quello che il verbale dice di averci scritto</span>
+            <span className="font-medium text-slate-400">Control de calidad</span>
+            <span className="text-slate-600">— lo que hay en el archivo ahora, no lo que el registro dice que se escribió</span>
           </p>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex flex-wrap gap-x-8 gap-y-3">
-              <Stat icon={Layers} label="File" value={num(files.length)}
-                hint={stats.pending ? `${stats.pending} da importare` : 'tutti importati'} />
-              <Stat icon={Table2} label="Righe grezze" value={num(stats.rawRows)} hint="conservate, rimappabili" />
+              <Stat icon={Layers} label="Archivos" value={num(files.length)}
+                hint={stats.pending ? `${stats.pending} por importar` : 'todos importados'} />
+              <Stat icon={Table2} label="Filas en bruto" value={num(stats.rawRows)} hint="conservadas, reasignables" />
               {stats.mentions > 0 && (
-                <Stat icon={Check} label="Contenuti" value={num(stats.mentions)}
-                  hint={stats.withSentiment ? `${num(stats.withSentiment)} con sentiment dal file` : 'righe con un testo, in archivio adesso'}
+                <Stat icon={Check} label="Contenidos" value={num(stats.mentions)}
+                  hint={stats.withSentiment ? `${num(stats.withSentiment)} con sentimiento del archivo` : 'filas con texto, en el archivo ahora'}
                   tone="ok" />
               )}
               {stats.points > 0 && (
-                <Stat icon={LineChart} label="Misure" value={num(stats.points)}
-                  hint="punti di serie storica" tone="ok" />
+                <Stat icon={LineChart} label="Métricas" value={num(stats.points)}
+                  hint="puntos de serie histórica" tone="ok" />
               )}
               {stats.datesFailed > 0 && (
-                <Stat icon={CalendarRange} label="Date illeggibili" value={num(stats.datesFailed)}
-                  hint="finite a oggi: controlla la colonna data" tone="warn" />
+                <Stat icon={CalendarRange} label="Fechas ilegibles" value={num(stats.datesFailed)}
+                  hint="quedaron con fecha de hoy: revisa la columna de fecha" tone="warn" />
               )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -662,14 +662,14 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
                 <button onClick={importAll} disabled={!!busy}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400 disabled:opacity-50">
                   {busy === 'all' ? <Loader2 className="size-3.5 animate-spin" /> : <PlayCircle className="size-3.5" />}
-                  Importa i {stats.ready} pronti
+                  Importar las {stats.ready} listas
                 </button>
               )}
               {stats.exportable && (
                 <div className="flex items-center overflow-hidden rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-xs text-emerald-200">
-                  <span className="px-2.5 py-1.5 text-emerald-300/70">Normalizzato</span>
+                  <span className="px-2.5 py-1.5 text-emerald-300/70">Normalizado</span>
                   <a href={`/api/import/normalized?project=${project.id}&format=xlsx`}
-                    title="Tutti i file, fusi e normalizzati, in un unico foglio Excel"
+                    title="Todos los archivos, fusionados y normalizados, en una sola hoja de Excel"
                     className="inline-flex items-center gap-1 border-l border-emerald-500/30 px-2.5 py-1.5 hover:bg-emerald-500/20">
                     <Download className="size-3.5" /> Excel
                   </a>
@@ -699,13 +699,13 @@ export function ImportWorkspace({ project }: { project: { id: number; name: stri
           <Rocket className="size-4 shrink-0 text-emerald-300" />
           <span className="text-sm font-medium text-slate-200">Analista</span>
           <span className="min-w-0 flex-1 text-[11px] text-slate-600">
-            I contenuti sono in archivio. Posso farli leggere all’AI: sentiment, temi e rilevanza
-            rispetto al tema del progetto, come per le mention raccolte da Radar.
+            Los contenidos están en el archivo. Puedo hacer que la IA los lea: sentimiento, temas y relevancia
+            frente al tema del proyecto, como con las menciones que recopila AEDO.
           </span>
           <button onClick={analyzeNow} disabled={!!busy}
             className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 text-xs text-violet-200 hover:bg-violet-500/20 disabled:opacity-50">
             {busy === 'analyze' ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
-            Analizza i contenuti
+            Analizar los contenidos
           </button>
           {analyzeMsg && <p className="w-full text-xs text-slate-400">{analyzeMsg}</p>}
         </section>
@@ -738,11 +738,11 @@ function FieldTip({ help, column, profiles }: {
           {help}
           {p && (
             <span className="mt-2 block border-t border-[var(--border)] pt-2 text-slate-500">
-              <span className="text-slate-300">{p.name}</span> — tipo {p.kind}, piena al {p.filled}%,
-              {' '}{p.distinct} valori distinti.
+              <span className="text-slate-300">{p.name}</span> — tipo {p.kind}, llena al {p.filled}%,
+              {' '}{p.distinct} valores distintos.
               {p.samples.length > 0 && (
                 <span className="mt-0.5 block truncate text-slate-600">
-                  es: {p.samples.slice(0, 2).join(' ¦ ')}
+                  p. ej.: {p.samples.slice(0, 2).join(' ¦ ')}
                 </span>
               )}
             </span>
@@ -795,10 +795,10 @@ type Next = {
  */
 function NextStep({ n, projectId, role }: { n: Next; projectId: number; role: string }) {
   const tone = n.mood === 'you'
-    ? { ring: 'border-sky-500/50 bg-sky-500/[0.06]', label: 'ORA TOCCA A TE', color: 'text-sky-300', icon: ArrowRight }
+    ? { ring: 'border-sky-500/50 bg-sky-500/[0.06]', label: 'AHORA TE TOCA', color: 'text-sky-300', icon: ArrowRight }
     : n.mood === 'me'
-      ? { ring: 'border-violet-500/40 bg-violet-500/[0.05]', label: 'CI PENSO IO', color: 'text-violet-300', icon: Loader2 }
-      : { ring: 'border-emerald-500/40 bg-emerald-500/[0.05]', label: 'TUTTO FATTO', color: 'text-emerald-300', icon: Check };
+      ? { ring: 'border-violet-500/40 bg-violet-500/[0.05]', label: 'YO ME ENCARGO', color: 'text-violet-300', icon: Loader2 }
+      : { ring: 'border-emerald-500/40 bg-emerald-500/[0.05]', label: 'TODO LISTO', color: 'text-emerald-300', icon: Check };
   const Icon = tone.icon;
 
   return (
@@ -831,16 +831,16 @@ function NextStep({ n, projectId, role }: { n: Next; projectId: number; role: st
               <span className="min-w-0 flex-1 text-[11px] text-slate-600">{f.why}</span>
               <button onClick={f.onFix}
                 className="shrink-0 rounded-lg bg-sky-500/90 px-3 py-1 text-xs font-medium text-slate-950 hover:bg-sky-400">
-                Sistemalo
+                Corregir
               </button>
               <button onClick={f.onDrop}
-                title="Toglie il foglio dal progetto: il file resta, questo foglio no."
+                title="Quita la hoja del proyecto: el archivo se queda, esta hoja no."
                 className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-1 text-xs text-slate-400 hover:border-red-500/40 hover:text-red-300">
-                Scartalo
+                Descartar
               </button>
             </div>
           ))}
-          {n.more ? <p className="px-1 text-[11px] text-slate-600">e altri {n.more}</p> : null}
+          {n.more ? <p className="px-1 text-[11px] text-slate-600">y {n.more} más</p> : null}
         </div>
       )}
 
@@ -915,13 +915,13 @@ function ImportLog({ projectId, files, open, onToggle }: {
       <button onClick={onToggle} className="flex w-full flex-wrap items-center gap-2 text-left">
         {open ? <ChevronDown className="size-4 text-slate-500" /> : <ChevronRight className="size-4 text-slate-500" />}
         <ClipboardCheck className="size-4 text-emerald-400" />
-        <span className="text-sm font-medium text-slate-200">Cosa ho letto dai tuoi file</span>
+        <span className="text-sm font-medium text-slate-200">Lo que leí de tus archivos</span>
         {audit && (
           <span className={`ml-auto rounded-full px-2 py-0.5 text-[10px] ${unexplained
             ? 'bg-red-500/15 text-red-300'
             : ignoredCols ? 'bg-amber-500/15 text-amber-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
-            {unexplained ? `${unexplained} fogli non tornano`
-              : ignoredCols ? `${ignoredCols} colonne non usate` : 'tutto spiegato'}
+            {unexplained ? `${unexplained} hojas no cuadran`
+              : ignoredCols ? `${ignoredCols} columnas sin usar` : 'todo explicado'}
           </span>
         )}
       </button>
@@ -932,32 +932,32 @@ function ImportLog({ projectId, files, open, onToggle }: {
         <p className="mt-1.5 text-xs text-slate-400">
           {unexplained > 0
             ? <><AlertTriangle className="mr-1 inline size-3 text-red-400" />
-              <span className="text-red-300">Qualcosa non torna</span> in {unexplained}
-              {' '}{unexplained === 1 ? 'foglio' : 'fogli'}: apri qui sotto, te lo spiego riga per riga.</>
+              <span className="text-red-300">Algo no cuadra</span> en {unexplained}
+              {' '}{unexplained === 1 ? 'hoja' : 'hojas'}: abre aquí abajo y te lo explico fila por fila.</>
             : ignoredCols > 0
               ? <><Check className="mr-1 inline size-3 text-emerald-400" />
-                Tutte le righe sono a posto, ma <span className="text-amber-300">{ignoredCols} colonne</span> del
-                foglio non le sto usando. Se ti servono, aprile qui sotto e conservale.</>
+                Todas las filas están bien, pero no estoy usando <span className="text-amber-300">{ignoredCols} columnas</span> de
+                la hoja. Si las necesitas, ábrelas aquí abajo y consérvalas.</>
               : <><Check className="mr-1 inline size-3 text-emerald-400" />
-                <span className="text-emerald-300">Tutto quadra.</span> Ogni riga dei tuoi file o è
-                entrata, o so dirti perché no — e puoi verificarlo tu su righe a campione.</>}
+                <span className="text-emerald-300">Todo cuadra.</span> Cada fila de tus archivos o
+                entró, o sé decirte por qué no; y puedes verificarlo tú con filas de muestra.</>}
         </p>
       )}
 
       {open && (
         <div className="mt-3 flex flex-col gap-2.5 border-t border-[var(--border)] pt-3">
-          {loading && <p className="text-xs text-slate-500"><Loader2 className="mr-1 inline size-3 animate-spin" /> Conteggio…</p>}
+          {loading && <p className="text-xs text-slate-500"><Loader2 className="mr-1 inline size-3 animate-spin" /> Contando…</p>}
 
           {audit && done.length > 0 && (
             <p className="text-xs text-slate-400">
-              In tutto ho messo in archivio <span className="text-emerald-300">{num(totalRows)}</span> righe
-              da <span className="text-slate-200">{done.length}</span> fogli.
-              {unexplained === 0 && ' Ogni riga del file o è entrata, o so dirti perché no.'}
+              En total guardé en el archivo <span className="text-emerald-300">{num(totalRows)}</span> filas
+              de <span className="text-slate-200">{done.length}</span> hojas.
+              {unexplained === 0 && ' Cada fila del archivo o entró, o sé decirte por qué no.'}
             </p>
           )}
 
           {audit?.map((a) => <LogEntry key={a.fileId} a={a} projectId={projectId} />)}
-          {audit && audit.length === 0 && <p className="text-xs text-slate-600">Nessun file ancora.</p>}
+          {audit && audit.length === 0 && <p className="text-xs text-slate-600">Aún no hay archivos.</p>}
         </div>
       )}
     </section>
@@ -969,12 +969,12 @@ function LogEntry({ a, projectId }: { a: Audit; projectId: number }) {
   if (a.status !== 'imported') {
     return (
       <p className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-slate-500">
-        <span className="font-medium text-slate-300">{a.label}</span> — non ancora importato.
+        <span className="font-medium text-slate-300">{a.label}</span> — aún no importado.
       </p>
     );
   }
   const skippedText = a.skipped.length
-    ? a.skipped.map((s) => `${num(s.rows)} ${s.reason}`).join(' e ')
+    ? a.skipped.map((s) => `${num(s.rows)} ${s.reason}`).join(' y ')
     : null;
 
   // Su un foglio di misure i campi si chiamano tutti "valore": elencarli uno
@@ -989,7 +989,7 @@ function LogEntry({ a, projectId }: { a: Audit; projectId: number }) {
       }
       return [...by.entries()].map(([field, cols]) => (cols.length === 1
         ? `${field} (${cols[0]})`
-        : `${cols.length} colonne di ${field}`));
+        : `${cols.length} columnas de ${field}`));
     })()
     : [...new Set(a.mapped.map((m) => FIELD_LABEL[m.field] ?? m.field))];
 
@@ -1001,20 +1001,20 @@ function LogEntry({ a, projectId }: { a: Audit; projectId: number }) {
           : <AlertTriangle className="mr-1 inline size-3 text-red-400" />}
         <span className="font-medium">{a.label}</span>
         <span className="text-slate-500">
-          {' '}— ho letto {num(a.rowsInSheet)} righe e ne ho create{' '}
+          {' '}— leí {num(a.rowsInSheet)} filas y creé{' '}
           <span className="text-emerald-300">{num(a.produced)}</span>
-          {' '}{a.kind === 'metrics' ? 'misure' : 'contenuti'}
-          {skippedText ? `. Ho lasciato fuori ${skippedText}` : ''}.
+          {' '}{a.kind === 'metrics' ? 'métricas' : 'contenidos'}
+          {skippedText ? `. Dejé por fuera ${skippedText}` : ''}.
         </span>
       </p>
 
       <p className="mt-1 text-[11px] text-slate-600">
-        {fields.length > 0 && <>Ho riconosciuto: <span className="text-sky-300">{fields.join(', ')}</span>. </>}
-        {a.kept.length > 0 && <>Ho tenuto da parte: <span className="text-violet-300">{[...new Set(a.kept.map((k) => k.label))].join(', ')}</span>. </>}
+        {fields.length > 0 && <>Reconocí: <span className="text-sky-300">{fields.join(', ')}</span>. </>}
+        {a.kept.length > 0 && <>Guardé aparte: <span className="text-violet-300">{[...new Set(a.kept.map((k) => k.label))].join(', ')}</span>. </>}
         {a.ignored.length > 0 && (
-          <>Non ho usato <span className="text-amber-300">{a.ignored.length} colonne</span>
+          <>No usé <span className="text-amber-300">{a.ignored.length} columnas</span>
             {' '}({a.ignored.slice(0, 6).join(', ')}{a.ignored.length > 6 ? '…' : ''}):
-            {' '}se ti servono, aprile qui sopra e aggiungile ai campi conservati.</>
+            {' '}si las necesitas, ábrelas aquí arriba y agrégalas a los campos conservados.</>
         )}
       </p>
 
@@ -1057,19 +1057,19 @@ function SheetChooser({ filename, sheets, busy, onCancel, onConfirm }: {
       <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1">
         <Layers className="size-4 text-sky-400" />
         <p className="text-sm font-medium text-slate-200">
-          {filename} contiene {sheets.length} fogli
+          {filename} contiene {sheets.length} hojas
         </p>
         <p className="text-xs text-slate-500">
-          {withData.length} con dati · scegli quali importare
+          {withData.length} con datos · elige cuáles importar
         </p>
         <div className="ml-auto flex items-center gap-2 text-[11px]">
           <button onClick={() => setPicked(new Set(withData.map((s) => s.name)))}
-            className="text-sky-300 hover:underline">tutti</button>
+            className="text-sky-300 hover:underline">todas</button>
           <span className="text-slate-700">·</span>
           <button onClick={() => setPicked(new Set(withData.filter((s) => !s.hidden).map((s) => s.name)))}
-            className="text-sky-300 hover:underline">solo visibili</button>
+            className="text-sky-300 hover:underline">solo visibles</button>
           <span className="text-slate-700">·</span>
-          <button onClick={() => setPicked(new Set())} className="text-slate-500 hover:underline">nessuno</button>
+          <button onClick={() => setPicked(new Set())} className="text-slate-500 hover:underline">ninguna</button>
         </div>
       </div>
 
@@ -1078,10 +1078,10 @@ function SheetChooser({ filename, sheets, busy, onCancel, onConfirm }: {
           <thead className="sticky top-0 bg-[var(--panel-2)]">
             <tr className="text-left text-[10px] uppercase tracking-wide text-slate-600">
               <th className="w-8 px-3 py-2"></th>
-              <th className="px-2 py-2">Foglio</th>
-              <th className="px-2 py-2 text-right">Righe</th>
-              <th className="px-2 py-2 text-right">Colonne</th>
-              <th className="px-2 py-2">Prime intestazioni</th>
+              <th className="px-2 py-2">Hoja</th>
+              <th className="px-2 py-2 text-right">Filas</th>
+              <th className="px-2 py-2 text-right">Columnas</th>
+              <th className="px-2 py-2">Primeros encabezados</th>
             </tr>
           </thead>
           <tbody>
@@ -1097,9 +1097,9 @@ function SheetChooser({ filename, sheets, busy, onCancel, onConfirm }: {
                   </td>
                   <td className="px-2 py-1.5">
                     <span className="font-medium text-slate-200">{s.name}</span>
-                    {s.hidden && <span className="ml-1.5 rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-slate-500">nascosto</span>}
-                    {s.twoRowHeader && <span className="ml-1.5 rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] text-violet-300">intestazione doppia</span>}
-                    {s.headerRow > 1 && <span className="ml-1.5 text-[10px] text-slate-600">intestazione a riga {s.headerRow}</span>}
+                    {s.hidden && <span className="ml-1.5 rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-slate-500">oculta</span>}
+                    {s.twoRowHeader && <span className="ml-1.5 rounded bg-violet-500/15 px-1.5 py-0.5 text-[10px] text-violet-300">encabezado doble</span>}
+                    {s.headerRow > 1 && <span className="ml-1.5 text-[10px] text-slate-600">encabezado en la fila {s.headerRow}</span>}
                   </td>
                   <td className="px-2 py-1.5 text-right tabular-nums text-slate-400">{empty ? '—' : num(s.rows)}</td>
                   <td className="px-2 py-1.5 text-right tabular-nums text-slate-500">{s.columns}</td>
@@ -1115,18 +1115,18 @@ function SheetChooser({ filename, sheets, busy, onCancel, onConfirm }: {
         <button onClick={() => onConfirm([...picked])} disabled={busy || picked.size === 0}
           className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500/90 px-3.5 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400 disabled:opacity-40">
           {busy ? <Loader2 className="size-3.5 animate-spin" /> : <ArrowRight className="size-3.5" />}
-          Importa {picked.size} {picked.size === 1 ? 'foglio' : 'fogli'}
+          Importar {picked.size} {picked.size === 1 ? 'hoja' : 'hojas'}
         </button>
         <button onClick={onCancel} disabled={busy}
           className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-slate-400 hover:bg-white/5 disabled:opacity-40">
-          Annulla
+          Cancelar
         </button>
         {sheets.length > withData.length && (
           <button onClick={() => setShowEmpty((v) => !v)} className="text-[11px] text-slate-500 hover:text-slate-300">
-            {showEmpty ? 'nascondi' : 'mostra'} i {sheets.length - withData.length} fogli vuoti
+            {showEmpty ? 'ocultar' : 'mostrar'} las {sheets.length - withData.length} hojas vacías
           </button>
         )}
-        {busy && <span className="text-[11px] text-slate-500">Lettura e profilazione di ogni foglio: può richiedere qualche minuto.</span>}
+        {busy && <span className="text-[11px] text-slate-500">Leyendo y perfilando cada hoja: puede tardar unos minutos.</span>}
       </div>
     </section>
   );
@@ -1149,7 +1149,7 @@ function Stat({ icon: Icon, label, value, hint, tone }: {
 
 /** I quattro passi, sempre visibili: si sa dove si è e cosa manca. */
 function Steps({ step, hasContent }: { step: number; hasContent: boolean }) {
-  const items = ['Caricato', hasContent ? 'Assegnato' : 'Da assegnare', 'Verificato', 'Importato'];
+  const items = ['Cargado', hasContent ? 'Asignado' : 'Por asignar', 'Verificado', 'Importado'];
   const done = step >= 3 ? 4 : hasContent ? 2 : 1;
   return (
     <div className="flex items-center gap-1.5 text-[10px]">
@@ -1187,14 +1187,14 @@ function SourceHeader({ src, busy, onRemove, multi }: {
   const kb = src.sizeBytes >= 1_048_576
     ? `${(src.sizeBytes / 1_048_576).toFixed(1)} MB`
     : `${Math.max(1, Math.round(src.sizeBytes / 1024))} KB`;
-  const quando = new Date(src.uploadedAt).toLocaleDateString('it-IT', {
+  const quando = new Date(src.uploadedAt).toLocaleDateString('es-CO', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
   const busyHere = busy === `source-${src.name}`;
 
   const cosa = [
-    src.mentions ? `${num(src.mentions)} contenuti` : null,
-    src.points ? `${num(src.points)} misure` : null,
+    src.mentions ? `${num(src.mentions)} contenidos` : null,
+    src.points ? `${num(src.points)} métricas` : null,
   ].filter(Boolean).join(' · ');
 
   return (
@@ -1205,38 +1205,38 @@ function SourceHeader({ src, busy, onRemove, multi }: {
           {src.name}
         </span>
         <span className="shrink-0 text-[11px] text-slate-500">
-          {src.files.length === 1 ? '1 foglio' : `${src.files.length} fogli`} · {num(src.rawRows)} righe · {kb}
+          {src.files.length === 1 ? '1 hoja' : `${src.files.length} hojas`} · {num(src.rawRows)} filas · {kb}
         </span>
         <button onClick={() => setAsking(true)} disabled={!!busy}
-          title="Togli questo file dal progetto, insieme ai dati che ne derivano"
+          title="Quita este archivo del proyecto, junto con los datos que salen de él"
           className="shrink-0 rounded-lg p-1.5 text-slate-600 transition hover:text-red-400 disabled:opacity-50">
           {busyHere ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
         </button>
       </div>
       <p className="mt-0.5 text-[11px] text-slate-600">
-        Caricato il {quando}
-        {cosa && <> · nel progetto ci sono {cosa} che vengono da qui</>}
-        {src.pending > 0 && <> · {src.pending === 1 ? 'un foglio non è ancora importato' : `${src.pending} fogli non sono ancora importati`}</>}
+        Cargado el {quando}
+        {cosa && <> · en el proyecto hay {cosa} que vienen de aquí</>}
+        {src.pending > 0 && <> · {src.pending === 1 ? 'una hoja aún no se importa' : `${src.pending} hojas aún no se importan`}</>}
       </p>
 
       {asking && (
         <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/[0.05] px-3.5 py-3">
           <p className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-red-300">
-            <AlertTriangle className="size-4 shrink-0" /> Togliere “{src.name}”?
+            <AlertTriangle className="size-4 shrink-0" /> ¿Quitar “{src.name}”?
           </p>
           <p className="mb-2.5 text-xs leading-relaxed text-slate-400">
-            Spariscono {src.files.length === 1 ? 'il foglio' : `i suoi ${src.files.length} fogli`}, il materiale grezzo
-            {cosa ? <> e {cosa} in archivio</> : null}
-            {multi ? ' — gli altri file restano dove sono.' : '.'} Per riaverli va ricaricato il file.
+            Se eliminan {src.files.length === 1 ? 'la hoja' : `sus ${src.files.length} hojas`}, el material en bruto
+            {cosa ? <> y {cosa} del archivo</> : null}
+            {multi ? '; los demás archivos se quedan donde están.' : '.'} Para recuperarlos hay que volver a cargar el archivo.
           </p>
           <div className="flex items-center gap-2">
             <button onClick={() => { setAsking(false); onRemove(); }} disabled={!!busy}
               className="inline-flex items-center gap-1.5 rounded-lg bg-red-500/90 px-3.5 py-1.5 text-xs font-medium text-slate-950 hover:bg-red-400 disabled:opacity-50">
-              <Trash2 className="size-3.5" /> Togli tutto
+              <Trash2 className="size-3.5" /> Quitar todo
             </button>
             <button onClick={() => setAsking(false)}
               className="rounded-lg border border-[var(--border)] px-3.5 py-1.5 text-xs text-slate-300 hover:bg-white/5">
-              Annulla
+              Cancelar
             </button>
           </div>
         </div>
@@ -1272,7 +1272,7 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
         body: JSON.stringify({ projectId, fileId: file.id, mapping: map }),
       });
       const d = await res.json();
-      if (!res.ok) { setPreviewErr(d.error ?? 'Anteprima non riuscita'); setPreview(null); return; }
+      if (!res.ok) { setPreviewErr(d.error ?? 'No se pudo generar la vista previa'); setPreview(null); return; }
       setPreview({ rows: d.rows, report: d.report });
     } catch (e) { setPreviewErr((e as Error).message); }
     finally { setPreviewing(false); }
@@ -1285,23 +1285,23 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
           {expanded ? <ChevronDown className="size-4 shrink-0 text-slate-500" /> : <ChevronRight className="size-4 shrink-0 text-slate-500" />}
           <FileSpreadsheet className="size-4 shrink-0 text-slate-500" />
           <span className="min-w-[7rem] flex-1 truncate text-sm font-medium text-slate-200">{file.sheetName ?? file.filename}</span>
-          <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] ${file.kind === 'metrics' ? 'bg-violet-500/15 text-violet-300' : 'bg-sky-500/15 text-sky-300'}`}>{file.kind === 'metrics' ? 'misure' : 'contenuti'}</span>
+          <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] ${file.kind === 'metrics' ? 'bg-violet-500/15 text-violet-300' : 'bg-sky-500/15 text-sky-300'}`}>{file.kind === 'metrics' ? 'métricas' : 'contenidos'}</span>
           {file.person && (
-            <span title={`Il foglio si chiama come una persona: ogni riga risulta sua. Senza questo, ${file.person} non comparirebbe da nessuna parte.`}
+            <span title={`La hoja se llama como una persona: cada fila se le atribuye. Sin esto, ${file.person} no aparecería en ninguna parte.`}
               className="inline-flex shrink-0 items-center gap-1 rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] text-amber-200">
               <User className="size-3" />{file.person}
             </span>
           )}
           <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${st.cls}`}>{st.label}</span>
           <span className="shrink-0 text-[11px] text-slate-600">
-            {num(file.rowCount)} righe · {file.columns.length} colonne
-            {file.rawPurged && ' · grezzo eliminato'}
+            {num(file.rowCount)} filas · {file.columns.length} columnas
+            {file.rawPurged && ' · bruto eliminado'}
           </span>
         </button>
         <div className="flex shrink-0 items-center gap-1.5">
           {file.status === 'imported' && !file.rawPurged && (
             <a href={`/api/import/normalized?project=${projectId}&file=${file.id}&format=xlsx`}
-              title="Scarica solo questo file, normalizzato"
+              title="Descarga solo este archivo, normalizado"
               className="rounded-lg p-1.5 text-slate-600 hover:text-emerald-300">
               <Download className="size-4" />
             </a>
@@ -1309,15 +1309,15 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
           {!file.rawPurged && (
             <button onClick={() => onAct(file.id, 'derive', { kind: file.kind })} disabled={!!busy || !isReady(file)}
               title={!isReady(file)
-                ? (file.kind === 'metrics' ? 'Scegli prima la data e almeno una colonna di valori' : 'Assegna prima la colonna del testo')
-                : file.status === 'imported' ? 'Rigenera i dati da questo foglio' : 'Deriva i dati'}
+                ? (file.kind === 'metrics' ? 'Primero elige la fecha y al menos una columna de valores' : 'Primero asigna la columna del texto')
+                : file.status === 'imported' ? 'Regenerar los datos de esta hoja' : 'Generar los datos'}
               className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400 disabled:opacity-50">
               {busyHere && busy.startsWith('derive') ? <Loader2 className="size-3.5 animate-spin" /> : <ArrowRight className="size-3.5" />}
-              {file.status === 'imported' ? 'Reimporta' : 'Importa'}
+              {file.status === 'imported' ? 'Reimportar' : 'Importar'}
             </button>
           )}
           <button onClick={() => setConfirmDel(true)} disabled={!!busy}
-            title="Togli questo foglio e i dati che ne derivano"
+            title="Quita esta hoja y los datos que salen de ella"
             className="rounded-lg p-1.5 text-slate-600 hover:text-red-400 disabled:opacity-50">
             <Trash2 className="size-4" />
           </button>
@@ -1329,22 +1329,22 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
         // pagina: va detto quante, prima.
         <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/[0.05] px-3.5 py-3">
           <p className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-red-300">
-            <AlertTriangle className="size-4 shrink-0" /> Togliere il foglio “{file.sheetName ?? file.filename}”?
+            <AlertTriangle className="size-4 shrink-0" /> ¿Quitar la hoja “{file.sheetName ?? file.filename}”?
           </p>
           <p className="mb-2.5 text-xs leading-relaxed text-slate-400">
             {file.inArchive > 0
-              ? <>Spariscono dall’archivio {num(file.inArchive)} {file.kind === 'metrics' ? 'misure' : 'contenuti'} che vengono da questo foglio, insieme alle sue righe grezze.</>
-              : <>Questo foglio non ha ancora dati in archivio: sparisce solo il materiale grezzo.</>}
-            {' '}Per riaverlo va ricaricato il file.
+              ? <>Se eliminan del archivo {num(file.inArchive)} {file.kind === 'metrics' ? 'métricas' : 'contenidos'} que vienen de esta hoja, junto con sus filas en bruto.</>
+              : <>Esta hoja aún no tiene datos en el archivo: solo se elimina el material en bruto.</>}
+            {' '}Para recuperarla hay que volver a cargar el archivo.
           </p>
           <div className="flex items-center gap-2">
             <button onClick={() => { setConfirmDel(false); onAct(file.id, 'delete'); }} disabled={!!busy}
               className="inline-flex items-center gap-1.5 rounded-lg bg-red-500/90 px-3.5 py-1.5 text-xs font-medium text-slate-950 hover:bg-red-400 disabled:opacity-50">
-              <Trash2 className="size-3.5" /> Togli il foglio
+              <Trash2 className="size-3.5" /> Quitar la hoja
             </button>
             <button onClick={() => setConfirmDel(false)}
               className="rounded-lg border border-[var(--border)] px-3.5 py-1.5 text-xs text-slate-300 hover:bg-white/5">
-              Annulla
+              Cancelar
             </button>
           </div>
         </div>
@@ -1354,17 +1354,17 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
 
       {file.report && (
         <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-0.5 text-[11px]">
-          <li className="text-emerald-300">{num(file.report.inserted)} importate</li>
-          {file.report.skippedEmpty > 0 && <li className="text-slate-500">{file.report.skippedEmpty} senza testo</li>}
-          {file.report.duplicates > 0 && <li className="text-slate-500">{file.report.duplicates} duplicati</li>}
+          <li className="text-emerald-300">{num(file.report.inserted)} importadas</li>
+          {file.report.skippedEmpty > 0 && <li className="text-slate-500">{file.report.skippedEmpty} sin texto</li>}
+          {file.report.duplicates > 0 && <li className="text-slate-500">{file.report.duplicates} duplicadas</li>}
           {file.report.datesFailed > 0 && (
             <li className="text-amber-300">
               <AlertTriangle className="mr-1 inline size-3" />
-              {file.report.datesFailed} date illeggibili — quelle righe sono finite a oggi
+              {file.report.datesFailed} fechas ilegibles: esas filas quedaron con la fecha de hoy
             </li>
           )}
           {file.report.sentimentImported > 0 && (
-            <li className="text-emerald-300">{file.report.sentimentImported} con sentiment dal file (nessun costo AI)</li>
+            <li className="text-emerald-300">{file.report.sentimentImported} con sentimiento del archivo (sin costo de IA)</li>
           )}
         </ul>
       )}
@@ -1377,9 +1377,9 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
             ? <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
             : <Check className="mt-0.5 size-3.5 shrink-0" />}
           <span>
-            {file.issues.formulas} celle calcolate con formule: Radar ne ha preso il risultato, non la formula.
-            {file.issues.formulaErrors > 0 && ` ${file.issues.formulaErrors} davano errore (#DIV/0!, #N/D…) e sono state lasciate vuote.`}
-            {file.issues.formulaNoValue > 0 && ` ${file.issues.formulaNoValue} non avevano il valore salvato nel file: riaprilo in Excel e risalvalo per recuperarle.`}
+            {file.issues.formulas} celdas calculadas con fórmulas: AEDO tomó el resultado, no la fórmula.
+            {file.issues.formulaErrors > 0 && ` ${file.issues.formulaErrors} daban error (#DIV/0!, #N/A…) y se dejaron vacías.`}
+            {file.issues.formulaNoValue > 0 && ` ${file.issues.formulaNoValue} no tenían el valor guardado en el archivo: ábrelo en Excel y vuelve a guardarlo para recuperarlas.`}
           </span>
         </p>
       )}
@@ -1395,7 +1395,7 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
           {file.proposal && file.proposal.length > 0 && <ProposalPanel proposal={file.proposal} usedAi={file.usedAi} />}
 
           <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Assegnazione dei campi</p>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Asignación de campos</p>
             <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
               {FIELDS.map((f) => (
                 <label key={f.key} className="flex flex-col gap-1">
@@ -1409,7 +1409,7 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
                     className={`rounded-lg border bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 outline-none ${
                       f.required && !map[f.key] ? 'border-sky-500/50' : 'border-[var(--border)]'
                     }`}>
-                    <option value="">— nessuna —</option>
+                    <option value="">— ninguna —</option>
                     {file.columns.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </label>
@@ -1417,26 +1417,26 @@ function FileCard({ file, busy, projectId, expanded, onToggle, onAct }: {
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button onClick={runPreview} disabled={previewing || !map.content || file.rawPurged}
-                title={!map.content ? 'Serve almeno la colonna del testo' : 'Vedi come diventano le righe, senza scrivere niente'}
+                title={!map.content ? 'Se necesita al menos la columna del texto' : 'Mira cómo quedan las filas, sin escribir nada'}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-sky-500/40 bg-sky-500/10 px-3 py-1.5 text-xs text-sky-200 hover:bg-sky-500/20 disabled:opacity-40">
                 {previewing ? <Loader2 className="size-3.5 animate-spin" /> : <Eye className="size-3.5" />}
-                Verifica il risultato
+                Verificar el resultado
               </button>
               <button onClick={() => onAct(file.id, 'map', { mapping: map })} disabled={!!busy || !dirty}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-40">
                 {busyHere && busy.startsWith('map') ? <Loader2 className="size-3.5 animate-spin" /> : <Check className="size-3.5" />}
-                Salva assegnazione
+                Guardar asignación
               </button>
               {dirty && (
                 <span className="text-[11px] text-amber-300">
-                  Modifiche non salvate — dopo il salvataggio usa &ldquo;Reimporta&rdquo; per rigenerare le mention.
+                  Cambios sin guardar: después de guardar usa &ldquo;Reimportar&rdquo; para regenerar las menciones.
                 </span>
               )}
               {!file.rawPurged && file.status === 'imported' && (
                 <button onClick={() => onAct(file.id, 'purge')} disabled={!!busy}
-                  title="Elimina le righe grezze per liberare spazio: le mention restano, ma il file non sarà più rimappabile"
+                  title="Elimina las filas en bruto para liberar espacio: las menciones se quedan, pero el archivo ya no se podrá reasignar"
                   className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-slate-500 hover:text-slate-300 disabled:opacity-50">
-                  <Archive className="size-3.5" /> Libera spazio grezzo
+                  <Archive className="size-3.5" /> Liberar espacio en bruto
                 </button>
               )}
             </div>
@@ -1466,12 +1466,12 @@ function KindSwitch({ file, busy, onAct }: {
   onAct: (fileId: number, action: string, payload?: Record<string, unknown>) => Promise<void>;
 }) {
   const opts: { k: 'mentions' | 'metrics'; label: string; hint: string }[] = [
-    { k: 'mentions', label: 'Contenuti', hint: 'righe con un testo: post, articoli, commenti' },
-    { k: 'metrics', label: 'Misure', hint: 'serie di numeri nel tempo: follower, impression, medie' },
+    { k: 'mentions', label: 'Contenidos', hint: 'filas con texto: posts, artículos, comentarios' },
+    { k: 'metrics', label: 'Métricas', hint: 'series de números en el tiempo: seguidores, impresiones, promedios' },
   ];
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Questo foglio è</span>
+      <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Esta hoja es de</span>
       {opts.map((o) => (
         <button key={o.k} title={o.hint} disabled={!!busy}
           onClick={() => file.kind !== o.k && onAct(file.id, 'kind', { kind: o.k })}
@@ -1483,7 +1483,7 @@ function KindSwitch({ file, busy, onAct }: {
       ))}
       <span className="text-[11px] text-slate-600">
         {opts.find((o) => o.k === file.kind)?.hint}
-        {file.status === 'imported' && ' · cambiando tipo, quanto già importato da questo foglio viene rifatto'}
+        {file.status === 'imported' && ' · si cambias el tipo, lo que ya se importó de esta hoja se rehace'}
       </span>
     </div>
   );
@@ -1508,27 +1508,27 @@ function MetricEditor({ file, busy, onAct }: {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Come leggere questo foglio</p>
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">Cómo leer esta hoja</p>
       <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-slate-300">Data <span className="text-sky-400">*</span><span className="text-slate-600"> · quando</span></span>
+          <span className="text-xs text-slate-300">Fecha <span className="text-sky-400">*</span><span className="text-slate-600"> · cuándo</span></span>
           <select value={m.date ?? ''} onChange={(e) => setM({ ...m, date: e.target.value })}
             className={`rounded-lg border bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 ${m.date ? 'border-[var(--border)]' : 'border-sky-500/50'}`}>
-            <option value="">— nessuna —</option>
+            <option value="">— ninguna —</option>
             {file.columns.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-slate-300">Entità<span className="text-slate-600"> · chi</span></span>
+          <span className="text-xs text-slate-300">Entidad<span className="text-slate-600"> · quién</span></span>
           <select value={m.entity ?? ''} onChange={(e) => setM({ ...m, entity: e.target.value })}
             className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100">
-            <option value="">— il foglio stesso —</option>
+            <option value="">— la hoja misma —</option>
             {textual.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </label>
         {!m.entity && (
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-slate-300">Nome dell&rsquo;entità<span className="text-slate-600"> · come chiamarla</span></span>
+            <span className="text-xs text-slate-300">Nombre de la entidad<span className="text-slate-600"> · cómo llamarla</span></span>
             <input value={m.entityLabel ?? ''} onChange={(e) => setM({ ...m, entityLabel: e.target.value })}
               placeholder={file.sheetName ?? file.filename}
               className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100" />
@@ -1538,8 +1538,8 @@ function MetricEditor({ file, busy, onAct }: {
 
       <div>
         <p className="mb-1 text-xs text-slate-300">
-          Colonne dei valori <span className="text-sky-400">*</span>
-          <span className="text-slate-600"> · ognuna diventa una serie ({(m.metrics ?? []).length} scelte)</span>
+          Columnas de valores <span className="text-sky-400">*</span>
+          <span className="text-slate-600"> · cada una se vuelve una serie ({(m.metrics ?? []).length} elegidas)</span>
         </p>
         <div className="flex flex-wrap gap-1.5">
           {numeric.map((c) => {
@@ -1551,13 +1551,13 @@ function MetricEditor({ file, busy, onAct }: {
                   : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>{c}</button>
             );
           })}
-          {!numeric.length && <span className="text-[11px] text-slate-600">Nessuna colonna numerica in questo foglio.</span>}
+          {!numeric.length && <span className="text-[11px] text-slate-600">No hay columnas numéricas en esta hoja.</span>}
         </div>
       </div>
 
       <div>
         <p className="mb-1 text-xs text-slate-300">
-          Dimensioni<span className="text-slate-600"> · come tagliare i numeri: canale, pillar, azienda ({(m.dims ?? []).length} scelte)</span>
+          Dimensiones<span className="text-slate-600"> · cómo segmentar los números: canal, pilar, empresa ({(m.dims ?? []).length} elegidas)</span>
         </p>
         <div className="flex flex-wrap gap-1.5">
           {textual.filter((c) => c !== m.entity).map((c) => {
@@ -1575,9 +1575,9 @@ function MetricEditor({ file, busy, onAct }: {
       <div className="flex flex-wrap items-center gap-2">
         <button onClick={() => onAct(file.id, 'map-metrics', { metricMap: m })} disabled={!!busy || !dirty}
           className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-40">
-          <Check className="size-3.5" /> Salva la lettura
+          <Check className="size-3.5" /> Guardar la lectura
         </button>
-        {dirty && <span className="text-[11px] text-amber-300">Modifiche non salvate — poi usa &ldquo;Reimporta&rdquo;.</span>}
+        {dirty && <span className="text-[11px] text-amber-300">Cambios sin guardar: luego usa &ldquo;Reimportar&rdquo;.</span>}
       </div>
     </div>
   );
@@ -1601,10 +1601,10 @@ function ExtrasEditor({ file, busy, onAct }: {
   return (
     <div>
       <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-        Campi conservati <span className="normal-case tracking-normal text-slate-600">— colonne che non sono un campo di Radar, ma che restano</span>
+        Campos conservados <span className="normal-case tracking-normal text-slate-600">— columnas que no son un campo de AEDO, pero que se conservan</span>
       </p>
       {Object.keys(ex).length === 0 && (
-        <p className="mb-2 text-xs text-slate-600">Nessuna: tutte le colonne utili sono già assegnate a un campo.</p>
+        <p className="mb-2 text-xs text-slate-600">Ninguno: todas las columnas útiles ya están asignadas a un campo.</p>
       )}
       <div className="flex flex-col gap-1.5">
         {Object.entries(ex).map(([col, label]) => (
@@ -1614,14 +1614,14 @@ function ExtrasEditor({ file, busy, onAct }: {
             <input value={label} onChange={(e) => setEx({ ...ex, [col]: e.target.value })}
               className="min-w-[10rem] flex-1 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1 text-xs text-slate-100" />
             <button onClick={() => { const n = { ...ex }; delete n[col]; setEx(n); }}
-              title="Non conservare questa colonna"
+              title="No conservar esta columna"
               className="text-slate-600 hover:text-red-300"><Trash2 className="size-3.5" /></button>
           </div>
         ))}
       </div>
       {available.length > 0 && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] text-slate-600">aggiungi:</span>
+          <span className="text-[11px] text-slate-600">agregar:</span>
           {available.slice(0, 14).map((c) => (
             <button key={c} onClick={() => setEx({ ...ex, [c]: c })}
               className="rounded-lg border border-dashed border-[var(--border)] px-2 py-0.5 text-[11px] text-slate-500 hover:text-slate-300">
@@ -1633,7 +1633,7 @@ function ExtrasEditor({ file, busy, onAct }: {
       {dirty && (
         <button onClick={() => onAct(file.id, 'extras', { extras: ex })} disabled={!!busy}
           className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-40">
-          <Check className="size-3.5" /> Salva i campi conservati
+          <Check className="size-3.5" /> Guardar los campos conservados
         </button>
       )}
     </div>
@@ -1647,23 +1647,23 @@ function PreviewTable({ preview }: { preview: { rows: PreviewRow[]; report: Repo
   return (
     <div className="rounded-lg border border-sky-500/25 bg-sky-500/[0.04] px-3 py-2.5">
       <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-sky-300">
-        <Eye className="size-3.5" /> Come diventeranno le righe
+        <Eye className="size-3.5" /> Cómo quedarán las filas
       </p>
       <p className="mb-2 text-xs text-slate-500">
-        {`Prime ${rows.length} righe valide, prodotte dalla stessa funzione che scrive l’import: quello che vedi è quello che verrà salvato.`}
-        {report.skippedEmpty > 0 && <span className="text-slate-400"> · {report.skippedEmpty} righe scartate perché senza testo</span>}
-        {fellBack > 0 && <span className="text-amber-300"> · {fellBack} con data non leggibile, finite a oggi</span>}
+        {`Primeras ${rows.length} filas válidas, generadas por la misma función que escribe la importación: lo que ves es lo que se guardará.`}
+        {report.skippedEmpty > 0 && <span className="text-slate-400"> · {report.skippedEmpty} filas descartadas por no tener texto</span>}
+        {fellBack > 0 && <span className="text-amber-300"> · {fellBack} con fecha ilegible, quedaron con la de hoy</span>}
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="text-left text-[10px] uppercase tracking-wide text-slate-600">
-              <th className="pb-1 pr-3">Data</th>
-              <th className="pb-1 pr-3">Fonte</th>
-              <th className="pb-1 pr-3">Autore</th>
-              <th className="pb-1 pr-3">Testo</th>
+              <th className="pb-1 pr-3">Fecha</th>
+              <th className="pb-1 pr-3">Fuente</th>
+              <th className="pb-1 pr-3">Autor</th>
+              <th className="pb-1 pr-3">Texto</th>
               <th className="pb-1 pr-3">Sent.</th>
-              <th className="pb-1 pr-3 text-right">Reach</th>
+              <th className="pb-1 pr-3 text-right">Alcance</th>
               <th className="pb-1 text-right">Engag.</th>
             </tr>
           </thead>
@@ -1671,7 +1671,7 @@ function PreviewTable({ preview }: { preview: { rows: PreviewRow[]; report: Repo
             {rows.map((r, i) => (
               <tr key={i} className="border-t border-[var(--border)]/40 align-top">
                 <td className={`py-1 pr-3 whitespace-nowrap tabular-nums ${r.dateFellBack ? 'text-amber-400' : 'text-slate-400'}`}>
-                  {new Date(r.publishedAt).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}
+                  {new Date(r.publishedAt).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}
                   {r.dateFellBack && <AlertTriangle className="ml-1 inline size-3" />}
                 </td>
                 <td className="py-1 pr-3 text-slate-400">{r.source}</td>
@@ -1703,30 +1703,30 @@ function ProposalPanel({ proposal, usedAi }: { proposal: Proposal[]; usedAi: boo
   return (
     <div>
       <p className="mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-        <Wand2 className="size-3.5 text-violet-400" /> Cosa ha capito Radar
+        <Wand2 className="size-3.5 text-violet-400" /> Lo que entendió AEDO
       </p>
       <p className="mb-2 text-xs text-slate-600">
-        Letto dai <span className="text-slate-400">valori</span> delle colonne, non dai loro nomi: funziona in qualsiasi lingua. Resta tutto modificabile qui sotto.
+        Leído a partir de los <span className="text-slate-400">valores</span> de las columnas, no de sus nombres: funciona en cualquier idioma. Todo se puede modificar aquí abajo.
         {!usedAi && (
-          <span className="text-amber-400"> · Riconoscimento automatico senza AI (chiave assente, tetto di spesa raggiunto o modello non raggiungibile): controlla le assegnazioni.</span>
+          <span className="text-amber-400"> · Reconocimiento automático sin IA (falta la clave, se alcanzó el tope de gasto o el modelo no responde): revisa las asignaciones.</span>
         )}
       </p>
       <div className="flex flex-col gap-2">
         {sure.length > 0 && (
           <div>
-            <p className="mb-0.5 flex items-center gap-1 text-[11px] font-medium text-emerald-300"><Check className="size-3" /> Riconosciute ({sure.length})</p>
+            <p className="mb-0.5 flex items-center gap-1 text-[11px] font-medium text-emerald-300"><Check className="size-3" /> Reconocidas ({sure.length})</p>
             <ul className="flex flex-col gap-0.5">{sure.map((p) => <Row key={p.column} p={p} />)}</ul>
           </div>
         )}
         {unsure.length > 0 && (
           <div>
-            <p className="mb-0.5 flex items-center gap-1 text-[11px] font-medium text-amber-300"><AlertTriangle className="size-3" /> Da controllare ({unsure.length})</p>
+            <p className="mb-0.5 flex items-center gap-1 text-[11px] font-medium text-amber-300"><AlertTriangle className="size-3" /> Por revisar ({unsure.length})</p>
             <ul className="flex flex-col gap-0.5">{unsure.map((p) => <Row key={p.column} p={p} />)}</ul>
           </div>
         )}
         {ignored.length > 0 && (
           <div>
-            <p className="mb-0.5 flex items-center gap-1 text-[11px] font-medium text-slate-500"><EyeOff className="size-3" /> Non importate ({ignored.length})</p>
+            <p className="mb-0.5 flex items-center gap-1 text-[11px] font-medium text-slate-500"><EyeOff className="size-3" /> No importadas ({ignored.length})</p>
             <p className="text-xs text-slate-600">{ignored.map((p) => p.column).join(' · ')}</p>
           </div>
         )}
@@ -1741,18 +1741,18 @@ function ColumnTable({ profiles, mapping }: { profiles: Profile[]; mapping: Reco
   return (
     <details className="rounded-lg border border-[var(--border)] px-3 py-2">
       <summary className="cursor-pointer list-none text-[11px] font-semibold uppercase tracking-widest text-slate-500 [&::-webkit-details-marker]:hidden">
-        <RefreshCw className="mr-1 inline size-3" /> Colonne del file ({profiles.length})
+        <RefreshCw className="mr-1 inline size-3" /> Columnas del archivo ({profiles.length})
       </summary>
       <div className="mt-2 overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="text-left text-[10px] uppercase tracking-wide text-slate-600">
-              <th className="pb-1 pr-3">Colonna</th>
+              <th className="pb-1 pr-3">Columna</th>
               <th className="pb-1 pr-3">Tipo</th>
-              <th className="pb-1 pr-3 text-right">Piena</th>
-              <th className="pb-1 pr-3 text-right">Distinti</th>
-              <th className="pb-1 pr-3">Esempi</th>
-              <th className="pb-1">Assegnata a</th>
+              <th className="pb-1 pr-3 text-right">Llena</th>
+              <th className="pb-1 pr-3 text-right">Distintos</th>
+              <th className="pb-1 pr-3">Ejemplos</th>
+              <th className="pb-1">Asignada a</th>
             </tr>
           </thead>
           <tbody>

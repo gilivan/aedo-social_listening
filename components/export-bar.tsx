@@ -10,10 +10,10 @@ import { EXPORT_SECTIONS, ALL_SECTION_IDS, SECTION_GROUPS } from '@/lib/export-s
 const ALL_IDS = ALL_SECTION_IDS as string[];
 
 const FORMATS = [
-  { id: 'pdf', label: 'PDF', icon: FileText, color: 'text-red-400', hint: 'Formatted report' },
-  { id: 'xlsx', label: 'Excel', icon: FileSpreadsheet, color: 'text-emerald-400', hint: 'Data in sheets' },
-  { id: 'docx', label: 'Word', icon: FileType2, color: 'text-sky-400', hint: 'Document' },
-  { id: 'pptx', label: 'PowerPoint', icon: Presentation, color: 'text-orange-400', hint: 'Presentation' },
+  { id: 'pdf', label: 'PDF', icon: FileText, color: 'text-red-400', hint: 'Reporte con formato' },
+  { id: 'xlsx', label: 'Excel', icon: FileSpreadsheet, color: 'text-emerald-400', hint: 'Datos en hojas' },
+  { id: 'docx', label: 'Word', icon: FileType2, color: 'text-sky-400', hint: 'Documento' },
+  { id: 'pptx', label: 'PowerPoint', icon: Presentation, color: 'text-orange-400', hint: 'Presentación' },
 ] as const;
 
 type Format = (typeof FORMATS)[number]['id'];
@@ -76,16 +76,16 @@ export function ExportBar() {
       const res = await fetch(`/api/export/${format}?${qs}`);
       if (!res.ok) throw new Error('export failed');
       const blob = await res.blob();
-      const name = res.headers.get('content-disposition')?.match(/filename="([^"]+)"/)?.[1] ?? `radar.${format}`;
+      const name = res.headers.get('content-disposition')?.match(/filename="([^"]+)"/)?.[1] ?? `aedo.${format}`;
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = name; a.click();
       URL.revokeObjectURL(url);
       setOpen(false);
-      setToast(`${format.toUpperCase()} export downloaded.`);
+      setToast(`Exportación ${format.toUpperCase()} descargada.`);
       setTimeout(() => setToast(null), 5000);
     } catch {
-      setToast('Export failed, please retry.');
+      setToast('La exportación falló; inténtalo de nuevo.');
       setTimeout(() => setToast(null), 5000);
     } finally {
       setBusy(false);
@@ -99,7 +99,7 @@ export function ExportBar() {
       <div className="mb-5 flex justify-end">
         <button onClick={() => setOpen(true)}
           className="flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--panel)] px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10">
-          <Download className="size-4 text-sky-400" /> Export
+          <Download className="size-4 text-sky-400" /> Exportar
         </button>
       </div>
 
@@ -110,7 +110,7 @@ export function ExportBar() {
           <div className="relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl border border-[var(--border)] bg-[#0c1226] shadow-2xl sm:max-w-lg sm:rounded-2xl">
             <div className="flex items-center gap-2 border-b border-[var(--border)] px-5 py-3.5">
               <Download className="size-4 text-sky-400" />
-              <h2 className="text-sm font-semibold">Export report</h2>
+              <h2 className="text-sm font-semibold">Exportar reporte</h2>
               <button onClick={() => !busy && setOpen(false)} className="ml-auto rounded-lg p-1 text-slate-500 hover:bg-white/10 hover:text-slate-200">
                 <X className="size-4" />
               </button>
@@ -118,7 +118,7 @@ export function ExportBar() {
 
             <div className="flex-1 overflow-y-auto px-5 py-4">
               {/* Formato */}
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Format</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Formato</p>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {FORMATS.map((f) => {
                   const active = format === f.id;
@@ -135,21 +135,21 @@ export function ExportBar() {
               </div>
 
               {/* Ambito */}
-              <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">What to export</p>
+              <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">Qué exportar</p>
               <div className="grid grid-cols-2 gap-2">
                 {(['complete', 'custom'] as const).map((s) => (
                   <button key={s} onClick={() => { setScope(s); persist({ scope: s }); }}
                     className={`rounded-lg border px-3 py-2 text-sm transition ${
                       scope === s ? 'border-sky-500/60 bg-sky-500/10 text-sky-200' : 'border-[var(--border)] text-slate-400 hover:bg-white/5'
                     }`}>
-                    {s === 'complete' ? 'Full state' : 'Customize'}
+                    {s === 'complete' ? 'Estado completo' : 'Personalizar'}
                   </button>
                 ))}
               </div>
               <p className="mt-1.5 text-[11px] text-slate-600">
                 {scope === 'complete'
-                  ? `Everything the report can hold — all ${ALL_IDS.length} sections${studio.length ? `, plus the ${studio.length} chart${studio.length > 1 ? 's' : ''} you built in Studio Graph` : ''}. Each format renders the ones that suit it (e.g. the raw mentions list goes to PDF/Word/Excel, not the slides).`
-                  : 'Pick exactly what to include. Sections that a format cannot show are skipped automatically.'}
+                  ? `Todo lo que puede incluir el reporte: las ${ALL_IDS.length} secciones${studio.length ? `, más ${studio.length === 1 ? 'el gráfico' : `los ${studio.length} gráficos`} que construiste en Studio Graph` : ''}. Cada formato muestra las que le sirven (p. ej. la lista de menciones va a PDF/Word/Excel, no a las diapositivas).`
+                  : 'Elige exactamente qué incluir. Las secciones que un formato no puede mostrar se omiten automáticamente.'}
               </p>
 
               {/* Checklist sezioni (solo in personalizza) */}
@@ -157,12 +157,12 @@ export function ExportBar() {
                 <div className="mt-3 rounded-lg border border-[var(--border)] p-2">
                   <div className="mb-1 flex items-center justify-between px-1">
                     <span className="text-xs text-slate-500">
-                      {selected.size} sections selected
+                      {selected.size} secciones seleccionadas
                       {studio.length > 0 && ` · ${studio.length - studioOff.size}/${studio.length} Studio Graph`}
                     </span>
                     <div className="flex gap-2 text-xs">
-                      <button onClick={() => { setSelected(new Set(ALL_IDS)); persist({ selected: ALL_IDS }); }} className="text-sky-400 hover:text-sky-300">all</button>
-                      <button onClick={() => { setSelected(new Set()); persist({ selected: [] }); }} className="text-slate-500 hover:text-slate-300">none</button>
+                      <button onClick={() => { setSelected(new Set(ALL_IDS)); persist({ selected: ALL_IDS }); }} className="text-sky-400 hover:text-sky-300">todas</button>
+                      <button onClick={() => { setSelected(new Set()); persist({ selected: [] }); }} className="text-slate-500 hover:text-slate-300">ninguna</button>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
@@ -200,7 +200,7 @@ export function ExportBar() {
                                 next.has(g.id) ? next.delete(g.id) : next.add(g.id);
                                 return next;
                               })}
-                                title="Grafico costruito da te in Studio Graph"
+                                title="Gráfico que construiste en Studio Graph"
                                 className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition ${on ? 'text-slate-200' : 'text-slate-500'} hover:bg-white/5`}>
                                 <span className={`flex size-4 shrink-0 items-center justify-center rounded border ${on ? 'border-violet-500 bg-violet-500 text-slate-950' : 'border-[var(--border)]'}`}>
                                   {on && <Check className="size-3" />}
@@ -217,14 +217,14 @@ export function ExportBar() {
               )}
 
               {/* Periodo */}
-              <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">Data period</p>
+              <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-slate-500">Periodo de datos</p>
               <div className="flex gap-2">
                 {[7, 30, 90].map((d) => (
                   <button key={d} onClick={() => { setDays(d); persist({ days: d }); }}
                     className={`rounded-full px-4 py-1.5 text-sm transition ${
                       days === d ? 'bg-sky-500/20 text-sky-300' : 'bg-white/5 text-slate-400 hover:text-slate-200'
                     }`}>
-                    {d} days
+                    {d} días
                   </button>
                 ))}
               </div>
@@ -236,7 +236,7 @@ export function ExportBar() {
                 disabled={busy || (scope === 'custom' && selected.size === 0 && studioOff.size >= studio.length)}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-sky-400 disabled:opacity-50">
                 {busy ? <Loader2 className="size-4 animate-spin" /> : <activeFormat.icon className="size-4" />}
-                {busy ? 'Generating file…' : `Generate ${activeFormat.label}`}
+                {busy ? 'Generando archivo…' : `Generar ${activeFormat.label}`}
               </button>
             </div>
           </div>

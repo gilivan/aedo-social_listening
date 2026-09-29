@@ -18,19 +18,19 @@ import { NAV_TABS } from '@/lib/nav';
 
 const GROUPS: Record<string, { href: string; label: string; it?: string }[]> = {
   story: [
-    { href: '/narratives', label: 'Narratives' },
-    { href: '/timeline', label: 'Timeline' },
+    { href: '/narratives', label: 'Narrativas' },
+    { href: '/timeline', label: 'Línea de tiempo' },
     { href: '/stakeholders', label: 'Stakeholders' },
-    { href: '/messages', label: 'Message pull-through' },
+    { href: '/messages', label: 'Penetración de mensajes' },
   ],
   data: [
-    { href: '/measures', label: 'Measures' },
-    { href: '/people', label: 'People' },
+    { href: '/measures', label: 'Métricas' },
+    { href: '/people', label: 'Personas' },
   ],
   facts: [
-    { href: '/riscontri', label: 'Cross-checks', it: 'Riscontri' },
-    { href: '/verifiche', label: 'Fact checks', it: 'Verifiche' },
-    { href: '/evidenze', label: 'Clinical trials', it: 'Studi clinici' },
+    { href: '/riscontri', label: 'Contrastes', it: 'Riscontri' },
+    { href: '/verifiche', label: 'Verificación de datos', it: 'Verifiche' },
+    { href: '/evidenze', label: 'Ensayos clínicos', it: 'Studi clinici' },
     { href: '/podcast', label: 'Podcasts', it: 'Podcast' },
   ],
 };

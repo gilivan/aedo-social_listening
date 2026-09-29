@@ -84,45 +84,45 @@ export type StudioResult = {
 // --- Il catalogo -----------------------------------------------------------
 
 const MENTION_DIMENSIONS: Field[] = [
-  { id: 'day', label: 'Giorno', role: 'dimension', hint: 'la data di pubblicazione, giorno per giorno' },
-  { id: 'week', label: 'Settimana', role: 'dimension', hint: 'aggrega per settimana: meno rumore del giorno' },
-  { id: 'month', label: 'Mese', role: 'dimension', hint: 'aggrega per mese: la vista da lontano' },
-  { id: 'hour', label: 'Ora del giorno', role: 'dimension', hint: 'da 0 a 23: quando esce e quando funziona' },
-  { id: 'weekday', label: 'Giorno della settimana', role: 'dimension', hint: 'lunedì…domenica' },
-  { id: 'source', label: 'Fonte', role: 'dimension', hint: 'la piattaforma o la testata' },
-  { id: 'author', label: 'Autore', role: 'dimension' },
-  { id: 'community', label: 'Community', role: 'dimension' },
-  { id: 'language', label: 'Lingua', role: 'dimension' },
-  { id: 'sentiment', label: 'Sentiment', role: 'dimension', hint: 'positivo / neutro / negativo' },
-  { id: 'emotion', label: 'Emozione', role: 'dimension' },
-  { id: 'kind', label: 'Tipo', role: 'dimension', hint: 'articolo o post' },
+  { id: 'day', label: 'Día', role: 'dimension', hint: 'la fecha de publicación, día por día' },
+  { id: 'week', label: 'Semana', role: 'dimension', hint: 'agrupa por semana: menos ruido que por día' },
+  { id: 'month', label: 'Mes', role: 'dimension', hint: 'agrupa por mes: la vista de conjunto' },
+  { id: 'hour', label: 'Hora del día', role: 'dimension', hint: 'de 0 a 23: cuándo se publica y cuándo funciona' },
+  { id: 'weekday', label: 'Día de la semana', role: 'dimension', hint: 'lunes…domingo' },
+  { id: 'source', label: 'Fuente', role: 'dimension', hint: 'la plataforma o el medio' },
+  { id: 'author', label: 'Autor', role: 'dimension' },
+  { id: 'community', label: 'Comunidad', role: 'dimension' },
+  { id: 'language', label: 'Idioma', role: 'dimension' },
+  { id: 'sentiment', label: 'Sentimiento', role: 'dimension', hint: 'positivo / neutro / negativo' },
+  { id: 'emotion', label: 'Emoción', role: 'dimension' },
+  { id: 'kind', label: 'Tipo', role: 'dimension', hint: 'artículo o post' },
   {
-    id: 'country', label: 'Paese', role: 'dimension',
-    hint: 'da dove viene: dichiarato dalla fonte o dedotto dal dominio nazionale del link. La lingua NON è il paese — lo spagnolo si parla a Madrid e a Città del Messico',
+    id: 'country', label: 'País', role: 'dimension',
+    hint: 'de dónde viene: declarado por la fuente o deducido del dominio nacional del enlace. El idioma NO es el país: el español se habla en Madrid y en Ciudad de México',
   },
 ];
 
 const MENTION_MEASURES: Field[] = [
-  { id: 'count', label: 'Numero di contenuti', role: 'measure', hint: 'quante righe: la misura più solida, c’è sempre' },
-  { id: 'engagement_score', label: 'Engagement', role: 'measure', hint: 'like + 2×commenti + 3×condivisioni + viste/200' },
-  { id: 'reach', label: 'Reach', role: 'measure' },
-  { id: 'likes', label: 'Like', role: 'measure' },
-  { id: 'comments', label: 'Commenti', role: 'measure' },
-  { id: 'shares', label: 'Condivisioni', role: 'measure' },
-  { id: 'views', label: 'Visualizzazioni', role: 'measure' },
-  { id: 'sentiment_score', label: 'Punteggio sentiment', role: 'measure', hint: 'da -1 a +1: da mediare, non da sommare' },
+  { id: 'count', label: 'Número de contenidos', role: 'measure', hint: 'cuántas filas: la medida más sólida, siempre está' },
+  { id: 'engagement_score', label: 'Engagement', role: 'measure', hint: 'likes + 2×comentarios + 3×compartidos + vistas/200' },
+  { id: 'reach', label: 'Alcance', role: 'measure' },
+  { id: 'likes', label: 'Likes', role: 'measure' },
+  { id: 'comments', label: 'Comentarios', role: 'measure' },
+  { id: 'shares', label: 'Compartidos', role: 'measure' },
+  { id: 'views', label: 'Visualizaciones', role: 'measure' },
+  { id: 'sentiment_score', label: 'Puntaje de sentimiento', role: 'measure', hint: 'de -1 a +1: se promedia, no se suma' },
 ];
 
 const METRIC_DIMENSIONS: Field[] = [
-  { id: 'day', label: 'Giorno', role: 'dimension' },
-  { id: 'month', label: 'Mese', role: 'dimension' },
-  { id: 'entity', label: 'Entità', role: 'dimension', hint: 'chi: un canale, un manager, un brand' },
-  { id: 'metric', label: 'Metrica', role: 'dimension', hint: 'che cosa: follower, impression, engagement…' },
+  { id: 'day', label: 'Día', role: 'dimension' },
+  { id: 'month', label: 'Mes', role: 'dimension' },
+  { id: 'entity', label: 'Entidad', role: 'dimension', hint: 'quién: un canal, un directivo, una marca' },
+  { id: 'metric', label: 'Métrica', role: 'dimension', hint: 'qué: seguidores, impresiones, engagement…' },
 ];
 
 const METRIC_MEASURES: Field[] = [
-  { id: 'value', label: 'Valore', role: 'measure', hint: 'il numero della misura' },
-  { id: 'count', label: 'Numero di rilevazioni', role: 'measure' },
+  { id: 'value', label: 'Valor', role: 'measure', hint: 'el número de la medición' },
+  { id: 'count', label: 'Número de mediciones', role: 'measure' },
 ];
 
 /**
@@ -140,7 +140,7 @@ export async function studioFields(projectId: number, source: StudioSource): Pro
     `);
     const extra: Field[] = (dims.rows as { k: string }[])
       .filter((r) => r.k)
-      .map((r) => ({ id: `dim:${r.k}`, label: r.k, role: 'dimension' as const, hint: 'dimensione del foglio importato' }));
+      .map((r) => ({ id: `dim:${r.k}`, label: r.k, role: 'dimension' as const, hint: 'dimensión de la hoja importada' }));
     return [...METRIC_DIMENSIONS, ...extra, ...METRIC_MEASURES];
   }
 
@@ -150,7 +150,7 @@ export async function studioFields(projectId: number, source: StudioSource): Pro
   `);
   const extra: Field[] = (custom.rows as { k: string }[])
     .filter((r) => r.k)
-    .map((r) => ({ id: `custom:${r.k}`, label: r.k, role: 'dimension' as const, hint: 'campo conservato dal file importato' }));
+    .map((r) => ({ id: `custom:${r.k}`, label: r.k, role: 'dimension' as const, hint: 'campo conservado del archivo importado' }));
 
   return [...MENTION_DIMENSIONS, ...extra, ...MENTION_MEASURES];
 }
@@ -226,25 +226,25 @@ export function fieldLabel(source: StudioSource, id: string): string {
  */
 export function specWarnings(spec: StudioSpec, result: { series: string[]; rows: unknown[] }): string[] {
   const w: string[] = [];
-  const isRate = /(rate|%|perc|medi|avg|score|punteggio)/i.test(fieldLabel(spec.source, spec.y));
+  const isRate = /(rate|%|perc|medi|avg|score|punteggio|puntaje|tasa)/i.test(fieldLabel(spec.source, spec.y));
 
   if (isRate && spec.yAgg === 'sum') {
-    w.push(`"${fieldLabel(spec.source, spec.y)}" sembra una media o un tasso: sommarlo dà un numero senza significato. Meglio la media.`);
+    w.push(`"${fieldLabel(spec.source, spec.y)}" parece un promedio o una tasa: sumarlo da un número sin sentido. Mejor usa el promedio.`);
   }
   if (spec.chart === 'pie' && result.rows.length > 4) {
-    w.push(`La torta con ${result.rows.length} fette si legge male: confrontare angoli è difficile. Con barre orizzontali si legge a colpo d’occhio.`);
+    w.push(`Una torta con ${result.rows.length} porciones se lee mal: comparar ángulos es difícil. Con barras horizontales se lee de un vistazo.`);
   }
   if ((spec.chart === 'line' || spec.chart === 'area') && !/(day|week|month|hour)/.test(spec.x)) {
-    w.push(`La linea suggerisce una continuità che "${fieldLabel(spec.source, spec.x)}" non ha: fra due categorie non c’è un percorso. Con le barre il confronto è corretto.`);
+    w.push(`La línea sugiere una continuidad que "${fieldLabel(spec.source, spec.x)}" no tiene: entre dos categorías no hay un recorrido. Con barras la comparación es correcta.`);
   }
   if (spec.chart === 'map' && spec.x !== 'country') {
-    w.push(`Una mappa ha bisogno del PAESE sull'asse X: con "${fieldLabel(spec.source, spec.x)}" non c'è niente da colorare. Scegli "Paese", oppure un'altra forma.`);
+    w.push(`Un mapa necesita el PAÍS en el eje X: con "${fieldLabel(spec.source, spec.x)}" no hay nada que colorear. Elige "País" u otra forma.`);
   }
   if (spec.chart === 'map' && /(medi|avg|rate|%)/i.test(fieldLabel(spec.source, spec.y)) && spec.yAgg === 'sum') {
-    w.push('Su una mappa un tasso sommato colora di scuro i paesi con più righe, non quelli messi meglio.');
+    w.push('En un mapa, una tasa sumada oscurece los países con más filas, no los que están mejor.');
   }
   if (result.series.length > 8) {
-    w.push(`${result.series.length} serie: oltre otto i colori non si distinguono più. Le minori vengono raccolte in "Altro".`);
+    w.push(`${result.series.length} series: con más de ocho los colores ya no se distinguen. Las menores se agrupan en "Otros".`);
   }
   return w;
 }
@@ -257,7 +257,7 @@ export async function runStudio(projectId: number, spec: StudioSpec): Promise<St
 
   const x = dimExpr(spec.source, spec.x);
   const y = measureExpr(spec.source, spec.y, spec.yAgg);
-  if (!x || !y) throw new Error('Campi non validi per questa sorgente');
+  if (!x || !y) throw new Error('Campos no válidos para esta fuente');
 
   // Z può essere una seconda dimensione (una serie per colore) oppure una
   // seconda misura (la dimensione della bolla): dipende dal tipo di grafico.

@@ -39,7 +39,7 @@ export function AskChat({ suggestions }: { suggestions: string[] }) {
     <div className="flex flex-col gap-4">
       {turns.length === 0 && (
         <div className="panel px-5 py-5">
-          <p className="mb-3 text-sm text-slate-400">Try asking:</p>
+          <p className="mb-3 text-sm text-slate-400">Prueba a preguntar:</p>
           <div className="flex flex-wrap gap-2">
             {suggestions.map((s) => (
               <button key={s} onClick={() => ask(s)}
@@ -65,7 +65,7 @@ export function AskChat({ suggestions }: { suggestions: string[] }) {
 
       {busy && (
         <div className="panel flex max-w-[92%] items-center gap-2 px-5 py-4 text-sm text-slate-400">
-          <Loader2 className="size-4 animate-spin text-sky-400" /> Analyzing the data…
+          <Loader2 className="size-4 animate-spin text-sky-400" /> Analizando los datos…
         </div>
       )}
       {error && <p className="text-sm text-red-400">Error: {error}</p>}
@@ -78,7 +78,7 @@ export function AskChat({ suggestions }: { suggestions: string[] }) {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a question about the data…"
+          placeholder="Hazle una pregunta a los datos…"
           className="flex-1 bg-transparent px-2 text-sm outline-none placeholder:text-slate-600"
         />
         <button type="submit" disabled={busy || !input.trim()}
@@ -87,7 +87,7 @@ export function AskChat({ suggestions }: { suggestions: string[] }) {
         </button>
       </form>
       <p className="text-center text-[11px] text-slate-600">
-        Each question costs ~1 cent of API. Answers are based on the last 14 days of data.
+        Cada pregunta cuesta ~1 centavo de dólar de API. Las respuestas se basan en los últimos 14 días de datos.
       </p>
     </div>
   );

@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic';
 
 /** Il report appartiene al progetto corrente: nessun id di progetto dal client. */
 async function ctx() {
-  if (!isAdmin(await getCurrentUser())) return { error: 'Solo gli amministratori possono modificare i report' as const };
+  if (!isAdmin(await getCurrentUser())) return { error: 'Solo los administradores pueden modificar los informes' as const };
   const project = await getCurrentProject();
-  if (!project) return { error: 'Nessun progetto selezionato' as const };
+  if (!project) return { error: 'No hay ningún proyecto seleccionado' as const };
   return { project };
 }
 
@@ -33,7 +33,7 @@ export async function PATCH(req: Request) {
   if ('error' in c) return NextResponse.json({ error: c.error }, { status: 400 });
   const body = await req.json().catch(() => ({}));
   const id = Number(body.id);
-  if (!id) return NextResponse.json({ error: 'Report mancante' }, { status: 400 });
+  if (!id) return NextResponse.json({ error: 'Falta el informe' }, { status: 400 });
   await saveReport(id, c.project.id, {
     title: typeof body.title === 'string' ? body.title : undefined,
     days: body.days === undefined ? undefined : Number(body.days),
@@ -46,7 +46,7 @@ export async function DELETE(req: Request) {
   const c = await ctx();
   if ('error' in c) return NextResponse.json({ error: c.error }, { status: 400 });
   const id = Number(new URL(req.url).searchParams.get('id'));
-  if (!id) return NextResponse.json({ error: 'Report mancante' }, { status: 400 });
+  if (!id) return NextResponse.json({ error: 'Falta el informe' }, { status: 400 });
   await deleteReport(id, c.project.id);
   return NextResponse.json({ ok: true });
 }

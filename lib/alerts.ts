@@ -51,7 +51,7 @@ async function buildAlertContext(projectId: number, kind: 'volume' | 'sentiment'
   if (await claudeAvailable()) {
     const text = await callClaude(
       MODELS.haiku, 'alert_explanation',
-      `You are a media analyst. Explain in at most 2 sentences in English what is causing this ${kind === 'volume' ? 'spike in conversations' : 'drop in sentiment'} and why it deserves attention. Be concrete, cite facts from the provided content. Respond only with the 2 sentences.`,
+      `You are a media analyst. Explain in at most 2 sentences in Spanish what is causing this ${kind === 'volume' ? 'spike in conversations' : 'drop in sentiment'} and why it deserves attention. Be concrete, cite facts from the provided content. Respond only with the 2 sentences.`,
       `Topics of the last 24h: ${topics.join(', ') || 'n/a'}\n\nKey content:\n${keyMentions.map((m) => `- [${m.source}] ${m.title}`).join('\n')}`,
       200, true,
     );
@@ -100,7 +100,7 @@ export async function detectAlerts(projectId: number, opts: { aiContext?: boolea
       projectId,
       type: 'volume_spike',
       severity: last24 > 5 * avgDaily ? 'high' : 'medium',
-      message: `Volume spike: ${last24} mentions in the last 24h vs an average of ${avgDaily.toFixed(0)}/day.`,
+      message: `Pico de volumen: ${last24} menciones en las últimas 24 h frente a un promedio de ${avgDaily.toFixed(0)}/día.`,
       data: { last24, avgDaily: Math.round(avgDaily), ...context },
     });
     created++;
@@ -123,7 +123,7 @@ export async function detectAlerts(projectId: number, opts: { aiContext?: boolea
       projectId,
       type: 'sentiment_drop',
       severity: avg24 < avgPrev - 0.4 ? 'high' : 'medium',
-      message: `Sharp sentiment drop: average ${avg24.toFixed(2)} in the last 24h (baseline ${avgPrev.toFixed(2)}).`,
+      message: `Caída fuerte del sentimiento: promedio de ${avg24.toFixed(2)} en las últimas 24 h (línea base ${avgPrev.toFixed(2)}).`,
       data: { avg24, avgPrev, ...context },
     });
     created++;

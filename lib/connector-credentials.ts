@@ -16,81 +16,81 @@ export type CredField = { env: string; label: string; hint?: string; secret: boo
  */
 export const CREDENTIAL_FIELDS: Record<string, CredField[]> = {
   anthropic: [
-    { env: 'ANTHROPIC_API_KEY', label: 'Anthropic API key', hint: 'from console.anthropic.com', secret: true },
+    { env: 'ANTHROPIC_API_KEY', label: 'Clave API de Anthropic', hint: 'desde console.anthropic.com', secret: true },
   ],
   openai: [
-    { env: 'OPENAI_API_KEY', label: 'OpenAI API key', hint: 'from platform.openai.com', secret: true },
+    { env: 'OPENAI_API_KEY', label: 'Clave API de OpenAI', hint: 'desde platform.openai.com', secret: true },
   ],
   grok: [
-    { env: 'XAI_API_KEY', label: 'xAI (Grok) API key', hint: 'from console.x.ai', secret: true },
+    { env: 'XAI_API_KEY', label: 'Clave API de xAI (Grok)', hint: 'desde console.x.ai', secret: true },
   ],
   azure: [
-    { env: 'AZURE_OPENAI_API_KEY', label: 'Azure OpenAI key', hint: 'Azure portal → your Foundry/OpenAI resource → Keys and Endpoint', secret: true },
-    { env: 'AZURE_OPENAI_ENDPOINT', label: 'Resource URL', hint: 'e.g. https://my-resource.openai.azure.com — the model names above are your deployment names', secret: false },
+    { env: 'AZURE_OPENAI_API_KEY', label: 'Clave de Azure OpenAI', hint: 'Portal de Azure → tu recurso Foundry/OpenAI → Claves y punto de conexión', secret: true },
+    { env: 'AZURE_OPENAI_ENDPOINT', label: 'URL del recurso', hint: 'p. ej. https://my-resource.openai.azure.com; los nombres de modelo de arriba son los nombres de tus implementaciones', secret: false },
   ],
   talkwalker: [
-    { env: 'TALKWALKER_ACCESS_TOKEN', label: 'Talkwalker access token', hint: 'read_only token issued by your Talkwalker Customer Success Manager', secret: true },
+    { env: 'TALKWALKER_ACCESS_TOKEN', label: 'Token de acceso de Talkwalker', hint: 'token read_only emitido por tu Customer Success Manager de Talkwalker', secret: true },
   ],
   reddit: [
-    { env: 'REDDIT_CLIENT_ID', label: 'Client ID', hint: 'Reddit app of type "script", the string under the name', secret: true },
-    { env: 'REDDIT_CLIENT_SECRET', label: 'Client Secret', hint: 'the app’s "secret" field', secret: true },
+    { env: 'REDDIT_CLIENT_ID', label: 'Client ID', hint: 'app de Reddit de tipo "script", la cadena debajo del nombre', secret: true },
+    { env: 'REDDIT_CLIENT_SECRET', label: 'Client Secret', hint: 'el campo "secret" de la app', secret: true },
   ],
   youtube: [
-    { env: 'YOUTUBE_API_KEY', label: 'API Key', hint: 'free key from Google Cloud Console (YouTube Data API v3)', secret: true },
+    { env: 'YOUTUBE_API_KEY', label: 'Clave API', hint: 'clave gratuita de Google Cloud Console (YouTube Data API v3)', secret: true },
   ],
   x: [
-    { env: 'X_BEARER_TOKEN', label: 'Bearer Token', hint: 'X API v2, Basic plan', secret: true },
+    { env: 'X_BEARER_TOKEN', label: 'Bearer Token', hint: 'X API v2, plan Basic', secret: true },
   ],
   instagram: [
-    { env: 'META_ACCESS_TOKEN', label: 'Meta Access Token', hint: 'Meta app + Instagram Business account', secret: true },
-    { env: 'INSTAGRAM_USER_ID', label: 'Instagram User ID', secret: false },
+    { env: 'META_ACCESS_TOKEN', label: 'Token de acceso de Meta', hint: 'app de Meta + cuenta de Instagram Business', secret: true },
+    { env: 'INSTAGRAM_USER_ID', label: 'ID de usuario de Instagram', secret: false },
   ],
   facebook: [
-    { env: 'META_ACCESS_TOKEN', label: 'Meta Access Token', hint: 'The same token as the Meta app', secret: true },
-    { env: 'FACEBOOK_PAGE_ID', label: 'Facebook Page ID', hint: 'one or more, comma-separated', secret: false },
+    { env: 'META_ACCESS_TOKEN', label: 'Token de acceso de Meta', hint: 'El mismo token de la app de Meta', secret: true },
+    { env: 'FACEBOOK_PAGE_ID', label: 'ID de página de Facebook', hint: 'uno o más, separados por comas', secret: false },
   ],
   tiktok: [
     { env: 'TIKTOK_CLIENT_KEY', label: 'Client Key', hint: 'TikTok Research API', secret: true },
     { env: 'TIKTOK_CLIENT_SECRET', label: 'Client Secret', secret: true },
   ],
   linkedin: [
-    { env: 'LINKEDIN_ACCESS_TOKEN', label: 'Access Token', hint: 'Community Management API', secret: true },
-    { env: 'LINKEDIN_ORG_ID', label: 'Organization ID', secret: false },
+    { env: 'LINKEDIN_ACCESS_TOKEN', label: 'Token de acceso', hint: 'Community Management API', secret: true },
+    { env: 'LINKEDIN_ORG_ID', label: 'ID de organización', secret: false },
   ],
   linkedin_web: [
-    { env: 'TAVILY_API_KEY', label: 'Tavily API Key', hint: 'free key from app.tavily.com (1,000 searches/month)', secret: true },
+    { env: 'TAVILY_API_KEY', label: 'Clave API de Tavily', hint: 'clave gratuita de app.tavily.com (1.000 búsquedas/mes)', secret: true },
   ],
   newsapi: [
-    { env: 'NEWSAPI_KEY', label: 'API Key', hint: 'newsapi.org', secret: true },
+    { env: 'NEWSAPI_KEY', label: 'Clave API', hint: 'newsapi.org', secret: true },
   ],
   newsdata: [
-    { env: 'NEWSDATA_API_KEY', label: 'API Key', hint: 'free, from newsdata.io/register (200 credits a day, commercial use allowed)', secret: true },
+    { env: 'NEWSDATA_API_KEY', label: 'Clave API', hint: 'gratis, desde newsdata.io/register (200 créditos al día, uso comercial permitido)', secret: true },
   ],
   podcastindex: [
-    { env: 'PODCASTINDEX_API_KEY', label: 'API Key', hint: 'free, from api.podcastindex.org (sent by email)', secret: true },
-    { env: 'PODCASTINDEX_API_SECRET', label: 'API Secret', hint: 'the secret delivered together with the key', secret: true },
+    { env: 'PODCASTINDEX_API_KEY', label: 'Clave API', hint: 'gratis, desde api.podcastindex.org (llega por correo)', secret: true },
+    { env: 'PODCASTINDEX_API_SECRET', label: 'Secreto API', hint: 'el secreto que se entrega junto con la clave', secret: true },
   ],
   mcp: [
-    { env: 'RADAR_MCP_TOKEN', label: 'MCP access token', hint: 'protects /api/mcp — generate one from the MCP page', secret: true },
+    { env: 'RADAR_MCP_TOKEN', label: 'Token de acceso MCP', hint: 'protege /api/mcp; genera uno desde la página MCP', secret: true },
   ],
   factcheck: [
-    { env: 'GOOGLE_FACTCHECK_API_KEY', label: 'API Key', hint: 'Google Cloud key with the "Fact Check Tools API" enabled — the YouTube key works too once that API is enabled in its project', secret: true },
+    { env: 'GOOGLE_FACTCHECK_API_KEY', label: 'Clave API', hint: 'clave de Google Cloud con la "Fact Check Tools API" habilitada; la clave de YouTube también sirve si habilitas esa API en su proyecto', secret: true },
   ],
   googleplaces: [
-    { env: 'GOOGLE_PLACES_API_KEY', label: 'API Key', hint: 'free-tier key from Google Cloud Console (Places API)', secret: true },
+    { env: 'GOOGLE_PLACES_API_KEY', label: 'Clave API', hint: 'clave del nivel gratuito de Google Cloud Console (Places API)', secret: true },
   ],
   discord: [
-    { env: 'DISCORD_BOT_TOKEN', label: 'Bot Token', hint: 'from discord.com/developers — invite the bot to your server first', secret: true },
-    { env: 'DISCORD_CHANNEL_IDS', label: 'Channel IDs', hint: 'one or more, comma-separated (right-click a channel → Copy Channel ID)', secret: false },
+    { env: 'DISCORD_BOT_TOKEN', label: 'Token del bot', hint: 'desde discord.com/developers; primero invita el bot a tu servidor', secret: true },
+    { env: 'DISCORD_CHANNEL_IDS', label: 'IDs de canal', hint: 'uno o más, separados por comas (clic derecho en un canal → Copiar ID del canal)', secret: false },
   ],
   'football-data': [
-    { env: 'FOOTBALL_DATA_API_KEY', label: 'API Key', hint: 'free, from football-data.org/client/register', secret: true },
+    { env: 'FOOTBALL_DATA_API_KEY', label: 'Clave API', hint: 'gratis, desde football-data.org/client/register', secret: true },
   ],
   alphavantage: [
-    { env: 'ALPHA_VANTAGE_API_KEY', label: 'API Key', hint: 'free, from alphavantage.co/support/#api-key (email only, no password)', secret: true },
+    { env: 'ALPHA_VANTAGE_API_KEY', label: 'Clave API', hint: 'gratis, desde alphavantage.co/support/#api-key (solo correo, sin contraseña)', secret: true },
   ],
   yelp: [
-    { env: 'YELP_API_KEY', label: 'API Key', hint: 'free, from fusion.yelp.com/api-keys (a Yelp business account)', secret: true },
+    { env: 'YELP_API_KEY', label: 'Clave API', hint: 'gratis, desde fusion.yelp.com/api-keys (cuenta de empresa de Yelp)', secret: true },
   ],
 };
 

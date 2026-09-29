@@ -50,7 +50,7 @@ function politeParam(): string {
 async function fetchJson<T>(url: string): Promise<{ data: T | null; limited: boolean }> {
   try {
     const res = await fetch(url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'Radar/1.0 (media intelligence)' },
+      headers: { Accept: 'application/json', 'User-Agent': 'AEDO/1.0 (media intelligence)' },
       signal: AbortSignal.timeout(15000),
       cache: 'no-store',
     });
@@ -157,7 +157,7 @@ export async function researchEvidence(
 
   type RawWork = NonNullable<WorksResp['results']>[number];
   const toWork = (w: RawWork): ResearchWork => ({
-    title: (w.title ?? 'untitled').slice(0, 200),
+    title: (w.title ?? 'sin título').slice(0, 200),
     year: w.publication_year,
     citations: w.cited_by_count,
     url: w.doi ? `https://doi.org/${w.doi.replace(/^https?:\/\/doi\.org\//, '')}` : w.id,

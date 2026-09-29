@@ -11,7 +11,7 @@
 // account temporanei/anonimi (campo "temp"/"anon") — non serve altra euristica
 // per capire "chi" ha fatto la modifica.
 
-const UA = 'SocialRadar/1.0 (monitoraggio media; contatto: admin@example.com)';
+const UA = 'AEDO/1.0 (monitoraggio media; contatto: admin@example.com)';
 const API = 'https://en.wikipedia.org/w/api.php';
 
 async function api<T>(params: Record<string, string>): Promise<T> {

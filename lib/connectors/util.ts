@@ -1,4 +1,4 @@
-const UA = 'SocialRadar/1.0 (monitoraggio media; contatto: admin@example.com)';
+const UA = 'AEDO/1.0 (monitoraggio media; contatto: admin@example.com)';
 
 export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -7,12 +7,12 @@ export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> 
     signal: AbortSignal.timeout(15000),
     cache: 'no-store',
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} da ${new URL(url).host}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} de ${new URL(url).host}`);
   const text = await res.text();
   try {
     return JSON.parse(text) as T;
   } catch {
-    throw new Error(`Risposta non JSON da ${new URL(url).host}`);
+    throw new Error(`Respuesta no JSON de ${new URL(url).host}`);
   }
 }
 
@@ -23,7 +23,7 @@ export async function fetchText(url: string, init?: RequestInit): Promise<string
     signal: AbortSignal.timeout(15000),
     cache: 'no-store',
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} da ${new URL(url).host}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status} de ${new URL(url).host}`);
   return res.text();
 }
 

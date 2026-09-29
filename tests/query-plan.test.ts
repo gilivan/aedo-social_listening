@@ -51,7 +51,7 @@ test('la sintassi booleana si può incollare altrove', () => {
 
 test('la query si legge come una frase', () => {
   const q = plan.queries.find((x) => x.id === 'prot')!;
-  assert.equal(describeQuery(plan, q), 'Trova quello che parla di Protesta e Ferrari, lasciando fuori Omonimi.');
+  assert.equal(describeQuery(plan, q), 'Encuentra lo que habla de Protesta y Ferrari, dejando fuera Omonimi.');
 });
 
 test('la validazione scarta quello che non regge e lo dice', () => {
@@ -94,7 +94,7 @@ test('non più di otto query attive', () => {
     queries: Array.from({ length: 10 }, (_, i) => ({ name: `Q${i}`, all: [`c${i}`] })),
   });
   assert.equal(p.queries.filter((q) => q.enabled).length, 8);
-  assert.ok(warnings.some((w) => w.includes('spenta')));
+  assert.ok(warnings.some((w) => w.includes('desactivó')));
 });
 
 test('la vecchia query diventa un piano senza perdere niente', () => {

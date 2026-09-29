@@ -8,27 +8,27 @@ import { SOURCE_META } from '@/lib/connectors';
 import { TrendingUp, TrendingDown, Bell, ExternalLink, Lightbulb } from 'lucide-react';
 
 const TYPE_META: Record<string, { label: string; icon: typeof Bell }> = {
-  volume_spike: { label: 'Volume spike', icon: TrendingUp },
-  sentiment_drop: { label: 'Sentiment drop', icon: TrendingDown },
+  volume_spike: { label: 'Pico de volumen', icon: TrendingUp },
+  sentiment_drop: { label: 'Caída de sentimiento', icon: TrendingDown },
 };
 
-export const metadata = { title: 'Alerts' };
+export const metadata = { title: 'Alertas' };
 
 export default async function AlertsPage() {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const rows = await getRecentAlerts(project.id);
   const aiOn = await claudeAvailable();
 
   return (
     <>
       <PageHeader
-        title={t('page.alerts.title', 'Alerts')}
-        subtitle="On every update, Radar checks whether the volume or tone of conversations departs from the week's norm. When an alert fires, here you find what caused it: the explanation, topics, sources and key news."
+        title={t('page.alerts.title', 'Alertas')}
+        subtitle="En cada actualización, AEDO revisa si el volumen o el tono de las conversaciones se aleja de lo normal en la semana. Cuando se dispara una alerta, aquí encuentras qué la causó: la explicación, los temas, las fuentes y las noticias clave."
       />
       {rows.length === 0 ? (
-        <EmptyState message={t('alerts.none', 'No alerts. The check runs on every data update.')} />
+        <EmptyState message={t('alerts.none', 'No hay alertas. La revisión se ejecuta en cada actualización de datos.')} />
       ) : (
         <div className="flex flex-col gap-3">
           {rows.map((a) => {
@@ -46,7 +46,7 @@ export default async function AlertsPage() {
                     <p className="text-sm font-semibold">
                       {meta.label}
                       <span className={`ml-2 rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wide ${high ? 'bg-red-500/15 text-red-400' : 'bg-amber-500/15 text-amber-400'}`}>
-                        severity {a.severity}
+                        severidad {a.severity === 'high' ? 'alta' : a.severity === 'medium' ? 'media' : a.severity === 'low' ? 'baja' : a.severity}
                       </span>
                       <span className="ml-2 text-xs font-normal text-slate-600">{fmtDate(a.createdAt)}</span>
                     </p>
@@ -65,7 +65,7 @@ export default async function AlertsPage() {
                       <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
                         {d.topics && d.topics.length > 0 && (
                           <span className="flex flex-wrap items-center gap-1.5">
-                            <span className="text-slate-600">Topics:</span>
+                            <span className="text-slate-600">Temas:</span>
                             {d.topics.map((t) => (
                               <span key={t} className="rounded-full bg-sky-500/10 px-2 py-0.5 text-sky-300">{t}</span>
                             ))}
@@ -73,7 +73,7 @@ export default async function AlertsPage() {
                         )}
                         {d.bySource && d.bySource.length > 0 && (
                           <span className="text-slate-500">
-                            <span className="text-slate-600">Sources: </span>
+                            <span className="text-slate-600">Fuentes: </span>
                             {d.bySource.map((s) => `${SOURCE_META[s.source]?.label ?? s.source} ${s.n}`).join(' · ')}
                           </span>
                         )}
@@ -83,7 +83,7 @@ export default async function AlertsPage() {
                     {/* Le news/contenuti che hanno pesato di più */}
                     {d.keyMentions && d.keyMentions.length > 0 && (
                       <div className="mt-2.5 flex flex-col gap-1.5">
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">Key content</p>
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">Contenido clave</p>
                         {d.keyMentions.map((m, i) => (
                           <div key={i} className="flex items-center gap-2 text-xs">
                             <SourceBadge source={m.source} />

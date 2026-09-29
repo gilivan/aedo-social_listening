@@ -75,8 +75,8 @@ export async function getReport(id: number, projectId: number): Promise<CustomRe
 export async function createReport(projectId: number, title: string, days = 30): Promise<number> {
   const db = await getDb();
   const [r] = await db.insert(customReports).values({
-    projectId, title: title.trim() || 'Report senza titolo', days,
-    pages: [{ title: 'Pagina 1', blocks: [] }],
+    projectId, title: title.trim() || 'Reporte sin título', days,
+    pages: [{ title: 'Página 1', blocks: [] }],
   }).returning({ id: customReports.id });
   return r.id;
 }
@@ -86,7 +86,7 @@ export async function saveReport(
 ): Promise<void> {
   const db = await getDb();
   await db.update(customReports).set({
-    ...(patch.title !== undefined ? { title: patch.title.trim() || 'Report senza titolo' } : {}),
+    ...(patch.title !== undefined ? { title: patch.title.trim() || 'Reporte sin título' } : {}),
     ...(patch.days !== undefined ? { days: Math.min(90, Math.max(1, patch.days)) } : {}),
     ...(patch.pages !== undefined ? { pages: sanitizePages(patch.pages) } : {}),
     updatedAt: new Date(),

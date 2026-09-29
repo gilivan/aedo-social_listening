@@ -6,20 +6,20 @@ import { getT } from '@/lib/i18n';
 import { TimelineView } from '@/components/timeline-view';
 import { SectionTabs } from '@/components/section-tabs';
 
-export const metadata = { title: 'Timeline' };
+export const metadata = { title: 'Línea de tiempo' };
 
 export default async function TimelinePage() {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const events = await getTimeline(project.id);
 
   return (
     <>
       <SectionTabs group="story" />
       <PageHeader
-        title={t('page.timeline.title', 'Timeline')}
-        subtitle={t('page.timeline.subtitle', 'The historical memory of your monitoring: salient events, extracted daily by AI. It grows on its own over time.')}
+        title={t('page.timeline.title', 'Línea de tiempo')}
+        subtitle={t('page.timeline.subtitle', 'La memoria histórica de tu monitoreo: eventos destacados, extraídos a diario por IA. Crece sola con el tiempo.')}
       />
       <TimelineView
         events={events.map((e) => ({

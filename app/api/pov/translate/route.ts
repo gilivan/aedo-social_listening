@@ -15,16 +15,16 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
 
   const body = await req.json().catch(() => ({}));
   const locale: ContentLocale = body?.locale === 'it' ? 'it' : 'en';
 
   const { pov, reason } = await translatePointOfView(project.id, 90, locale);
   if (!pov) {
-    const msg = reason === 'not_built' ? 'no point of view to translate yet — build it first'
-      : reason === 'no_ai' ? 'AI key missing or spend cap reached'
-        : 'translation took too long or failed — try again';
+    const msg = reason === 'not_built' ? 'todavía no hay un punto de vista para traducir — primero créalo'
+      : reason === 'no_ai' ? 'falta la clave de IA o se alcanzó el tope de gasto'
+        : 'la traducción tardó demasiado o falló — inténtalo de nuevo';
     return NextResponse.json({ error: msg }, { status: 400 });
   }
   return NextResponse.json({ pov });

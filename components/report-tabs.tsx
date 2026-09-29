@@ -8,8 +8,8 @@ import { LayoutList, CalendarClock } from 'lucide-react';
 // componi tu, l'altro esce da solo a una cadenza. Separarli in due voci
 // avrebbe suggerito che siano due strumenti diversi, e non lo sono.
 const TABS = [
-  { href: '/report', label: 'Composto da te', icon: LayoutList },
-  { href: '/report/periodic', label: 'Periodico', icon: CalendarClock },
+  { href: '/report', label: 'Hecho por ti', icon: LayoutList },
+  { href: '/report/periodic', label: 'Periódico', icon: CalendarClock },
 ];
 
 export function ReportTabs() {

@@ -127,10 +127,10 @@ async function searchClaims(query: string, key: string, languageCode?: string): 
     // nel testo: l'API spenta nel progetto, o la chiave limitata ad altre API
     // (il caso della chiave YouTube riusata, verificato dal vivo).
     throw new Error(/not been used|disabled/i.test(body)
-      ? 'Fact Check Tools API non abilitata nel progetto Google di questa chiave: abilitala in Google Cloud → API e servizi'
+      ? 'Fact Check Tools API no habilitada en el proyecto de Google de esta clave: habilítala en Google Cloud → APIs y servicios'
       : /blocked/i.test(body)
-        ? 'La chiave Google è limitata ad altre API: aggiungi "Fact Check Tools API" alle sue restrizioni, o usa una chiave dedicata'
-        : 'Fact Check: chiave rifiutata (403)');
+        ? 'La clave de Google está limitada a otras APIs: agrega "Fact Check Tools API" a sus restricciones o usa una clave dedicada'
+        : 'Fact Check: clave rechazada (403)');
   }
   if (!res.ok) throw new Error(`Fact Check: HTTP ${res.status}`);
   const data = await res.json() as { claims?: ApiClaim[] };
@@ -205,7 +205,7 @@ export async function ingestFactChecks(projectId: number): Promise<{ tried: numb
     } catch (e) {
       lastError = e as Error;
       // Una chiave rifiutata non migliora alla chiamata dopo.
-      if (/403|abilitata/.test(lastError.message)) break;
+      if (/403|habilitada/.test(lastError.message)) break;
     }
   }
   // L'esito si salva: una chiave rifiutata altrimenti produce una pagina

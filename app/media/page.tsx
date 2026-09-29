@@ -7,12 +7,12 @@ import { ExternalLink } from 'lucide-react';
 import { TranslateBar } from '@/components/translate-bar';
 import { translateMentions, TRANSLATE_LANGS, type Translated } from '@/lib/translate';
 
-export const metadata = { title: 'Media' };
+export const metadata = { title: 'Medios' };
 
 export default async function MediaPage() {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const data = await mediaData(project.id);
 
   const readLang = (await cookies()).get('sr_translate')?.value ?? null;
@@ -22,7 +22,7 @@ export default async function MediaPage() {
 
   return (
     <>
-      <PageHeader title={t('page.media.title2', 'Media Monitoring')} subtitle={t('page.media.subtitle', 'News and press from the last 7 days, grouped by story')} />
+      <PageHeader title={t('page.media.title2', 'Monitoreo de medios')} subtitle={t('page.media.subtitle', 'Noticias y prensa de los últimos 7 días, agrupadas por historia')} />
       <div className="mb-4 flex items-center gap-2 text-xs">
         <TranslateBar current={readLang} langs={TRANSLATE_LANGS} />
       </div>
@@ -31,7 +31,7 @@ export default async function MediaPage() {
         <div className="flex flex-col gap-4 lg:col-span-2">
           {data.stories.length > 0 && (
             <section>
-              <h2 className="mb-2 text-sm font-semibold text-slate-300">Top stories</h2>
+              <h2 className="mb-2 text-sm font-semibold text-slate-300">Historias principales</h2>
               <div className="flex flex-col gap-3">
                 {data.stories.map((story) => {
                   const items = data.storyMentions.filter((m) => m.storyId === story.id);
@@ -54,7 +54,7 @@ export default async function MediaPage() {
                           </li>
                         ))}
                       </ul>
-                      <p className="mt-2 text-[11px] text-slate-600">{items.length} articles</p>
+                      <p className="mt-2 text-[11px] text-slate-600">{items.length} artículos</p>
                     </article>
                   );
                 })}
@@ -63,21 +63,21 @@ export default async function MediaPage() {
           )}
 
           <section>
-            <h2 className="mb-2 text-sm font-semibold text-slate-300">All news</h2>
+            <h2 className="mb-2 text-sm font-semibold text-slate-300">Todas las noticias</h2>
             <div className="flex flex-col gap-2">
               {data.news.length
                 ? data.news.map((m) => <MentionCard key={m.id} m={m} translated={translations.get(m.id)} />)
-                : <EmptyState message="No news collected in the last 7 days." />}
+                : <EmptyState message="No se recopilaron noticias en los últimos 7 días." />}
             </div>
           </section>
         </div>
 
         <aside>
           <section className="panel sticky top-6 px-5 py-4">
-            <h2 className="mb-3 text-sm font-semibold text-slate-300">Most active outlets</h2>
+            <h2 className="mb-3 text-sm font-semibold text-slate-300">Medios más activos</h2>
             {data.topOutlets.length
               ? <HBars items={data.topOutlets.map((o) => ({ label: o.community ?? '?', value: Number(o.n) }))} color="#f59e0b" />
-              : <p className="text-sm text-slate-500">No data.</p>}
+              : <p className="text-sm text-slate-500">Sin datos.</p>}
           </section>
         </aside>
       </div>

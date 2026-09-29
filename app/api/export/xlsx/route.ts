@@ -33,7 +33,7 @@ const NUM_FMT: Record<KpiUnit, string> = {
 
 export async function GET(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
   const url = new URL(req.url);
   const { sections, days } = parseExportOptions(url);
   const has = (s: string) => sections.has(s as never);
@@ -43,7 +43,7 @@ export async function GET(req: Request) {
   ]);
 
   const wb = new ExcelJS.Workbook();
-  wb.creator = 'Radar By Scognamiglio 2026';
+  wb.creator = 'AEDO';
   wb.created = new Date();
   // Marcatura leggibile da una macchina (AI Act art. 50, par. 2).
   wb.subject = AI_DISCLOSURE_META.subject;
@@ -52,21 +52,21 @@ export async function GET(req: Request) {
 
   // 1. Mention
   if (has('mentions')) {
-  const wsM = sheet(wb, 'Mentions', [
-    { header: 'Date', key: 'data', width: 17 },
-    { header: 'Source', key: 'fonte', width: 13 },
-    { header: 'Title', key: 'titolo', width: 45 },
-    { header: 'Text', key: 'testo', width: 60 },
-    { header: 'Author', key: 'autore', width: 20 },
-    { header: 'Community', key: 'community', width: 20 },
-    { header: 'Language', key: 'lingua', width: 8 },
-    { header: 'Sentiment', key: 'sentiment', width: 11 },
-    { header: 'Score', key: 'score', width: 8 },
-    { header: 'Like', key: 'like', width: 8 },
-    { header: 'Comments', key: 'commenti', width: 10 },
-    { header: 'Shares', key: 'condivisioni', width: 12 },
+  const wsM = sheet(wb, 'Menciones', [
+    { header: 'Fecha', key: 'data', width: 17 },
+    { header: 'Fuente', key: 'fonte', width: 13 },
+    { header: 'Título', key: 'titolo', width: 45 },
+    { header: 'Texto', key: 'testo', width: 60 },
+    { header: 'Autor', key: 'autore', width: 20 },
+    { header: 'Comunidad', key: 'community', width: 20 },
+    { header: 'Idioma', key: 'lingua', width: 8 },
+    { header: 'Sentimiento', key: 'sentiment', width: 11 },
+    { header: 'Puntaje', key: 'score', width: 8 },
+    { header: 'Me gusta', key: 'like', width: 8 },
+    { header: 'Comentarios', key: 'commenti', width: 10 },
+    { header: 'Compartidos', key: 'condivisioni', width: 12 },
     { header: 'Engagement', key: 'engagement', width: 12 },
-    { header: 'Topics', key: 'temi', width: 30 },
+    { header: 'Temas', key: 'temi', width: 30 },
     { header: 'URL', key: 'url', width: 45 },
   ]);
   for (const m of data.allMentions) {
@@ -74,7 +74,7 @@ export async function GET(req: Request) {
       data: m.publishedAt, fonte: sourceLabel(m.source), titolo: m.title ?? '',
       testo: m.content.slice(0, 500), autore: m.authorHandle ?? m.author ?? '',
       community: m.community ?? '', lingua: m.language ?? '',
-      sentiment: m.sentiment ?? 'awaiting', score: m.sentimentScore,
+      sentiment: m.sentiment ?? 'pendiente', score: m.sentimentScore,
       like: m.engagement?.likes, commenti: m.engagement?.comments,
       condivisioni: m.engagement?.shares, engagement: Math.round(m.engagementScore),
       temi: (m.topics ?? []).join(', '), url: m.url ?? '',
@@ -84,10 +84,10 @@ export async function GET(req: Request) {
 
   // 2. Volume giornaliero per fonte
   if (has('volume')) {
-  const wsV = sheet(wb, 'Daily volume', [
-    { header: 'Day', key: 'g', width: 12 },
-    { header: 'Source', key: 'f', width: 15 },
-    { header: 'Mentions', key: 'n', width: 10 },
+  const wsV = sheet(wb, 'Volumen diario', [
+    { header: 'Día', key: 'g', width: 12 },
+    { header: 'Fuente', key: 'f', width: 15 },
+    { header: 'Menciones', key: 'n', width: 10 },
   ]);
   for (const r of data.dashboard.volumeByDay) {
     wsV.addRow({ g: r.day, f: sourceLabel(r.source), n: Number(r.n) });
@@ -96,9 +96,9 @@ export async function GET(req: Request) {
 
   // 3. Sentiment
   if (has('sentiment')) {
-  const wsS = sheet(wb, 'Sentiment', [
-    { header: 'Sentiment', key: 's', width: 14 },
-    { header: 'Mentions (7 days)', key: 'n', width: 18 },
+  const wsS = sheet(wb, 'Sentimiento', [
+    { header: 'Sentimiento', key: 's', width: 14 },
+    { header: 'Menciones (7 días)', key: 'n', width: 18 },
   ]);
   for (const r of data.dashboard.sentimentDist) wsS.addRow({ s: r.sentiment, n: r.n });
   }
@@ -109,27 +109,27 @@ export async function GET(req: Request) {
     const k = data.standard;
     const it = k.lang === 'it';
     const verdicts = new Map(data.reliability.verdicts.map((v) => [v.id, v]));
-    const wsK = sheet(wb, 'Standard KPIs', [
+    const wsK = sheet(wb, 'KPI estándar', [
       { header: 'KPI', key: 'k', width: 34 },
-      { header: it ? 'Valore' : 'Value', key: 'v', width: 14 },
-      { header: it ? 'Periodo prec.' : 'Previous', key: 'p', width: 14 },
+      { header: it ? 'Valore' : 'Valor', key: 'v', width: 14 },
+      { header: it ? 'Periodo prec.' : 'Periodo ant.', key: 'p', width: 14 },
       { header: 'Δ', key: 'd', width: 12 },
-      { header: it ? 'Δ% (Δ in punti per le percentuali)' : 'Δ% (Δ in points for percentages)', key: 'dp', width: 16 },
-      { header: it ? 'Tipo' : 'Type', key: 't', width: 12 },
-      { header: it ? 'Base (menzioni)' : 'Base (mentions)', key: 'b', width: 14 },
-      { header: it ? 'Affidabilità' : 'Reliability', key: 'r', width: 40 },
-      { header: 'Formula', key: 'f', width: 60 },
-      { header: it ? 'Note' : 'Notes', key: 'n', width: 60 },
+      { header: it ? 'Δ% (Δ in punti per le percentuali)' : 'Δ% (Δ en puntos para porcentajes)', key: 'dp', width: 16 },
+      { header: it ? 'Tipo' : 'Tipo', key: 't', width: 12 },
+      { header: it ? 'Base (menzioni)' : 'Base (menciones)', key: 'b', width: 14 },
+      { header: it ? 'Affidabilità' : 'Fiabilidad', key: 'r', width: 40 },
+      { header: 'Fórmula', key: 'f', width: 60 },
+      { header: it ? 'Note' : 'Notas', key: 'n', width: 60 },
     ]);
     for (const x of k.kpis) {
       const v = verdicts.get(x.id);
       const row = wsK.addRow({
         k: x.label,
-        v: x.value ?? (it ? 'n.d.' : 'n/a'),
-        p: x.previous ?? (it ? 'n.d.' : 'n/a'),
+        v: x.value ?? (it ? 'n.d.' : 'N/D'),
+        p: x.previous ?? (it ? 'n.d.' : 'N/D'),
         d: x.delta ?? '',
         dp: x.deltaPct === null ? '' : x.deltaPct / 100,
-        t: x.kind === 'absolute' ? (it ? 'assoluto' : 'absolute') : (it ? 'calcolato' : 'calculated'),
+        t: x.kind === 'absolute' ? (it ? 'assoluto' : 'absoluto') : (it ? 'calcolato' : 'calculado'),
         b: x.base,
         r: v ? verdictLabel(v.verdict, k.lang) + (v.verdict !== 'reliable' ? ` — ${v.reason}` : '') : '',
         f: x.formula ?? '', n: x.note ?? '',
@@ -142,21 +142,21 @@ export async function GET(req: Request) {
     for (const n of k.notes) wsK.addRow({ k: n });
 
     if (k.channels.length) {
-      const wsCh = sheet(wb, 'KPIs by channel', [
-        { header: it ? 'Canale' : 'Channel', key: 'c', width: 18 },
-        { header: it ? 'Menzioni' : 'Mentions', key: 'm', width: 11 },
-        { header: it ? 'Menzioni periodo prec.' : 'Previous mentions', key: 'pm', width: 14 },
-        { header: it ? '% sul totale' : '% of total', key: 's', width: 11 },
-        { header: it ? 'Reach potenziale' : 'Potential reach', key: 'r', width: 14 },
+      const wsCh = sheet(wb, 'KPI por canal', [
+        { header: it ? 'Canale' : 'Canal', key: 'c', width: 18 },
+        { header: it ? 'Menzioni' : 'Menciones', key: 'm', width: 11 },
+        { header: it ? 'Menzioni periodo prec.' : 'Menciones periodo ant.', key: 'pm', width: 14 },
+        { header: it ? '% sul totale' : '% del total', key: 's', width: 11 },
+        { header: it ? 'Reach potenziale' : 'Alcance potencial', key: 'r', width: 14 },
         { header: 'Engagement', key: 'e', width: 12 },
-        { header: it ? 'Eng. medio' : 'Avg eng.', key: 'em', width: 11 },
-        { header: 'ER reach %', key: 'er', width: 11 },
+        { header: it ? 'Eng. medio' : 'Eng. prom.', key: 'em', width: 11 },
+        { header: 'ER alcance %', key: 'er', width: 11 },
         { header: 'NSS', key: 'nss', width: 8 },
-        { header: it ? 'Δ% menzioni' : 'Δ% mentions', key: 'dm', width: 12 },
+        { header: it ? 'Δ% menzioni' : 'Δ% menciones', key: 'dm', width: 12 },
       ]);
       for (const c of k.channels) {
         const row = wsCh.addRow({
-          c: sourceLabel(c.source) + (c.previousMentions === 0 && !k.previousIncomplete ? (it ? ' (nuova)' : ' (new)') : ''),
+          c: sourceLabel(c.source) + (c.previousMentions === 0 && !k.previousIncomplete ? (it ? ' (nuova)' : ' (nuevo)') : ''),
           m: c.mentions, pm: c.previousMentions,
           s: c.share === null ? '' : c.share / 100,
           r: c.reach ?? 'n.d.', e: c.engagement ?? 'n.d.', em: c.engPerMention ?? 'n.d.',
@@ -173,21 +173,21 @@ export async function GET(req: Request) {
     }
 
     if (k.competitive.length) {
-      const wsCo = sheet(wb, 'Competitive KPIs', [
-        { header: it ? 'Entità' : 'Entity', key: 'n', width: 22 },
-        { header: it ? 'Il tuo brand' : 'Your brand', key: 'b', width: 11 },
-        { header: it ? 'Menzioni' : 'Mentions', key: 'm', width: 11 },
+      const wsCo = sheet(wb, 'KPI competitivos', [
+        { header: it ? 'Entità' : 'Entidad', key: 'n', width: 22 },
+        { header: it ? 'Il tuo brand' : 'Tu marca', key: 'b', width: 11 },
+        { header: it ? 'Menzioni' : 'Menciones', key: 'm', width: 11 },
         { header: 'SOV', key: 'sov', width: 9 },
-        { header: it ? 'Δ SOV (punti)' : 'Δ SOV (points)', key: 'd', width: 13 },
+        { header: it ? 'Δ SOV (punti)' : 'Δ SOV (puntos)', key: 'd', width: 13 },
         { header: 'Engagement', key: 'e', width: 12 },
         { header: 'SOE', key: 'soe', width: 9 },
-        { header: it ? 'Positive' : 'Positive', key: 'pos', width: 9 },
+        { header: it ? 'Positive' : 'Positivas', key: 'pos', width: 9 },
         { header: 'Share of Positive Voice', key: 'spv', width: 20 },
         { header: 'NSS', key: 'nss', width: 8 },
       ]);
       for (const c of k.competitive) {
         const row = wsCo.addRow({
-          n: c.name, b: c.isOwnBrand ? (it ? 'sì' : 'yes') : '',
+          n: c.name, b: c.isOwnBrand ? (it ? 'sì' : 'sí') : '',
           m: c.mentions,
           sov: c.sov === null ? '' : c.sov / 100,
           d: k.previousIncomplete || c.sovDeltaPoints === null ? '' : c.sovDeltaPoints,
@@ -212,7 +212,7 @@ export async function GET(req: Request) {
     const lang = data.standard.lang;
     const it = lang === 'it';
     const g = findingGrid(r, lang);
-    const wsR = sheet(wb, 'Data reliability', g.headers.map((h, i) => ({ header: h, key: `c${i}`, width: [40, 50, 50, 12, 45][i] })));
+    const wsR = sheet(wb, 'Fiabilidad de los datos', g.headers.map((h, i) => ({ header: h, key: `c${i}`, width: [40, 50, 50, 12, 45][i] })));
     for (const row of g.rows) {
       const added = wsR.addRow(Object.fromEntries(row.map((v, i) => [`c${i}`, v])));
       added.alignment = { wrapText: true, vertical: 'top' };
@@ -221,7 +221,7 @@ export async function GET(req: Request) {
     wsR.addRow({ c0: `${overallLabel(r, lang)} — ${r.overallReason}` }).font = { bold: true };
     if (r.cannotSay.length) {
       wsR.addRow({});
-      wsR.addRow({ c0: it ? 'Cosa non si può scrivere nel report' : 'What the report cannot say' }).font = { bold: true };
+      wsR.addRow({ c0: it ? 'Cosa non si può scrivere nel report' : 'Lo que el informe no puede afirmar' }).font = { bold: true };
       for (const c of r.cannotSay) wsR.addRow({ c0: c });
     }
     for (const grp of verdictGroups(r, lang)) {
@@ -233,56 +233,56 @@ export async function GET(req: Request) {
 
   // 3a. Health Index (market + brand + confronto)
   if (has('health') && data.health.theme.total > 0) {
-  const wsH = sheet(wb, 'Health Index', [
-    { header: 'Scope', key: 'sc', width: 20 },
-    { header: 'Metric', key: 'm', width: 20 },
-    { header: 'Value (0-100)', key: 'v', width: 14 },
-    { header: 'Weight', key: 'w', width: 10 },
+  const wsH = sheet(wb, 'Índice de salud', [
+    { header: 'Ámbito', key: 'sc', width: 20 },
+    { header: 'Métrica', key: 'm', width: 20 },
+    { header: 'Valor (0-100)', key: 'v', width: 14 },
+    { header: 'Peso', key: 'w', width: 10 },
   ]);
-  wsH.addRow({ sc: 'Market', m: `OVERALL — ${data.health.theme.grade}`, v: data.health.theme.score, w: '100%' });
-  for (const c of data.health.theme.components) wsH.addRow({ sc: 'Market', m: c.label, v: c.value, w: `${Math.round(c.weight * 100)}%` });
+  wsH.addRow({ sc: 'Mercado', m: `GENERAL — ${data.health.theme.grade}`, v: data.health.theme.score, w: '100%' });
+  for (const c of data.health.theme.components) wsH.addRow({ sc: 'Mercado', m: c.label, v: c.value, w: `${Math.round(c.weight * 100)}%` });
   if (data.health.brand) {
-    wsH.addRow({ sc: `Brand: ${data.health.brand.name}`, m: `OVERALL — ${data.health.brand.health.grade}`, v: data.health.brand.health.score, w: '100%' });
-    for (const c of data.health.brand.health.components) wsH.addRow({ sc: `Brand: ${data.health.brand.name}`, m: c.label, v: c.value, w: `${Math.round(c.weight * 100)}%` });
+    wsH.addRow({ sc: `Marca: ${data.health.brand.name}`, m: `GENERAL — ${data.health.brand.health.grade}`, v: data.health.brand.health.score, w: '100%' });
+    for (const c of data.health.brand.health.components) wsH.addRow({ sc: `Marca: ${data.health.brand.name}`, m: c.label, v: c.value, w: `${Math.round(c.weight * 100)}%` });
   }
   if (data.health.compare.length > 1) {
-    const wsC = sheet(wb, 'Health ranking', [
-      { header: 'Entity', key: 'e', width: 26 },
-      { header: 'Health score', key: 's', width: 14 },
-      { header: 'Mentions', key: 'n', width: 10 },
-      { header: 'Your brand', key: 'b', width: 12 },
+    const wsC = sheet(wb, 'Ranking de salud', [
+      { header: 'Entidad', key: 'e', width: 26 },
+      { header: 'Puntaje de salud', key: 's', width: 14 },
+      { header: 'Menciones', key: 'n', width: 10 },
+      { header: 'Tu marca', key: 'b', width: 12 },
     ]);
-    for (const c of data.health.compare) wsC.addRow({ e: c.name, s: c.score, n: c.total, b: c.isBrand ? 'yes' : '' });
+    for (const c of data.health.compare) wsC.addRow({ e: c.name, s: c.score, n: c.total, b: c.isBrand ? 'sí' : '' });
   }
   }
 
   // 3b. Emotion radar
   if (has('emotions') && data.emotions.length) {
-  const wsE = sheet(wb, 'Emotion radar', [
-    { header: 'Emotion', key: 'e', width: 14 },
-    { header: 'Mentions', key: 'n', width: 10 },
-    { header: 'Share %', key: 'sh', width: 10 },
+  const wsE = sheet(wb, 'Radar de emociones', [
+    { header: 'Emoción', key: 'e', width: 14 },
+    { header: 'Menciones', key: 'n', width: 10 },
+    { header: 'Part. %', key: 'sh', width: 10 },
   ]);
   for (const e of data.emotions) wsE.addRow({ e: e.emotion, n: e.value, sh: e.share });
   }
 
   // 4. Temi
   if (has('topics')) {
-  const wsT = sheet(wb, 'Topics', [
-    { header: 'Topic', key: 't', width: 30 },
-    { header: 'Mentions', key: 'n', width: 10 },
+  const wsT = sheet(wb, 'Temas', [
+    { header: 'Tema', key: 't', width: 30 },
+    { header: 'Menciones', key: 'n', width: 10 },
   ]);
   for (const r of data.dashboard.topTopics) wsT.addRow({ t: r.topic, n: Number(r.n) });
   }
 
   // 4·pyramid. Author influence pyramid
   if (has('pyramid') && data.pyramid.tiers.length) {
-  const wsPy = sheet(wb, 'Author pyramid', [
-    { header: 'Tier', key: 't', width: 16 },
-    { header: 'Authors', key: 'a', width: 10 },
-    { header: 'Reach', key: 'r', width: 12 },
-    { header: 'Share of reach %', key: 's', width: 16 },
-    { header: 'Examples', key: 'e', width: 40 },
+  const wsPy = sheet(wb, 'Pirámide de autores', [
+    { header: 'Nivel', key: 't', width: 16 },
+    { header: 'Autores', key: 'a', width: 10 },
+    { header: 'Alcance', key: 'r', width: 12 },
+    { header: '% del alcance', key: 's', width: 16 },
+    { header: 'Ejemplos', key: 'e', width: 40 },
   ]);
   for (const t of data.pyramid.tiers) {
     wsPy.addRow({ t: t.label, a: t.authors, r: Math.round(t.reach), s: t.sharePct, e: t.examples.join(', ') });
@@ -291,11 +291,11 @@ export async function GET(req: Request) {
 
   // 4·network. Influencer network (top autori per community)
   if (has('network') && data.network.nodes.length) {
-  const wsNet = sheet(wb, 'Influencer network', [
-    { header: 'Author', key: 'a', width: 24 },
-    { header: 'Focus topic', key: 'c', width: 22 },
-    { header: 'Source', key: 'f', width: 14 },
-    { header: 'Posts', key: 'p', width: 8 },
+  const wsNet = sheet(wb, 'Red de influenciadores', [
+    { header: 'Autor', key: 'a', width: 24 },
+    { header: 'Tema principal', key: 'c', width: 22 },
+    { header: 'Fuente', key: 'f', width: 14 },
+    { header: 'Publicaciones', key: 'p', width: 8 },
     { header: 'Engagement', key: 'e', width: 12 },
   ]);
   for (const n of [...data.network.nodes].sort((a, b) => b.engagement - a.engagement)) {
@@ -306,10 +306,10 @@ export async function GET(req: Request) {
   // 4·flow. Conversation flow (Source → Topic → Sentiment)
   if (has('flow') && data.flow.links.length) {
   const lbl = new Map(data.flow.nodes.map((n) => [n.key, n.label]));
-  const wsF = sheet(wb, 'Conversation flow', [
-    { header: 'From', key: 'a', width: 24 },
-    { header: 'To', key: 'b', width: 24 },
-    { header: 'Mentions', key: 'n', width: 10 },
+  const wsF = sheet(wb, 'Flujo de la conversación', [
+    { header: 'Desde', key: 'a', width: 24 },
+    { header: 'Hacia', key: 'b', width: 24 },
+    { header: 'Menciones', key: 'n', width: 10 },
   ]);
   for (const l of [...data.flow.links].sort((a, b) => b.value - a.value)) {
     wsF.addRow({ a: lbl.get(l.source) ?? l.source, b: lbl.get(l.target) ?? l.target, n: l.value });
@@ -318,17 +318,17 @@ export async function GET(req: Request) {
 
   // 4·constellation. Semantic constellation (termini + co-occorrenze)
   if (has('constellation') && data.constellation.nodes.length) {
-  const wsN = sheet(wb, 'Key terms', [
-    { header: 'Term', key: 't', width: 26 },
-    { header: 'Frequency', key: 'f', width: 12 },
-    { header: 'Avg sentiment', key: 's', width: 16 },
+  const wsN = sheet(wb, 'Términos clave', [
+    { header: 'Término', key: 't', width: 26 },
+    { header: 'Frecuencia', key: 'f', width: 12 },
+    { header: 'Sentimiento prom.', key: 's', width: 16 },
   ]);
   for (const n of data.constellation.nodes) wsN.addRow({ t: n.term, f: n.freq, s: n.sentiment });
   if (data.constellation.edges.length) {
-    const wsE = sheet(wb, 'Term co-occurrence', [
-      { header: 'Term A', key: 'a', width: 24 },
-      { header: 'Term B', key: 'b', width: 24 },
-      { header: 'Together (n)', key: 'w', width: 12 },
+    const wsE = sheet(wb, 'Coocurrencia de términos', [
+      { header: 'Término A', key: 'a', width: 24 },
+      { header: 'Término B', key: 'b', width: 24 },
+      { header: 'Juntos (n)', key: 'w', width: 12 },
     ]);
     for (const e of data.constellation.edges) wsE.addRow({ a: e.a, b: e.b, w: e.weight });
   }
@@ -336,24 +336,24 @@ export async function GET(req: Request) {
 
   // 4a. Momentum quadrant
   if (has('momentum') && data.momentum.length) {
-  const wsQ = sheet(wb, 'Momentum quadrant', [
-    { header: 'Topic', key: 't', width: 26 },
-    { header: 'Volume', key: 'v', width: 10 },
-    { header: 'Acceleration %', key: 'a', width: 15 },
-    { header: 'Quadrant', key: 'q', width: 16 },
-    { header: 'Avg sentiment', key: 's', width: 16 },
+  const wsQ = sheet(wb, 'Cuadrante de momentum', [
+    { header: 'Tema', key: 't', width: 26 },
+    { header: 'Volumen', key: 'v', width: 10 },
+    { header: 'Aceleración %', key: 'a', width: 15 },
+    { header: 'Cuadrante', key: 'q', width: 16 },
+    { header: 'Sentimiento prom.', key: 's', width: 16 },
   ]);
   for (const p of data.momentum) wsQ.addRow({ t: p.topic, v: p.volume, a: p.acceleration, q: p.quadrant, s: p.sentiment });
   }
 
   // 4b. Geographic map (per lingua/area)
   if (has('geo') && data.geo.length) {
-  const wsG = sheet(wb, 'Geographic map', [
-    { header: 'Area / language', key: 'c', width: 24 },
-    { header: 'Lang', key: 'l', width: 8 },
-    { header: 'Mentions', key: 'n', width: 10 },
-    { header: 'Share %', key: 'sh', width: 10 },
-    { header: 'Avg sentiment', key: 's', width: 16 },
+  const wsG = sheet(wb, 'Mapa geográfico', [
+    { header: 'Zona / idioma', key: 'c', width: 24 },
+    { header: 'Idioma', key: 'l', width: 8 },
+    { header: 'Menciones', key: 'n', width: 10 },
+    { header: 'Part. %', key: 'sh', width: 10 },
+    { header: 'Sentimiento prom.', key: 's', width: 16 },
   ]);
   for (const g of data.geo) {
     wsG.addRow({ c: g.country, l: g.lang, n: g.volume, sh: g.share, s: g.sentiment });
@@ -363,7 +363,7 @@ export async function GET(req: Request) {
   // 4c. Share of Voice over time (giorno × entità)
   if (has('sov') && data.sov.entities.length) {
   const wsSov = sheet(wb, 'Share of Voice', [
-    { header: 'Day', key: 'day', width: 12 },
+    { header: 'Día', key: 'day', width: 12 },
     ...data.sov.entities.map((e) => ({ header: e, key: e, width: 16 })),
   ]);
   for (const row of data.sov.days) {
@@ -377,11 +377,11 @@ export async function GET(req: Request) {
   if (has('benchmark')) {
   const total = data.benchmark.reduce((s, r) => s + r.total, 0);
   const wsB = sheet(wb, 'Benchmark', [
-    { header: 'Entity', key: 'e', width: 20 },
-    { header: 'Keyword', key: 'k', width: 35 },
-    { header: 'Mentions (14 days)', key: 'n', width: 18 },
-    { header: 'Share of voice %', key: 'sov', width: 16 },
-    { header: 'Avg sentiment', key: 's', width: 16 },
+    { header: 'Entidad', key: 'e', width: 20 },
+    { header: 'Palabras clave', key: 'k', width: 35 },
+    { header: 'Menciones (14 días)', key: 'n', width: 18 },
+    { header: 'Share of Voice %', key: 'sov', width: 16 },
+    { header: 'Sentimiento prom.', key: 's', width: 16 },
   ]);
   for (const r of data.benchmark) {
     wsB.addRow({
@@ -394,11 +394,11 @@ export async function GET(req: Request) {
 
   // 6. Audience
   if (has('audience')) {
-  const wsC = sheet(wb, 'Community', [
-    { header: 'Community', key: 'c', width: 28 },
-    { header: 'Source', key: 'f', width: 15 },
-    { header: 'Mentions', key: 'n', width: 10 },
-    { header: 'Avg sentiment', key: 's', width: 16 },
+  const wsC = sheet(wb, 'Comunidades', [
+    { header: 'Comunidad', key: 'c', width: 28 },
+    { header: 'Fuente', key: 'f', width: 15 },
+    { header: 'Menciones', key: 'n', width: 10 },
+    { header: 'Sentimiento prom.', key: 's', width: 16 },
   ]);
   for (const r of data.audience.communities) {
     wsC.addRow({
@@ -406,12 +406,12 @@ export async function GET(req: Request) {
       s: r.avgSentiment === null ? null : Number(r.avgSentiment.toFixed(2)),
     });
   }
-  const wsA = sheet(wb, 'Authors', [
-    { header: 'Author', key: 'a', width: 25 },
-    { header: 'Handle', key: 'h', width: 22 },
-    { header: 'Source', key: 'f', width: 15 },
-    { header: 'Post', key: 'n', width: 8 },
-    { header: 'Total engagement', key: 'e', width: 18 },
+  const wsA = sheet(wb, 'Autores', [
+    { header: 'Autor', key: 'a', width: 25 },
+    { header: 'Usuario', key: 'h', width: 22 },
+    { header: 'Fuente', key: 'f', width: 15 },
+    { header: 'Publicaciones', key: 'n', width: 8 },
+    { header: 'Engagement total', key: 'e', width: 18 },
   ]);
   for (const r of data.audience.authors) {
     wsA.addRow({ a: r.author, h: r.authorHandle ?? '', f: sourceLabel(r.source), n: r.n, e: Math.round(r.engagement) });
@@ -420,20 +420,20 @@ export async function GET(req: Request) {
 
   // 6b. Trend / Narrazioni / Timeline
   if (has('trends') && data.trends.length) {
-    const ws = sheet(wb, 'Trend', [
-      { header: 'Topic', key: 't', width: 26 }, { header: 'Score (×norm)', key: 's', width: 14 },
-      { header: 'Mentions 24h', key: 'n', width: 12 }, { header: 'Explanation', key: 'e', width: 70 },
+    const ws = sheet(wb, 'Tendencias', [
+      { header: 'Tema', key: 't', width: 26 }, { header: 'Puntaje (×norm.)', key: 's', width: 14 },
+      { header: 'Menciones 24 h', key: 'n', width: 12 }, { header: 'Explicación', key: 'e', width: 70 },
     ]);
     for (const t of data.trends) ws.addRow({ t: t.topic, s: Number(t.score.toFixed(1)), n: t.n24, e: t.explanation ?? '' });
   }
   if (has('pov') && data.pov.pov) {
     const pv = data.pov.pov;
-    const ws = sheet(wb, 'Point of View', [
-      { header: 'Block', key: 'i', width: 7 }, { header: 'Kind', key: 'k', width: 13 },
-      { header: 'Title', key: 't', width: 45 }, { header: 'Confidence', key: 'c', width: 12 },
-      { header: 'Figures', key: 'f', width: 45 }, { header: 'Narrative', key: 'b', width: 90 },
+    const ws = sheet(wb, 'Punto de vista', [
+      { header: 'Bloque', key: 'i', width: 7 }, { header: 'Tipo', key: 'k', width: 13 },
+      { header: 'Título', key: 't', width: 45 }, { header: 'Confianza', key: 'c', width: 12 },
+      { header: 'Cifras', key: 'f', width: 45 }, { header: 'Narrativa', key: 'b', width: 90 },
     ]);
-    ws.addRow({ i: '', k: 'THESIS', t: pv.headline, c: '', f: '', b: '' });
+    ws.addRow({ i: '', k: 'TESIS', t: pv.headline, c: '', f: '', b: '' });
     for (const par of pv.intro ?? []) ws.addRow({ k: 'intro', b: par.text });
     for (const [i, b] of pv.blocks.entries()) {
       ws.addRow({
@@ -441,39 +441,39 @@ export async function GET(req: Request) {
         f: b.stats.map((s) => `${s.value} — ${s.label}`).join(' · '), b: b.body,
       });
     }
-    for (const c of pv.counterSignals) ws.addRow({ k: 'counter-signal', b: c.point });
-    for (const t of pv.implications) ws.addRow({ k: 'implication', b: t });
-    for (const t of pv.watch) ws.addRow({ k: 'watch', b: t });
+    for (const c of pv.counterSignals) ws.addRow({ k: 'contraseñal', b: c.point });
+    for (const t of pv.implications) ws.addRow({ k: 'implicación', b: t });
+    for (const t of pv.watch) ws.addRow({ k: 'vigilar', b: t });
   }
 
   if (has('narratives') && data.narratives.length) {
-    const ws = sheet(wb, 'Narratives', [
-      { header: 'Title', key: 't', width: 40 }, { header: 'Stance', key: 's', width: 14 },
-      { header: 'Coordinated', key: 'c', width: 12 }, { header: 'Post', key: 'n', width: 8 },
-      { header: 'Description', key: 'd', width: 70 },
+    const ws = sheet(wb, 'Narrativas', [
+      { header: 'Título', key: 't', width: 40 }, { header: 'Postura', key: 's', width: 14 },
+      { header: 'Coordinada', key: 'c', width: 12 }, { header: 'Publicaciones', key: 'n', width: 8 },
+      { header: 'Descripción', key: 'd', width: 70 },
     ]);
-    for (const n of data.narratives) ws.addRow({ t: n.title, s: n.stance ?? '', c: n.coordinated ? 'yes' : 'no', n: n.mentionCount, d: n.description ?? '' });
+    for (const n of data.narratives) ws.addRow({ t: n.title, s: n.stance ?? '', c: n.coordinated ? 'sí' : 'no', n: n.mentionCount, d: n.description ?? '' });
   }
   if (has('timeline') && data.timeline.length) {
-    const ws = sheet(wb, 'Timeline', [
-      { header: 'Date', key: 'd', width: 12 }, { header: 'Event', key: 't', width: 45 },
-      { header: 'Importance', key: 'i', width: 12 }, { header: 'Description', key: 'de', width: 70 },
+    const ws = sheet(wb, 'Línea de tiempo', [
+      { header: 'Fecha', key: 'd', width: 12 }, { header: 'Evento', key: 't', width: 45 },
+      { header: 'Importancia', key: 'i', width: 12 }, { header: 'Descripción', key: 'de', width: 70 },
     ]);
     for (const e of data.timeline) ws.addRow({ d: e.eventDate, t: e.title, i: e.importance, de: e.description ?? '' });
   }
 
   // 7. Content ratings
   if (has('content')) {
-  const wsR = sheet(wb, 'Content ratings', [
-    { header: 'Title/Text', key: 't', width: 55 },
-    { header: 'Source', key: 'f', width: 13 },
+  const wsR = sheet(wb, 'Calificación de contenido', [
+    { header: 'Título/Texto', key: 't', width: 55 },
+    { header: 'Fuente', key: 'f', width: 13 },
     { header: 'Engagement', key: 'e', width: 12 },
-    { header: 'Percentile', key: 'p', width: 11 },
-    { header: 'AI score', key: 'q', width: 9 },
-    { header: 'Relevance', key: 'rel', width: 10 },
-    { header: 'Virality', key: 'vir', width: 9 },
-    { header: 'Risk', key: 'risk', width: 9 },
-    { header: 'AI note', key: 'nota', width: 45 },
+    { header: 'Percentil', key: 'p', width: 11 },
+    { header: 'Puntaje IA', key: 'q', width: 9 },
+    { header: 'Relevancia', key: 'rel', width: 10 },
+    { header: 'Viralidad', key: 'vir', width: 9 },
+    { header: 'Riesgo', key: 'risk', width: 9 },
+    { header: 'Nota IA', key: 'nota', width: 45 },
     { header: 'URL', key: 'u', width: 45 },
   ]);
   for (const r of data.ratings) {
@@ -488,27 +488,27 @@ export async function GET(req: Request) {
 
   // 7b. Crisis radar & peak
   if (has('crisis') && data.crisis.peak) {
-  const wsCr = sheet(wb, 'Crisis radar', [
-    { header: 'Metric', key: 'm', width: 26 },
-    { header: 'Value', key: 'v', width: 40 },
+  const wsCr = sheet(wb, 'Radar de crisis', [
+    { header: 'Métrica', key: 'm', width: 26 },
+    { header: 'Valor', key: 'v', width: 40 },
   ]);
-  wsCr.addRow({ m: 'Risk index (0-100)', v: `${data.crisis.risk} — ${data.crisis.level}` });
+  wsCr.addRow({ m: 'Índice de riesgo (0-100)', v: `${data.crisis.risk} — ${data.crisis.level}` });
   for (const d of data.crisis.drivers) wsCr.addRow({ m: d.label, v: `+${d.value}` });
-  wsCr.addRow({ m: 'Peak day', v: data.crisis.peak.day });
-  wsCr.addRow({ m: 'Peak volume', v: data.crisis.peak.volume });
-  wsCr.addRow({ m: 'Peak negative %', v: `${data.crisis.peak.negShare}%` });
-  wsCr.addRow({ m: 'Peak topics', v: data.crisis.peak.topics.map((t) => `${t.topic} (${t.n})`).join(', ') });
-  for (const c of data.crisis.peak.content) wsCr.addRow({ m: `Content [${sourceLabel(c.source)}]`, v: c.title });
+  wsCr.addRow({ m: 'Día pico', v: data.crisis.peak.day });
+  wsCr.addRow({ m: 'Volumen del pico', v: data.crisis.peak.volume });
+  wsCr.addRow({ m: '% negativo del pico', v: `${data.crisis.peak.negShare}%` });
+  wsCr.addRow({ m: 'Temas del pico', v: data.crisis.peak.topics.map((t) => `${t.topic} (${t.n})`).join(', ') });
+  for (const c of data.crisis.peak.content) wsCr.addRow({ m: `Contenido [${sourceLabel(c.source)}]`, v: c.title });
   }
 
   // 8. Alert e Brief
   if (has('alerts')) {
-  const wsAl = sheet(wb, 'Alert', [
-    { header: 'Date', key: 'd', width: 17 },
-    { header: 'Type', key: 't', width: 18 },
-    { header: 'Severity', key: 's', width: 10 },
-    { header: 'Message', key: 'm', width: 70 },
-    { header: 'Explanation', key: 'e', width: 70 },
+  const wsAl = sheet(wb, 'Alertas', [
+    { header: 'Fecha', key: 'd', width: 17 },
+    { header: 'Tipo', key: 't', width: 18 },
+    { header: 'Severidad', key: 's', width: 10 },
+    { header: 'Mensaje', key: 'm', width: 70 },
+    { header: 'Explicación', key: 'e', width: 70 },
   ]);
   for (const a of data.alerts) wsAl.addRow({
     d: a.createdAt, t: a.type, s: a.severity, m: a.message,
@@ -518,7 +518,7 @@ export async function GET(req: Request) {
 
   if (has('brief')) {
   const wsBr = sheet(wb, 'Brief', [
-    { header: 'Date', key: 'd', width: 12 },
+    { header: 'Fecha', key: 'd', width: 12 },
     { header: 'Brief', key: 'b', width: 120 },
   ]);
   for (const b of data.briefs) {
@@ -532,11 +532,11 @@ export async function GET(req: Request) {
   // poterle scegliere.
   const ppl = data.people;
   if (has('people') && ppl.ranking.length > 1) {
-    const ws = sheet(wb, 'People', [
-      { header: 'Person', key: 'name', width: 30 },
-      { header: 'Audience', key: 'followers', width: 14 },
-      { header: 'Posts / month', key: 'perMonth', width: 14 },
-      { header: 'Avg engagement', key: 'engagement', width: 16 },
+    const ws = sheet(wb, 'Personas', [
+      { header: 'Persona', key: 'name', width: 30 },
+      { header: 'Audiencia', key: 'followers', width: 14 },
+      { header: 'Publicaciones / mes', key: 'perMonth', width: 14 },
+      { header: 'Engagement prom.', key: 'engagement', width: 16 },
     ]);
     for (const r of ppl.ranking) {
       ws.addRow({
@@ -548,16 +548,16 @@ export async function GET(req: Request) {
     }
   }
   if ((has('peopleGrowth') || has('peopleDetail')) && ppl.cards.length) {
-    const ws = sheet(wb, 'Person cards', [
-      { header: 'Person', key: 'name', width: 30 },
-      { header: 'Followers now', key: 'latest', width: 15 },
-      { header: 'Gained', key: 'gained', width: 12 },
-      { header: 'From', key: 'from', width: 12 },
-      { header: 'To', key: 'to', width: 12 },
-      { header: 'Posts / month', key: 'perMonth', width: 14 },
-      { header: 'Trend %', key: 'trend', width: 10 },
-      { header: 'Best format', key: 'format', width: 26 },
-      { header: 'Audience split', key: 'audience', width: 46 },
+    const ws = sheet(wb, 'Fichas por persona', [
+      { header: 'Persona', key: 'name', width: 30 },
+      { header: 'Seguidores hoy', key: 'latest', width: 15 },
+      { header: 'Ganados', key: 'gained', width: 12 },
+      { header: 'Desde', key: 'from', width: 12 },
+      { header: 'Hasta', key: 'to', width: 12 },
+      { header: 'Publicaciones / mes', key: 'perMonth', width: 14 },
+      { header: 'Tendencia %', key: 'trend', width: 10 },
+      { header: 'Mejor formato', key: 'format', width: 26 },
+      { header: 'Distribución de audiencia', key: 'audience', width: 46 },
     ]);
     for (const c of ppl.cards) {
       const a = c.audience[0];
@@ -580,7 +580,7 @@ export async function GET(req: Request) {
   const usedNames = new Set(wb.worksheets.map((w) => w.name.toLowerCase()));
   for (const [id, chart] of studio) {
     // I nomi dei fogli Excel non ammettono : \\ / ? * [ ] e si fermano a 31 caratteri.
-    const base = (chart.title.replace(/[:\\/?*[\]]/g, ' ').trim() || `Grafico ${id}`).slice(0, 28);
+    const base = (chart.title.replace(/[:\\/?*[\]]/g, ' ').trim() || `Gráfico ${id}`).slice(0, 28);
     let name = base;
     for (let i = 2; usedNames.has(name.toLowerCase()); i++) name = `${base.slice(0, 26)} ${i}`;
     usedNames.add(name.toLowerCase());
@@ -588,21 +588,21 @@ export async function GET(req: Request) {
     const ws = sheet(wb, name, [
       { header: chart.xLabel || 'X', key: 'x', width: 34 },
       ...(chart.zLabel ? [{ header: chart.zLabel, key: 'z', width: 24 }] : []),
-      { header: chart.yLabel || 'Valore', key: 'y', width: 18 },
+      { header: chart.yLabel || 'Valor', key: 'y', width: 18 },
     ]);
     for (const r of chart.rows) ws.addRow({ x: r.x, z: r.z ?? '', y: r.y });
     // Il periodo del grafico è suo, non del report: va scritto dove sta il dato.
-    const note = ws.addRow([`Periodo del grafico: ultimi ${chart.days} giorni · generato il ${new Date().toLocaleDateString('it-IT')}`]);
+    const note = ws.addRow([`Periodo del gráfico: últimos ${chart.days} días · generado el ${new Date().toLocaleDateString('es-CO')}`]);
     note.font = { color: { argb: 'FF64748B' }, size: 9 };
   }
 
   // Se nessun foglio è stato aggiunto, evita un file corrotto
-  if (wb.worksheets.length === 0) sheet(wb, 'Empty', [{ header: 'No section selected', key: 'x', width: 40 }]);
+  if (wb.worksheets.length === 0) sheet(wb, 'Vacío', [{ header: 'No se seleccionó ninguna sección', key: 'x', width: 40 }]);
 
   // Foglio "Note": l'informativa estesa, sempre presente e sempre l'ultima.
-  const wsNote = wb.addWorksheet('Note');
+  const wsNote = wb.addWorksheet('Notas');
   wsNote.getColumn(1).width = 120;
-  const noteTitle = wsNote.addRow(['NOTE']);
+  const noteTitle = wsNote.addRow(['NOTA']);
   noteTitle.font = { bold: true, color: { argb: 'FF64748B' } };
   const noteBody = wsNote.addRow([AI_DISCLOSURE_LONG]);
   noteBody.height = 72;
@@ -614,7 +614,7 @@ export async function GET(req: Request) {
   return new NextResponse(buffer as ArrayBuffer, {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'Content-Disposition': `attachment; filename="radar-${slugify(project.name)}-${todayStamp()}.xlsx"`,
+      'Content-Disposition': `attachment; filename="aedo-${slugify(project.name)}-${todayStamp()}.xlsx"`,
     },
   });
 }

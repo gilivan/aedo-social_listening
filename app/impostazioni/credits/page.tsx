@@ -2,7 +2,7 @@ import { PageHeader } from '@/components/ui';
 import { getT } from '@/lib/i18n';
 import { Heart, Scale, Package, Image as ImageIcon, Database, ShieldAlert, ExternalLink } from 'lucide-react';
 
-export const metadata = { title: 'Credits & Legal' };
+export const metadata = { title: 'Créditos y aspectos legales' };
 
 const DEPS: { name: string; license: string; url: string }[] = [
   { name: 'Next.js', license: 'MIT', url: 'https://github.com/vercel/next.js' },
@@ -39,37 +39,37 @@ export default async function CreditsPage() {
   const t = await getT();
   return (
     <>
-      <PageHeader title={t('page.credits.title', 'Credits & Legal')} subtitle="Who built Radar, what it's made of, and the terms it's released under." />
+      <PageHeader title={t('page.credits.title', 'Créditos y aspectos legales')} subtitle="Quién creó la base de AEDO, de qué está hecho y bajo qué términos se publica." />
 
       <div className="flex max-w-2xl flex-col gap-4">
         {/* Chi */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300"><Heart className="size-4 text-pink-400" /> Made by</h2>
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300"><Heart className="size-4 text-pink-400" /> Creado por</h2>
           <div className="flex flex-col gap-2 text-sm text-slate-300">
-            <p><span className="text-slate-500">Creator & product:</span> <span className="font-medium text-slate-100">Massimo Scognamiglio</span> — idea, design, direction and every decision behind Radar.</p>
-            <p><span className="text-slate-500">Built in pair with:</span> <span className="font-medium text-slate-100">Claude</span> by <Ext href="https://www.anthropic.com">Anthropic</Ext> — the AI collaborator that wrote and shaped the code side by side with the author, and that also powers Radar’s in-app AI features (sentiment, emotion, briefs, clustering, Content Studio…).</p>
-            <p className="text-xs text-slate-500">A one-person team plus an AI partner — enterprise-grade media intelligence at a thousandth of the price. And yes, we had a lot of fun together. 🐣</p>
+            <p><span className="text-slate-500">Creador y producto:</span> <span className="font-medium text-slate-100">Massimo Scognamiglio</span> — idea, diseño, dirección y cada decisión detrás de Radar Intelligence, el proyecto open source en el que se basa AEDO.</p>
+            <p><span className="text-slate-500">Desarrollado en pareja con:</span> <span className="font-medium text-slate-100">Claude</span> de <Ext href="https://www.anthropic.com">Anthropic</Ext> — el colaborador de IA que escribió y moldeó el código junto al autor, y que también impulsa las funciones de IA dentro de AEDO (sentimiento, emociones, briefs, clustering, Content Studio…).</p>
+            <p className="text-xs text-slate-500">Un equipo de una persona más un socio de IA: inteligencia de medios de nivel empresarial a una milésima parte del precio. Y sí, nos divertimos mucho juntos. 🐣</p>
           </div>
         </section>
 
         {/* Licenza */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300"><Scale className="size-4 text-sky-400" /> License</h2>
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300"><Scale className="size-4 text-sky-400" /> Licencia</h2>
           <p className="text-sm text-slate-300">
-            Radar is <span className="font-medium text-slate-100">free and open source</span> under the{' '}
-            <Ext href="https://www.gnu.org/licenses/agpl-3.0.html">GNU AGPL-3.0</Ext> license.
-            © {new Date().getFullYear()} Massimo Scognamiglio and contributors.
+            AEDO es <span className="font-medium text-slate-100">software libre y de código abierto</span> bajo la licencia{' '}
+            <Ext href="https://www.gnu.org/licenses/agpl-3.0.html">GNU AGPL-3.0</Ext>.
+            © {new Date().getFullYear()} Massimo Scognamiglio y colaboradores.
           </p>
           <p className="mt-2 text-xs text-slate-500">
-            If you run a modified version as a network service, the AGPL requires you to make your source available under the same license.
-            Source code: <Ext href="https://github.com/Scognamiglio1969/radar-intelligence">github.com/Scognamiglio1969/radar-intelligence</Ext>.
+            Si ejecutas una versión modificada como servicio en red, la AGPL te exige publicar tu código fuente bajo la misma licencia.
+            Código fuente original: <Ext href="https://github.com/Scognamiglio1969/radar-intelligence">github.com/Scognamiglio1969/radar-intelligence</Ext>.
           </p>
         </section>
 
         {/* Open source */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300"><Package className="size-4 text-violet-400" /> Built with open source</h2>
-          <p className="mb-3 text-xs text-slate-500">Radar stands on the shoulders of these projects. Each package’s authoritative license text ships in its own folder under <code className="text-slate-400">node_modules/</code>.</p>
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300"><Package className="size-4 text-violet-400" /> Construido con código abierto</h2>
+          <p className="mb-3 text-xs text-slate-500">AEDO se apoya en estos proyectos. El texto oficial de la licencia de cada paquete se incluye en su propia carpeta dentro de <code className="text-slate-400">node_modules/</code>.</p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-3">
             {DEPS.map((d) => (
               <div key={d.name} className="flex flex-col text-xs">
@@ -82,41 +82,41 @@ export default async function CreditsPage() {
 
         {/* Media / asset */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300"><ImageIcon className="size-4 text-emerald-400" /> Media & assets</h2>
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300"><ImageIcon className="size-4 text-emerald-400" /> Medios y recursos</h2>
           <ul className="flex flex-col gap-2 text-xs text-slate-400">
             <li>
-              Planet, sun and moon textures in the <span className="text-slate-300">Conversation Galaxy</span> — © <Ext href="https://www.solarsystemscope.com/textures/">Solar System Scope</Ext>, licensed <span className="text-slate-300">CC BY 4.0</span>.
+              Texturas de planetas, sol y lunas de la <span className="text-slate-300">Galaxia de la conversación</span> — © <Ext href="https://www.solarsystemscope.com/textures/">Solar System Scope</Ext>, con licencia <span className="text-slate-300">CC BY 4.0</span>.
             </li>
             <li>
-              Egg photo (easter egg) — “White chicken egg” via <Ext href="https://commons.wikimedia.org/wiki/File:White_chicken_egg_square.jpg">Wikimedia Commons</Ext>, <span className="text-slate-300">CC BY 2.0</span>.
+              Foto del huevo (easter egg) — “White chicken egg” vía <Ext href="https://commons.wikimedia.org/wiki/File:White_chicken_egg_square.jpg">Wikimedia Commons</Ext>, <span className="text-slate-300">CC BY 2.0</span>.
             </li>
             <li>
-              Chick photo (easter egg) — “Day old chick” via <Ext href="https://commons.wikimedia.org/wiki/File:Day_old_chick_white_background.jpg">Wikimedia Commons</Ext>, <span className="text-slate-300">GFDL 1.2</span>.
+              Foto del pollito (easter egg) — “Day old chick” vía <Ext href="https://commons.wikimedia.org/wiki/File:Day_old_chick_white_background.jpg">Wikimedia Commons</Ext>, <span className="text-slate-300">GFDL 1.2</span>.
             </li>
           </ul>
         </section>
 
         {/* Fonti dati */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300"><Database className="size-4 text-amber-400" /> Data sources</h2>
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300"><Database className="size-4 text-amber-400" /> Fuentes de datos</h2>
           <p className="text-xs leading-relaxed text-slate-400">
-            Radar reads publicly available data from: <span className="text-slate-300">{SOURCES}</span>.
-            All trademarks and content belong to their respective owners; Radar is not affiliated with or endorsed by any of them.
+            AEDO lee datos públicos de: <span className="text-slate-300">{SOURCES}</span>.
+            Todas las marcas y contenidos pertenecen a sus respectivos propietarios; AEDO no está afiliado a ninguno de ellos ni cuenta con su respaldo.
           </p>
         </section>
 
         {/* Legale */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300"><ShieldAlert className="size-4 text-red-400" /> Legal & responsible use</h2>
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300"><ShieldAlert className="size-4 text-red-400" /> Aspectos legales y uso responsable</h2>
           <p className="text-xs leading-relaxed text-slate-400">
-            Radar is provided <span className="text-slate-300">“as is”, without warranty of any kind</span>. You are responsible for complying with the
-            Terms of Service of each data source and with applicable data-protection laws (e.g. GDPR) in your jurisdiction. Some sources restrict
-            automated access — enable only what you are entitled to use. AI outputs can be imprecise or biased and should be reviewed before acting on them.
-            To report a security issue, see <Ext href="https://github.com/Scognamiglio1969/radar-intelligence/blob/main/SECURITY.md">SECURITY.md</Ext>.
+            AEDO se ofrece <span className="text-slate-300">“tal cual”, sin garantía de ningún tipo</span>. Eres responsable de cumplir los
+            Términos de servicio de cada fuente de datos y las leyes de protección de datos aplicables en tu jurisdicción (p. ej., la Ley 1581 de 2012 en Colombia o el RGPD). Algunas fuentes restringen
+            el acceso automatizado: activa solo lo que tienes derecho a usar. Los resultados de la IA pueden ser imprecisos o sesgados y deben revisarse antes de actuar con base en ellos.
+            Para reportar un problema de seguridad, consulta <Ext href="https://github.com/Scognamiglio1969/radar-intelligence/blob/main/SECURITY.md">SECURITY.md</Ext>.
           </p>
         </section>
 
-        <p className="pb-6 text-center text-[11px] text-slate-600">Made with curiosity by a human and an AI. 🛰️</p>
+        <p className="pb-6 text-center text-[11px] text-slate-600">Hecho con curiosidad por un humano y una IA. 🛰️</p>
       </div>
     </>
   );

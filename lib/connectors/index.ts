@@ -74,8 +74,8 @@ export const SOURCE_CATEGORY: Record<string, SourceCategory> = {
 };
 export const CATEGORY_ORDER: SourceCategory[] = ['general', 'finance', 'academic', 'tech', 'social', 'video', 'audio'];
 export const CATEGORY_LABEL: Record<SourceCategory, string> = {
-  general: 'General & news', finance: 'Financial & corporate', academic: 'Academic',
-  tech: 'Tech & developer', social: 'Social & messaging', video: 'Video', audio: 'Podcasts & audio',
+  general: 'Generales y noticias', finance: 'Finanzas y empresas', academic: 'Académicas',
+  tech: 'Tecnología y desarrollo', social: 'Redes y mensajería', video: 'Video', audio: 'Podcasts y audio',
 };
 
 /**
@@ -92,11 +92,11 @@ export const SOURCE_META: Record<string, { label: string; color: string; note?: 
   googlenews: { label: 'Google News', color: '#f59e0b' },
   talkwalker: {
     label: 'Talkwalker', color: '#00b8a9',
-    note: 'Mentions pulled live from the corporate Talkwalker (Lumen by Hootsuite) account via its API, inside a project of type "Talkwalker": Radar reads the topics already configured there rather than rewriting the query. Each search spends credits from the Talkwalker contract (10 per call plus 1 per result).',
+    note: 'Menciones traídas en vivo desde la cuenta corporativa de Talkwalker (Lumen by Hootsuite) mediante su API, dentro de un proyecto de tipo "Talkwalker": AEDO lee los temas ya configurados allí en lugar de reescribir la consulta. Cada búsqueda consume créditos del contrato de Talkwalker (10 por llamada más 1 por resultado).',
   },
   talkwalker_news: {
-    label: 'Talkwalker (news)', color: '#0d9488',
-    note: 'Editorial articles from the Talkwalker index: same acquisition as "Talkwalker", read as press coverage rather than social posts.',
+    label: 'Talkwalker (noticias)', color: '#0d9488',
+    note: 'Artículos editoriales del índice de Talkwalker: misma adquisición que "Talkwalker", leídos como cobertura de prensa y no como publicaciones sociales.',
   },
   gdelt: { label: 'GDELT', color: '#a78bfa' },
   reddit: { label: 'Reddit', color: '#ff4500' },
@@ -111,48 +111,48 @@ export const SOURCE_META: Record<string, { label: string; color: string; note?: 
   facebook: { label: 'Facebook', color: '#1877f2' },
   tiktok: { label: 'TikTok', color: '#fe2c55' },
   linkedin: {
-    label: 'LinkedIn (page)', color: '#0a66c2',
-    note: 'Posts from your own company page via the official LinkedIn API: full text and real metrics, but only your page.',
+    label: 'LinkedIn (página)', color: '#0a66c2',
+    note: 'Publicaciones de la página de tu propia empresa mediante la API oficial de LinkedIn: texto completo y métricas reales, pero solo de tu página.',
   },
   linkedin_web: {
     label: 'LinkedIn (web)', color: '#4c9ce8',
-    note: 'Public LinkedIn posts and articles by anyone, found through the Tavily search index (official API): partial excerpts, no engagement metrics. A different acquisition model from "LinkedIn (page)".',
+    note: 'Publicaciones y artículos públicos de LinkedIn de cualquier persona, encontrados mediante el índice de búsqueda de Tavily (API oficial): fragmentos parciales, sin métricas de engagement. Un modelo de adquisición distinto al de "LinkedIn (página)".',
   },
   newsapi: { label: 'NewsAPI', color: '#14b8a6' },
   stackexchange: {
     label: 'Stack Exchange', color: '#f48024',
-    note: 'Questions matching your terms in their title, across Stack Overflow and 5 other Stack Exchange communities (money, workplace, travel, parenting, general computing). Works with no key, at a shared low quota; add a free key to raise it.',
+    note: 'Preguntas con tus términos en el título, en Stack Overflow y otras 5 comunidades de Stack Exchange (finanzas, trabajo, viajes, crianza, informática general). Funciona sin clave, con una cuota compartida baja; agrega una clave gratuita para aumentarla.',
   },
   github: {
     label: 'GitHub', color: '#e2e8f0',
-    note: 'Issues and pull requests matching your terms in their title, across all of public GitHub, with the full issue text and its reaction/comment counts. Automated bot-authored issues (changelog trackers, digests) are filtered out. Works with no key, at a low rate limit; add a free token to raise it.',
+    note: 'Issues y pull requests con tus términos en el título, en todo GitHub público, con el texto completo del issue y sus conteos de reacciones y comentarios. Se filtran los issues automáticos creados por bots (changelogs, resúmenes). Funciona sin clave, con un límite de uso bajo; agrega un token gratuito para aumentarlo.',
   },
   discord: {
     label: 'Discord', color: '#5865f2',
-    note: 'Messages from the channels of a server you administer, via an official bot (watchlist model, like Facebook) — not search across other people’s servers, which Discord does not offer. Requires a free bot token and the Message Content Intent enabled for it.',
+    note: 'Mensajes de los canales de un servidor que administras, mediante un bot oficial (modelo de lista de seguimiento, como Facebook); no busca en servidores de otras personas, algo que Discord no ofrece. Requiere un token de bot gratuito con el Message Content Intent habilitado.',
   },
   'sec-edgar': {
     label: 'SEC EDGAR', color: '#2c5aa0',
-    note: 'Official SEC filings (8-K material events, 10-K/10-Q reports, DEF 14A proxy statements) by any US-listed company matching your terms — free, no key, US government data. Filing text is not included in the search results, so entries are built from the company, filing type and exhibit description, with a link to the full document.',
+    note: 'Registros oficiales ante la SEC (eventos materiales 8-K, informes 10-K/10-Q, declaraciones DEF 14A) de cualquier empresa listada en EE. UU. que coincida con tus términos: gratis, sin clave, datos del gobierno de EE. UU. El texto del registro no viene en los resultados, así que cada entrada se arma con la empresa, el tipo de registro y la descripción del anexo, con un enlace al documento completo.',
   },
   arxiv: {
     label: 'arXiv', color: '#b31b1b',
-    note: 'Academic papers (CS, physics, math, quantitative biology and more) matching your terms, with the full abstract — official free API, no key. Server-side search does light stemming (verified live: "Claude" also matched an unrelated astronomy survey named "CLAUDS"), so results are re-checked here for a literal match in title or abstract.',
+    note: 'Artículos académicos (computación, física, matemáticas, biología cuantitativa y más) que coinciden con tus términos, con el resumen completo: API oficial gratuita, sin clave. La búsqueda del servidor aplica una lematización ligera (comprobado: "Claude" también coincidió con un estudio astronómico llamado "CLAUDS"), así que aquí se vuelve a verificar una coincidencia literal en el título o el resumen.',
   },
   lemmy: {
     label: 'Lemmy', color: '#00bc8c',
-    note: 'Posts and comments from Lemmy, the federated Reddit-like network, read through lemmy.world, which sees the content of the whole federation — free, no key. Server-side search is broad, so every result is re-checked here for a literal match in title or text.',
+    note: 'Publicaciones y comentarios de Lemmy, la red federada similar a Reddit, leídos a través de lemmy.world, que ve el contenido de toda la federación: gratis, sin clave. La búsqueda del servidor es amplia, así que aquí se vuelve a verificar cada resultado con una coincidencia literal en el título o el texto.',
   },
   newsdata: {
     label: 'NewsData.io', color: '#6366f1',
-    note: 'News from 100,000+ outlets in 80+ languages. Free key, 200 credits a day, commercial use allowed. One search per project per collection (10 articles, a 100-character boolean query); the remaining terms rotate on the next run. Full text is not in the free plan: articles are enriched afterwards like the others.',
+    note: 'Noticias de más de 100.000 medios en más de 80 idiomas. Clave gratuita, 200 créditos al día, uso comercial permitido. Una búsqueda por proyecto en cada recolección (10 artículos, consulta booleana de 100 caracteres); los términos restantes rotan en la siguiente ejecución. El texto completo no está en el plan gratuito: los artículos se enriquecen después, como los demás.',
   },
   podcastindex: {
     label: 'Podcast Index', color: '#f43f5e',
-    note: 'Podcast episodes whose title or description mentions your terms, from the open Podcast Index directory (non-profit, free key and secret). The description is read, not the audio: an episode that only names the topic out loud is not found.',
+    note: 'Episodios de podcast cuyo título o descripción menciona tus términos, del directorio abierto Podcast Index (sin ánimo de lucro, clave y secreto gratuitos). Se lee la descripción, no el audio: un episodio que solo nombra el tema en voz alta no aparece.',
   },
   upload: {
-    label: 'Imported file', color: '#94a3b8',
-    note: 'Rows imported from your Excel/CSV files: content, authors and dates are exactly what the file contains — nothing is collected from the web.',
+    label: 'Archivo importado', color: '#94a3b8',
+    note: 'Filas importadas de tus archivos Excel/CSV: el contenido, los autores y las fechas son exactamente los del archivo; no se recolecta nada de la web.',
   },
 };

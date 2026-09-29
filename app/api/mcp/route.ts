@@ -25,12 +25,12 @@ export async function POST(req: Request): Promise<Response> {
     // Senza token l'MCP è SPENTO, non aperto: un endpoint che espone l'intero
     // archivio non deve poter restare pubblico per dimenticanza.
     return Response.json(
-      { error: 'mcp_disabled', hint: 'Set RADAR_MCP_TOKEN to enable the MCP endpoint.' },
+      { error: 'mcp_disabled', hint: 'Configura RADAR_MCP_TOKEN para activar el endpoint MCP.' },
       { status: 503 },
     );
   }
   if (!tokenMatches(readToken(req.headers), expected)) {
-    return Response.json({ error: 'unauthorized' }, { status: 401 });
+    return Response.json({ error: 'no autorizado' }, { status: 401 });
   }
 
   const server = createRadarMcpServer();

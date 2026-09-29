@@ -261,7 +261,7 @@ export async function ingestProject(project: typeof projects.$inferSelect) {
       enabled = [];
       status.talkwalker = {
         ok: false, count: 0,
-        error: `Budget Talkwalker del giorno esaurito: ~${spent} credits su ${budget}. Riprende domani, oppure alza TALKWALKER_DAILY_CREDITS.`,
+        error: `Se agotó el presupuesto diario de Talkwalker: ~${spent} créditos de ${budget}. Se reanuda mañana, o aumenta TALKWALKER_DAILY_CREDITS.`,
         at: new Date().toISOString(), lastOkAt: status.talkwalker?.lastOkAt,
       };
       await setMeta('source_status', status);

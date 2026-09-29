@@ -19,7 +19,7 @@
 // (stesso principio già usato per Alpha Vantage) e ogni fallimento è silenzioso
 // per il resto della pipeline — è un arricchimento, non una fonte critica.
 
-const UA = 'SocialRadar/1.0 (monitoraggio media; contatto: admin@example.com)';
+const UA = 'AEDO/1.0 (monitoraggio media; contatto: admin@example.com)';
 const MAX_TERMS = 5; // limite reale imposto dal sito stesso, non nostro
 
 export type SearchInterestPoint = { date: string; values: number[] };
@@ -61,7 +61,7 @@ export async function fetchSearchInterest(terms: string[], days = '3-m'): Promis
     widgets?: { token: string; request: unknown }[];
   };
   const widget = exploreData.widgets?.[0];
-  if (!widget) throw new Error('Google Trends: nessun widget nella risposta');
+  if (!widget) throw new Error('Google Trends: no hay ningún widget en la respuesta');
 
   const dataRes = await fetch(
     `https://trends.google.com/trends/api/widgetdata/multiline?hl=en-US&tz=0&req=${encodeURIComponent(JSON.stringify(widget.request))}&token=${widget.token}`,

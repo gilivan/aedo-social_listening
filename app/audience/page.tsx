@@ -5,32 +5,32 @@ import { HBars } from '@/components/charts';
 import { InfluencerButton } from '@/components/influencer-button';
 import { claudeAvailable } from '@/lib/claude';
 
-export const metadata = { title: 'Audience' };
+export const metadata = { title: 'Audiencia' };
 
 export default async function AudiencePage() {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const data = await audienceData(project.id);
   const aiOn = await claudeAvailable();
 
   return (
     <>
       <PageHeader
-        title={t('page.audience.title2', 'Audience Insights')}
-        subtitle={t('page.audience.subtitle', 'Who discusses the topic: communities, languages and most influential voices (last 14 days)')}
+        title={t('page.audience.title2', 'Insights de audiencia')}
+        subtitle={t('page.audience.subtitle', 'Quién habla del tema: comunidades, idiomas y voces más influyentes (últimos 14 días)')}
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="panel px-5 py-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-300">Most active communities</h2>
+          <h2 className="mb-3 text-sm font-semibold text-slate-300">Comunidades más activas</h2>
           {data.communities.length ? (
             <div className="flex flex-col gap-2.5">
               {data.communities.map((c) => (
                 <div key={`${c.source}:${c.community}`} className="flex items-center gap-2 text-sm">
                   <SourceBadge source={c.source} />
                   <span className="truncate">{c.community}</span>
-                  <span className="ml-auto shrink-0 text-xs text-slate-500">{c.n} mentions</span>
+                  <span className="ml-auto shrink-0 text-xs text-slate-500">{c.n} menciones</span>
                   {c.avgSentiment !== null && (
                     <span className={`shrink-0 text-xs ${c.avgSentiment > 0.15 ? 'text-emerald-400' : c.avgSentiment < -0.15 ? 'text-red-400' : 'text-slate-500'}`}>
                       {c.avgSentiment.toFixed(2)}
@@ -39,20 +39,20 @@ export default async function AudiencePage() {
                 </div>
               ))}
             </div>
-          ) : <p className="text-sm text-slate-500">No data.</p>}
+          ) : <p className="text-sm text-slate-500">Sin datos.</p>}
         </section>
 
         <section className="panel px-5 py-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-300">Conversation languages</h2>
+          <h2 className="mb-3 text-sm font-semibold text-slate-300">Idiomas de la conversación</h2>
           {data.languages.length
             ? <HBars items={data.languages.map((l) => ({ label: l.language.toUpperCase(), value: l.n }))} color="#a78bfa" />
-            : <p className="text-sm text-slate-500">Awaiting AI analysis.</p>}
+            : <p className="text-sm text-slate-500">Pendiente del análisis de IA.</p>}
         </section>
 
         <section className="panel px-5 py-4">
-          <h2 className="mb-1 text-sm font-semibold text-slate-300">Most influential authors</h2>
+          <h2 className="mb-1 text-sm font-semibold text-slate-300">Autores más influyentes</h2>
           <p className="mb-3 text-xs text-slate-600">
-            Click the magnifier for the AI profile with a personalized outreach draft.
+            Haz clic en la lupa para ver el perfil de IA con un borrador de contacto personalizado.
           </p>
           {data.authors.length ? (
             <div className="flex flex-col gap-2.5">
@@ -64,7 +64,7 @@ export default async function AudiencePage() {
                     <span className="truncate text-xs text-slate-500">{a.authorHandle}</span>
                   )}
                   <span className="ml-auto shrink-0 text-xs text-slate-500">
-                    {a.n} posts · engagement {Math.round(a.engagement).toLocaleString('en-US')}
+                    {a.n} publicaciones · engagement {Math.round(a.engagement).toLocaleString('es-CO')}
                   </span>
                   {aiOn && (
                     <InfluencerButton author={a.authorHandle ?? a.author ?? ''} source={a.source} />
@@ -72,11 +72,11 @@ export default async function AudiencePage() {
                 </div>
               ))}
             </div>
-          ) : <p className="text-sm text-slate-500">No data.</p>}
+          ) : <p className="text-sm text-slate-500">Sin datos.</p>}
         </section>
 
         <section className="panel px-5 py-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-300">Topics by community</h2>
+          <h2 className="mb-3 text-sm font-semibold text-slate-300">Temas por comunidad</h2>
           {data.topicsByCommunity.length ? (
             <div className="flex flex-col gap-1.5 text-sm">
               {data.topicsByCommunity.slice(0, 15).map((t, i) => (
@@ -87,7 +87,7 @@ export default async function AudiencePage() {
                 </div>
               ))}
             </div>
-          ) : <p className="text-sm text-slate-500">Awaiting AI analysis.</p>}
+          ) : <p className="text-sm text-slate-500">Pendiente del análisis de IA.</p>}
         </section>
       </div>
     </>

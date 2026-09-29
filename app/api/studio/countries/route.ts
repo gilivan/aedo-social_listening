@@ -18,10 +18,10 @@ export const maxDuration = 120;
  */
 export async function POST() {
   if (!isAdmin(await getCurrentUser())) {
-    return NextResponse.json({ error: 'Solo gli amministratori' }, { status: 403 });
+    return NextResponse.json({ error: 'Solo para administradores' }, { status: 403 });
   }
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'Nessun progetto selezionato' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'No hay ningún proyecto seleccionado' }, { status: 400 });
 
   try {
     const recovered = await backfillCountries(project.id);

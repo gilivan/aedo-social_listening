@@ -5,7 +5,7 @@ import { fetchAppStoreReviews } from './appstore';
 import { fetchGooglePlacesReviews, googlePlacesEnabled } from './googleplaces';
 import { fetchYelpReviews, yelpEnabled } from './yelp';
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 /**
  * Interroga le fonti configurate e salva le recensioni nuove.

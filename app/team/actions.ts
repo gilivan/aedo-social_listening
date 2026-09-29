@@ -28,14 +28,14 @@ function tempPassword(): string {
 export type TeamActionState = { ok?: boolean; error?: string; tempPassword?: string; email?: string };
 
 export async function addUser(_prev: TeamActionState, formData: FormData): Promise<TeamActionState> {
-  if (!(await requireAdmin())) return { error: 'not authorized' };
+  if (!(await requireAdmin())) return { error: 'no autorizado' };
   const name = String(formData.get('name') ?? '').trim();
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
-  if (!name || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) return { error: 'Invalid name or email.' };
+  if (!name || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) return { error: 'Nombre o correo no válido.' };
 
   const db = await getDb();
   const [exists] = await db.select({ id: users.id }).from(users).where(eq(users.email, email));
-  if (exists) return { error: 'A user with this email already exists.' };
+  if (exists) return { error: 'Ya existe un usuario con este correo.' };
 
   const pw = tempPassword();
   await db.insert(users).values({
@@ -47,12 +47,12 @@ export async function addUser(_prev: TeamActionState, formData: FormData): Promi
 }
 
 export async function resetPassword(_prev: TeamActionState, formData: FormData): Promise<TeamActionState> {
-  if (!(await requireAdmin())) return { error: 'not authorized' };
+  if (!(await requireAdmin())) return { error: 'no autorizado' };
   const id = Number(formData.get('id'));
-  if (!id) return { error: 'invalid user' };
+  if (!id) return { error: 'usuario no válido' };
   const db = await getDb();
   const [u] = await db.select().from(users).where(eq(users.id, id));
-  if (!u) return { error: 'user not found' };
+  if (!u) return { error: 'usuario no encontrado' };
   const pw = tempPassword();
   await db.update(users).set({ passwordHash: hashPassword(pw), mustChangePassword: 1 }).where(eq(users.id, id));
   revalidatePath('/team');

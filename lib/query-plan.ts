@@ -60,10 +60,10 @@ export const LIMITS = {
 } as const;
 
 export const ROLE_LABEL: Record<ConceptRole, { it: string; en: string }> = {
-  subject: { it: 'Soggetto', en: 'Subject' },
-  context: { it: 'Contesto', en: 'Context' },
-  competitor: { it: 'Competitor', en: 'Competitor' },
-  noise: { it: 'Da escludere', en: 'Exclude' },
+  subject: { it: 'Soggetto', en: 'Sujeto' },
+  context: { it: 'Contesto', en: 'Contexto' },
+  competitor: { it: 'Competitor', en: 'Competidor' },
+  noise: { it: 'Da escludere', en: 'Ruido' },
 };
 
 const fold = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -114,11 +114,11 @@ export function validatePlan(input: unknown): { plan: QueryPlan; warnings: strin
       terms.push(ct);
     }
     if (!label || !terms.length) {
-      if (label) warnings.push(`“${label}” non ha termini validi ed è stato tolto.`);
+      if (label) warnings.push(`“${label}” no tiene términos válidos y se eliminó.`);
       continue;
     }
     if (concepts.length >= LIMITS.concepts) {
-      warnings.push(`Troppi concetti: “${label}” e i successivi sono stati tolti.`);
+      warnings.push(`Demasiados conceptos: se eliminaron “${label}” y los siguientes.`);
       break;
     }
     const wanted = typeof cc.id === 'string' && cc.id.trim() ? cc.id.trim() : label;
@@ -154,7 +154,7 @@ export function validatePlan(input: unknown): { plan: QueryPlan; warnings: strin
     const none = [...new Set([...resolve(qq.none), ...all.filter((id) => byId.get(id)!.role === 'noise')])]
       .filter((id) => !required.includes(id));
     if (!name || !required.length) {
-      if (name) warnings.push(`La query “${name}” non richiede nessun concetto valido ed è stata tolta.`);
+      if (name) warnings.push(`La consulta “${name}” no requiere ningún concepto válido y se eliminó.`);
       continue;
     }
     const sig = `${[...required].sort().join('+')}|${[...none].sort().join('+')}`;
@@ -163,12 +163,12 @@ export function validatePlan(input: unknown): { plan: QueryPlan; warnings: strin
       continue;
     }
     if (queries.length >= LIMITS.queries) {
-      warnings.push(`Troppe query: “${name}” e le successive sono state tolte.`);
+      warnings.push(`Demasiadas consultas: se eliminaron “${name}” y las siguientes.`);
       break;
     }
     signatures.add(sig);
     const on = qq.enabled !== false && enabled < LIMITS.enabledQueries;
-    if (qq.enabled !== false && !on) warnings.push(`“${name}” è stata spenta: al massimo ${LIMITS.enabledQueries} query attive.`);
+    if (qq.enabled !== false && !on) warnings.push(`“${name}” se desactivó: máximo ${LIMITS.enabledQueries} consultas activas.`);
     if (on) enabled++;
     const kind: QueryKind = (['core', 'context', 'competitor', 'comparison', 'custom'] as const).includes(qq.kind as QueryKind)
       ? qq.kind as QueryKind : 'custom';
@@ -256,13 +256,13 @@ export function toBoolean(q: Pick<CompiledQuery, 'anchor' | 'groups' | 'exclude'
 }
 
 /** La query letta come una frase, per chi non legge le parentesi. */
-export function describeQuery(plan: QueryPlan, q: QueryDef, lang: 'it' | 'en' = 'it'): string {
+export function describeQuery(plan: QueryPlan, q: QueryDef, lang: 'it' | 'en' = 'en'): string {
   const byId = new Map(plan.concepts.map((c) => [c.id, c]));
   const names = q.all.map((id) => byId.get(id)?.label).filter(Boolean) as string[];
   const excluded = q.none.map((id) => byId.get(id)?.label).filter(Boolean) as string[];
   const list = (xs: string[], and: string) => (xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} ${and} ${xs[xs.length - 1]}`);
   if (lang === 'en') {
-    return `Finds what talks about ${list(names, 'and')}${excluded.length ? `, leaving out ${list(excluded, 'and')}` : ''}.`;
+    return `Encuentra lo que habla de ${list(names, 'y')}${excluded.length ? `, dejando fuera ${list(excluded, 'y')}` : ''}.`;
   }
   return `Trova quello che parla di ${list(names, 'e')}${excluded.length ? `, lasciando fuori ${list(excluded, 'e')}` : ''}.`;
 }
@@ -306,17 +306,17 @@ export function planFromLegacy(
   const subject: Concept = {
     id: slugId(project.name, taken), label: project.name, role: 'subject',
     terms: project.keywords.length ? project.keywords : own?.keywords ?? [project.name],
-    note: 'Dai termini “almeno uno” della vecchia query.',
+    note: 'De los términos “al menos uno” de la consulta anterior.',
   };
   concepts.push(subject);
   const contexts = (project.allTerms ?? []).map((t) => ({
     id: slugId(t, taken), label: t, role: 'context' as const, terms: [t],
-    note: 'Termine “tutti richiesti” della vecchia query.',
+    note: 'Término “todos obligatorios” de la consulta anterior.',
   }));
   concepts.push(...contexts);
   let noise: Concept | null = null;
   if ((project.excludeTerms ?? []).length) {
-    noise = { id: slugId('rumore', taken), label: 'Rumore', role: 'noise', terms: project.excludeTerms!, note: 'Termini esclusi della vecchia query.' };
+    noise = { id: slugId('rumore', taken), label: 'Ruido', role: 'noise', terms: project.excludeTerms!, note: 'Términos excluidos de la consulta anterior.' };
     concepts.push(noise);
   }
   const qtaken = new Set<string>();

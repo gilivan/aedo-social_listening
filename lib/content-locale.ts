@@ -11,8 +11,9 @@ export type ContentLocale = 'en' | 'it';
 const NAMES: Record<ContentLocale, string> = { en: 'English', it: 'Italian' };
 
 export async function getContentLocale(): Promise<ContentLocale> {
-  const v = await getMeta<string>('content_locale');
-  return v === 'it' ? 'it' : 'en';
+  // AEDO: los contenidos generados por la IA siempre van en español.
+  void getMeta;
+  return 'en';
 }
 
 export async function setContentLocale(locale: ContentLocale): Promise<void> {
@@ -25,6 +26,7 @@ export async function setContentLocale(locale: ContentLocale): Promise<void> {
  * (sentiment, stance, quadranti…) così il parsing e la logica non si rompono.
  */
 export function localeDirective(locale: ContentLocale): string {
-  if (locale === 'en') return '';
-  return `\n\nIMPORTANT: Write every human-readable text value — titles, descriptions, summaries, explanations, narratives, answers — in ${NAMES[locale]}. Keep all JSON keys and controlled enum/category values (sentiment labels, stance, quadrant names, risk levels, etc.) exactly in English.`;
+  // AEDO: siempre español (Colombia), sin importar el valor recibido.
+  void locale; void NAMES;
+  return `\n\nIMPORTANT: Write every human-readable text value — titles, descriptions, summaries, explanations, narratives, answers — in Spanish (Latin American, Colombia). Keep all JSON keys and controlled enum/category values (sentiment labels, stance, quadrant names, risk levels, etc.) exactly in English.`;
 }

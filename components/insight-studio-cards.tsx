@@ -27,7 +27,7 @@ export function InsightStudioCards({ charts }: { charts: Chart[] }) {
     try {
       const res = await fetch(`/api/studio?id=${id}`, { method: 'DELETE' });
       if (!res.ok) {
-        setError((await res.json().catch(() => ({}))).error ?? 'Non è stato possibile cancellarlo');
+        setError((await res.json().catch(() => ({}))).error ?? 'No fue posible eliminarlo');
         return;
       }
       router.refresh();
@@ -43,7 +43,7 @@ export function InsightStudioCards({ charts }: { charts: Chart[] }) {
           <div key={c.id}
             className="panel group relative flex items-start gap-3 px-4 py-3 transition hover:border-violet-500/40 hover:bg-violet-500/[0.04]">
             <Shapes className="mt-0.5 size-4 shrink-0 text-violet-400" />
-            <Link href={`/graph?chart=${c.id}`} className="min-w-0 flex-1" title="Aprilo in Studio Graph">
+            <Link href={`/graph?chart=${c.id}`} className="min-w-0 flex-1" title="Ábrelo en Studio Graph">
               <span className="block pr-6 text-sm font-medium text-slate-200 transition group-hover:text-violet-200">
                 {c.title}
               </span>
@@ -54,16 +54,16 @@ export function InsightStudioCards({ charts }: { charts: Chart[] }) {
               // La conferma sta dentro la scheda: una finestra di sistema per
               // togliere un grafico che si rifà in dieci secondi è di troppo.
               <span className="absolute right-2 top-2 flex items-center gap-1 rounded-lg border border-red-500/40 bg-[#0c1226] px-1.5 py-1 text-[10px]">
-                <span className="text-slate-400">Tolgo?</span>
+                <span className="text-slate-400">¿Lo quito?</span>
                 <button onClick={() => remove(c.id)} disabled={busy === c.id}
                   className="rounded px-1 font-semibold text-red-300 hover:bg-red-500/15">
-                  {busy === c.id ? <Loader2 className="size-3 animate-spin" /> : 'sì'}
+                  {busy === c.id ? <Loader2 className="size-3 animate-spin" /> : 'sí'}
                 </button>
                 <button onClick={() => setConfirm(null)} className="rounded px-1 text-slate-500 hover:text-slate-300">no</button>
               </span>
             ) : (
               <button onClick={() => setConfirm(c.id)}
-                title="Togli questo grafico. Sparisce anche da report ed export che lo citano."
+                title="Quita este gráfico. También desaparece de los informes y exportaciones que lo citan."
                 className="absolute right-2 top-2 rounded-lg p-1 text-slate-600 opacity-0 transition hover:bg-red-500/15 hover:text-red-300 focus:opacity-100 group-hover:opacity-100">
                 <X className="size-3.5" />
               </button>

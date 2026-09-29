@@ -8,9 +8,9 @@ type Kit = Record<string, string>;
 
 const FORMATS: { id: string; label: string; icon: typeof Mail; pre?: boolean }[] = [
   { id: 'linkedin', label: 'LinkedIn', icon: Briefcase },
-  { id: 'xthread', label: 'Thread X', icon: Hash, pre: true },
+  { id: 'xthread', label: 'Hilo de X', icon: Hash, pre: true },
   { id: 'instagram', label: 'Instagram', icon: Camera },
-  { id: 'videohook', label: 'Video hook', icon: Film },
+  { id: 'videohook', label: 'Hook de video', icon: Film },
   { id: 'newsletter', label: 'Newsletter', icon: Mail },
 ];
 
@@ -55,13 +55,13 @@ export function ContentStudio({ suggestions }: { suggestions: string[] }) {
     <div className="flex flex-col gap-5">
       {/* Concetto */}
       <section className="panel px-5 py-4">
-        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Concept to develop</label>
+        <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">Concepto a desarrollar</label>
         <textarea value={concept} onChange={(e) => setConcept(e.target.value)} rows={2}
-          placeholder="e.g. The impact of AI data centers on energy consumption, with a surprising figure"
+          placeholder="p. ej. El impacto de los centros de datos de IA en el consumo de energía, con una cifra sorprendente"
           className={`${inputCls} mt-2 resize-y`} />
         {suggestions.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <span className="text-xs text-slate-600">Ideas from trends:</span>
+            <span className="text-xs text-slate-600">Ideas de las tendencias:</span>
             {suggestions.map((s) => (
               <button key={s} onClick={() => setConcept((c) => c ? c : s)}
                 className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-300 transition hover:bg-sky-500/15 hover:text-sky-300">
@@ -74,7 +74,7 @@ export function ContentStudio({ suggestions }: { suggestions: string[] }) {
           <button onClick={genKit} disabled={busyKit || !concept.trim()}
             className="flex items-center gap-2 rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-sky-400 disabled:opacity-50">
             {busyKit ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-            {busyKit ? 'Generating kit…' : 'Generate multi-format kit'}
+            {busyKit ? 'Generando kit…' : 'Generar kit multiformato'}
           </button>
           <button onClick={genHooks} disabled={busyHooks || !concept.trim()}
             className="flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/5 disabled:opacity-50">
@@ -89,7 +89,7 @@ export function ContentStudio({ suggestions }: { suggestions: string[] }) {
       {hooks && (
         <section className="panel px-5 py-4">
           <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300">
-            <Wand2 className="size-4 text-violet-400" /> Hooks & alternative titles
+            <Wand2 className="size-4 text-violet-400" /> Hooks y títulos alternativos
           </h2>
           <div className="flex flex-col gap-1.5">
             {hooks.map((h, i) => (
@@ -121,7 +121,7 @@ function KitCard({ format, label, Icon, pre, text, onUpdate }: {
 }) {
   const [instruction, setInstruction] = useState('');
   const [refining, setRefining] = useState(false);
-  const QUICK = ['more ironic', 'shorter', 'more formal', 'add a data point'];
+  const QUICK = ['más irónico', 'más corto', 'más formal', 'agrega un dato'];
 
   async function refine(inst: string) {
     if (!inst.trim() || refining) return;
@@ -155,7 +155,7 @@ function KitCard({ format, label, Icon, pre, text, onUpdate }: {
         </div>
         <form onSubmit={(e) => { e.preventDefault(); refine(instruction); }} className="flex items-center gap-1.5">
           <input value={instruction} onChange={(e) => setInstruction(e.target.value)}
-            placeholder="refine: e.g. more direct tone…"
+            placeholder="ajustar: p. ej. tono más directo…"
             className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-xs outline-none placeholder:text-slate-600" />
           <button type="submit" disabled={refining || !instruction.trim()}
             className="rounded-lg bg-violet-500/90 p-1.5 text-slate-950 transition hover:bg-violet-400 disabled:opacity-50">

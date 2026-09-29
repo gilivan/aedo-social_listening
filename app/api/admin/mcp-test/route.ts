@@ -13,10 +13,10 @@ export const maxDuration = 60;
  * con il token sbagliato o l'endpoint spento.
  */
 export async function POST(req: Request) {
-  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'solo amministratori' }, { status: 403 });
+  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'solo para administradores' }, { status: 403 });
   await hydrateConnectorCredentials();
   const token = mcpToken();
-  if (!token) return NextResponse.json({ error: 'L’endpoint è spento: genera prima un token.' }, { status: 400 });
+  if (!token) return NextResponse.json({ error: 'El endpoint está apagado: primero genera un token.' }, { status: 400 });
 
   const endpoint = new URL('/api/mcp', req.url).toString();
   const call = async (id: number, method: string, params: Record<string, unknown> = {}) => {

@@ -207,8 +207,8 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
   if (cur.n === 0) {
     return {
       overall: 'unsuitable',
-      overallReason: L(lang, 'Nessuna menzione nel periodo: non c’è niente da leggere.', 'No mentions in the period: nothing to read.'),
-      findings: [], verdicts: k.kpis.map((x) => ({ id: x.id, label: x.label, verdict: 'unusable', reason: L(lang, 'nessun dato', 'no data') })),
+      overallReason: L(lang, 'Nessuna menzione nel periodo: non c’è niente da leggere.', 'No hay menciones en el periodo: no hay nada que leer.'),
+      findings: [], verdicts: k.kpis.map((x) => ({ id: x.id, label: x.label, verdict: 'unusable', reason: L(lang, 'nessun dato', 'sin datos') })),
       cannotSay: [], historyWindows: 0,
     };
   }
@@ -231,15 +231,15 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
       id: 'gaps', area: 'completeness', severity: 'caution',
       observation: L(lang,
         zeroDays.length === 1 ? 'Un giorno senza nessuna menzione' : `${zeroDays.length} giorni senza nessuna menzione`,
-        zeroDays.length === 1 ? 'One day with no mentions at all' : `${zeroDays.length} days with no mentions at all`),
+        zeroDays.length === 1 ? 'Un día sin ninguna mención' : `${zeroDays.length} días sin ninguna mención`),
       evidence: L(lang, `media di ${fmt(avgDaily, 1)} menzioni al giorno; giorni a zero: ${zeroDays.slice(0, 5).map((d) => d.day).join(', ')}`,
-        `average of ${fmt(avgDaily, 1)} mentions a day; zero days: ${zeroDays.slice(0, 5).map((d) => d.day).join(', ')}`),
+        `promedio de ${fmt(avgDaily, 1)} menciones al día; días en cero: ${zeroDays.slice(0, 5).map((d) => d.day).join(', ')}`),
       why: L(lang, 'con questo volume un giorno a zero è più probabilmente una raccolta interrotta che un silenzio: abbassa totali e medie.',
-        'at this volume a zero day is more likely an interrupted collection than silence: it lowers totals and averages.'),
+        'con este volumen, un día en cero es más probablemente una recopilación interrumpida que un silencio: baja totales y promedios.'),
       confidence: 'medium',
-      verify: L(lang, 'controlla lo stato delle fonti in Impostazioni per quei giorni.', 'check source status in Settings for those days.'),
+      verify: L(lang, 'controlla lo stato delle fonti in Impostazioni per quei giorni.', 'revisa el estado de las fuentes en Ajustes para esos días.'),
     });
-    caution('mentions', L(lang, 'giorni senza raccolta nel periodo', 'days without collection in the period'));
+    caution('mentions', L(lang, 'giorni senza raccolta nel periodo', 'días sin recopilación en el periodo'));
   }
 
   // 2. VALIDITÀ — metriche coperte solo in parte, e metriche non omogenee.
@@ -247,40 +247,40 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
   if (cur.withEng && covEng < 0.5) {
     findings.push({
       id: 'engCoverage', area: 'validity', severity: 'caution',
-      observation: L(lang, 'L’engagement copre meno della metà delle menzioni', 'Engagement covers less than half of the mentions'),
+      observation: L(lang, 'L’engagement copre meno della metà delle menzioni', 'El engagement cubre menos de la mitad de las menciones'),
       evidence: L(lang, `${fmt(cur.withEng)} menzioni su ${fmt(cur.n)} riportano like, commenti o condivisioni (${fmt(covEng * 100)}%)`,
-        `${fmt(cur.withEng)} of ${fmt(cur.n)} mentions carry likes, comments or shares (${fmt(covEng * 100)}%)`),
+        `${fmt(cur.withEng)} de ${fmt(cur.n)} menciones reportan likes, comentarios o compartidos (${fmt(covEng * 100)}%)`),
       why: L(lang, 'i KPI di engagement descrivono solo i canali che lo misurano: non sono l’engagement della conversazione.',
-        'engagement KPIs describe only the channels that measure it: they are not the engagement of the whole conversation.'),
+        'los KPI de engagement describen solo los canales que lo miden: no son el engagement de toda la conversación.'),
       confidence: 'high',
-      verify: L(lang, 'leggi l’engagement per canale, non in totale.', 'read engagement by channel, not as a total.'),
+      verify: L(lang, 'leggi l’engagement per canale, non in totale.', 'lee el engagement por canal, no como total.'),
     });
     for (const id of ['engagement', 'engPerMention', 'amplification', 'conversation'] as KpiId[]) {
-      caution(id, L(lang, `copre il ${fmt(covEng * 100)}% delle menzioni`, `covers ${fmt(covEng * 100)}% of mentions`));
+      caution(id, L(lang, `copre il ${fmt(covEng * 100)}% delle menzioni`, `cubre el ${fmt(covEng * 100)}% de las menciones`));
     }
   }
   const engSources = k.channels.filter((c) => c.engagement !== null && c.engagement > 0);
   if (engSources.length > 1) {
     findings.push({
       id: 'engMixed', area: 'validity', severity: 'info',
-      observation: L(lang, 'L’engagement totale somma metriche di canali diversi', 'Total engagement adds up metrics from different channels'),
+      observation: L(lang, 'L’engagement totale somma metriche di canali diversi', 'El engagement total suma métricas de canales distintos'),
       evidence: L(lang, `canali con engagement: ${engSources.map((c) => c.source).join(', ')}`,
-        `channels with engagement: ${engSources.map((c) => c.source).join(', ')}`),
+        `canales con engagement: ${engSources.map((c) => c.source).join(', ')}`),
       why: L(lang, 'una reaction di Facebook, un like di Instagram e un upvote non valgono lo stesso: il totale è un indicatore, non una misura omogenea.',
-        'a Facebook reaction, an Instagram like and an upvote are not worth the same: the total is an indicator, not a homogeneous measure.'),
+        'una reacción de Facebook, un like de Instagram y un upvote no valen lo mismo: el total es un indicador, no una medida homogénea.'),
       confidence: 'high',
-      verify: L(lang, 'confronta i canali fra loro solo sulla loro variazione, non sul valore assoluto.', 'compare channels by their change, not their absolute value.'),
+      verify: L(lang, 'confronta i canali fra loro solo sulla loro variazione, non sul valore assoluto.', 'compara los canales por su variación, no por su valor absoluto.'),
     });
   }
   const covReach = cur.withReach / cur.n;
   if (cur.withReach && covReach < 0.5) {
-    caution('reach', L(lang, `copre il ${fmt(covReach * 100)}% delle menzioni`, `covers ${fmt(covReach * 100)}% of mentions`));
-    caution('erReach', L(lang, 'reach disponibile solo su una parte delle menzioni', 'reach available only for part of the mentions'));
+    caution('reach', L(lang, `copre il ${fmt(covReach * 100)}% delle menzioni`, `cubre el ${fmt(covReach * 100)}% de las menciones`));
+    caution('erReach', L(lang, 'reach disponibile solo su una parte delle menzioni', 'alcance disponible solo para una parte de las menciones'));
   }
   if (cur.withReach) {
     cannotSay.push(L(lang,
       `Non si può dire che il messaggio ha raggiunto ${fmt(cur.reach)} persone: la reach è potenziale, stimata dalle fonti${covReach < 1 ? `, e manca per il ${fmt((1 - covReach) * 100)}% delle menzioni` : ''}.`,
-      `You can't say the message reached ${fmt(cur.reach)} people: reach is potential, estimated by sources${covReach < 1 ? `, and missing for ${fmt((1 - covReach) * 100)}% of mentions` : ''}.`));
+      `No se puede decir que el mensaje llegó a ${fmt(cur.reach)} personas: el alcance es potencial, estimado por las fuentes${covReach < 1 ? `, y falta en el ${fmt((1 - covReach) * 100)}% de las menciones` : ''}.`));
   }
 
   // 3. COERENZA — un autore che fa il volume, testi ripetuti.
@@ -288,33 +288,33 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
   if (top && top.n / cur.n > DOMINANT_AUTHOR && cur.n >= 20) {
     findings.push({
       id: 'dominantAuthor', area: 'coherence', severity: 'caution',
-      observation: L(lang, `Un solo autore produce il ${fmt((top.n / cur.n) * 100)}% delle menzioni`, `A single author produces ${fmt((top.n / cur.n) * 100)}% of mentions`),
-      evidence: L(lang, `${top.author}: ${fmt(top.n)} menzioni su ${fmt(cur.n)}`, `${top.author}: ${fmt(top.n)} of ${fmt(cur.n)} mentions`),
+      observation: L(lang, `Un solo autore produce il ${fmt((top.n / cur.n) * 100)}% delle menzioni`, `Un solo autor produce el ${fmt((top.n / cur.n) * 100)}% de las menciones`),
+      evidence: L(lang, `${top.author}: ${fmt(top.n)} menzioni su ${fmt(cur.n)}`, `${top.author}: ${fmt(top.n)} de ${fmt(cur.n)} menciones`),
       why: L(lang, 'il volume misura quanto scrive quell’account, non quanto si parla del tema; può essere una testata prolifica, un bot o un aggregatore.',
-        'volume then measures how much that account posts, not how much the topic is discussed; it may be a prolific outlet, a bot or an aggregator.'),
+        'el volumen mide cuánto publica esa cuenta, no cuánto se habla del tema; puede ser un medio prolífico, un bot o un agregador.'),
       confidence: 'high',
-      verify: L(lang, 'apri le sue menzioni in Ascolto e decidi se escluderlo dalla query.', 'open its mentions in Listening and decide whether to exclude it from the query.'),
+      verify: L(lang, 'apri le sue menzioni in Ascolto e decidi se escluderlo dalla query.', 'abre sus menciones en Escucha y decide si excluirlo de la consulta.'),
     });
-    caution('mentions', L(lang, 'volume concentrato su un autore', 'volume concentrated on one author'));
-    caution('perDay', L(lang, 'volume concentrato su un autore', 'volume concentrated on one author'));
+    caution('mentions', L(lang, 'volume concentrato su un autore', 'volumen concentrado en un autor'));
+    caution('perDay', L(lang, 'volume concentrato su un autore', 'volumen concentrado en un autor'));
   }
   const dups = dup.extra;
   if (dups / cur.n > 0.1 && dups >= 10) {
     const worst = dup.top
       ? L(lang, `; il più ripetuto (${fmt(dup.top.n)} volte, ${fmt(dup.top.authors)} ${dup.top.authors === 1 ? 'account' : 'account'}, ${dup.top.sources}): «${dup.top.text}…»`,
-        `; the most repeated (${fmt(dup.top.n)} times, ${fmt(dup.top.authors)} account${dup.top.authors === 1 ? '' : 's'}, ${dup.top.sources}): “${dup.top.text}…”`)
+        `; el más repetido (${fmt(dup.top.n)} veces, ${fmt(dup.top.authors)} cuenta${dup.top.authors === 1 ? '' : 's'}, ${dup.top.sources}): “${dup.top.text}…”`)
       : '';
     findings.push({
       id: 'duplicates', area: 'coherence', severity: 'caution',
-      observation: L(lang, 'Molti contenuti hanno lo stesso testo', 'Many items share the same text'),
+      observation: L(lang, 'Molti contenuti hanno lo stesso testo', 'Muchos contenidos tienen el mismo texto'),
       evidence: L(lang, `${fmt(dups)} menzioni (${fmt((dups / cur.n) * 100)}%) ripetono un testo già presente${worst}`,
-        `${fmt(dups)} mentions (${fmt((dups / cur.n) * 100)}%) repeat a text already present${worst}`),
+        `${fmt(dups)} menciones (${fmt((dups / cur.n) * 100)}%) repiten un texto ya presente${worst}`),
       why: L(lang, 'ripubblicazioni, lanci d’agenzia copiati o bot gonfiano il volume senza aggiungere voci.',
-        'reposts, copied wire stories or bots inflate volume without adding voices.'),
+        'republicaciones, notas de agencia copiadas o bots inflan el volumen sin sumar voces.'),
       confidence: 'medium',
-      verify: L(lang, 'cerca in Ascolto le frasi ripetute e valuta un’esclusione.', 'search Listening for the repeated phrases and consider an exclusion.'),
+      verify: L(lang, 'cerca in Ascolto le frasi ripetute e valuta un’esclusione.', 'busca en Escucha las frases repetidas y evalúa una exclusión.'),
     });
-    caution('mentions', L(lang, 'testi duplicati nel volume', 'duplicate texts in the volume'));
+    caution('mentions', L(lang, 'testi duplicati nel volume', 'textos duplicados en el volumen'));
   }
 
   // 4. VALORI ESTREMI — quanto pesano i tre post migliori.
@@ -327,35 +327,35 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
     if (share > TOP3_SHARE || (d.driven && !k.previousIncomplete)) {
       findings.push({
         id: 'top3', area: 'extremes', severity: 'caution',
-        observation: L(lang, 'L’engagement dipende da pochissimi contenuti', 'Engagement depends on very few items'),
+        observation: L(lang, 'L’engagement dipende da pochissimi contenuti', 'El engagement depende de muy pocos contenidos'),
         evidence: L(lang,
           `i 3 contenuti migliori valgono il ${fmt(share * 100)}% dell’engagement`
             + (d.pctWith !== null && d.pctWithout !== null ? `; variazione ${fmt(d.pctWith, 1)}% con loro, ${fmt(d.pctWithout, 1)}% senza` : ''),
-          `the top 3 items account for ${fmt(share * 100)}% of engagement`
-            + (d.pctWith !== null && d.pctWithout !== null ? `; change ${fmt(d.pctWith, 1)}% with them, ${fmt(d.pctWithout, 1)}% without` : '')),
-        why: L(lang, 'la variazione racconta tre post, non l’andamento del periodo.', 'the change tells the story of three posts, not of the period.'),
+          `los 3 mejores contenidos suman el ${fmt(share * 100)}% del engagement`
+            + (d.pctWith !== null && d.pctWithout !== null ? `; variación de ${fmt(d.pctWith, 1)}% con ellos, ${fmt(d.pctWithout, 1)}% sin ellos` : '')),
+        why: L(lang, 'la variazione racconta tre post, non l’andamento del periodo.', 'la variación cuenta la historia de tres posts, no la del periodo.'),
         confidence: 'high',
-        verify: L(lang, 'nel report cita i tre contenuti per nome invece di dare la variazione in totale.', 'in the report, name the three items instead of giving the total change.'),
+        verify: L(lang, 'nel report cita i tre contenuti per nome invece di dare la variazione in totale.', 'en el reporte, cita los tres contenidos por nombre en lugar de dar la variación total.'),
       });
-      caution('engagement', L(lang, 'guidato dai 3 contenuti principali', 'driven by the top 3 items'));
+      caution('engagement', L(lang, 'guidato dai 3 contenuti principali', 'impulsado por los 3 contenidos principales'));
       if (d.driven && d.pctWith !== null) {
         cannotSay.push(L(lang,
           `Non si può dire che l’engagement è ${d.pctWith >= 0 ? 'cresciuto' : 'calato'} del ${fmt(Math.abs(d.pctWith), 1)}%: senza i 3 contenuti principali la variazione è ${fmt(d.pctWithout ?? 0, 1)}%.`,
-          `You can't say engagement ${d.pctWith >= 0 ? 'grew' : 'fell'} ${fmt(Math.abs(d.pctWith), 1)}%: without the top 3 items the change is ${fmt(d.pctWithout ?? 0, 1)}%.`));
+          `No se puede decir que el engagement ${d.pctWith >= 0 ? 'creció' : 'cayó'} un ${fmt(Math.abs(d.pctWith), 1)}%: sin los 3 contenidos principales la variación es de ${fmt(d.pctWithout ?? 0, 1)}%.`));
       }
     }
     if (engCur.mean !== null && engCur.median !== null && engCur.median > 0 && engCur.mean > 3 * engCur.median) {
       findings.push({
         id: 'meanMedian', area: 'extremes', severity: 'info',
-        observation: L(lang, 'La media dell’engagement non rappresenta il contenuto tipico', 'Average engagement does not represent the typical item'),
+        observation: L(lang, 'La media dell’engagement non rappresenta il contenuto tipico', 'El engagement promedio no representa el contenido típico'),
         evidence: L(lang, `media ${fmt(engCur.mean, 1)}, mediana ${fmt(engCur.median, 1)} per contenuto`,
-          `mean ${fmt(engCur.mean, 1)}, median ${fmt(engCur.median, 1)} per item`),
+          `promedio ${fmt(engCur.mean, 1)}, mediana ${fmt(engCur.median, 1)} por contenido`),
         why: L(lang, 'pochi contenuti molto forti alzano la media: il contenuto tipico ne fa molto meno.',
-          'a few very strong items lift the mean: the typical item gets far less.'),
+          'unos pocos contenidos muy fuertes suben el promedio: el contenido típico obtiene mucho menos.'),
         confidence: 'high',
-        verify: L(lang, 'riporta la mediana come “engagement del contenuto tipico”.', 'report the median as “engagement of the typical item”.'),
+        verify: L(lang, 'riporta la mediana come “engagement del contenuto tipico”.', 'reporta la mediana como “engagement del contenido típico”.'),
       });
-      caution('engPerMention', L(lang, `usa la mediana (${fmt(engCur.median, 1)})`, `use the median (${fmt(engCur.median, 1)})`));
+      caution('engPerMention', L(lang, `usa la mediana (${fmt(engCur.median, 1)})`, `usa la mediana (${fmt(engCur.median, 1)})`));
     }
   }
 
@@ -369,29 +369,29 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
     if (noise === true && change !== 0 && pct !== null) {
       findings.push({
         id: 'mentionsNoise', area: 'significance', severity: 'caution',
-        observation: L(lang, 'La variazione delle menzioni sta nella normale oscillazione', 'The change in mentions is within normal fluctuation'),
+        observation: L(lang, 'La variazione delle menzioni sta nella normale oscillazione', 'La variación de las menciones está dentro de la oscilación normal'),
         evidence: L(lang, `${change > 0 ? '+' : ''}${fmt(change)} menzioni (${fmt(pct, 1)}%); oscillazione tipica fra periodi: ±${fmt(sd)} (su ${historyWindows + 1} periodi)`,
-          `${change > 0 ? '+' : ''}${fmt(change)} mentions (${fmt(pct, 1)}%); typical swing between periods: ±${fmt(sd)} (over ${historyWindows + 1} periods)`),
+          `${change > 0 ? '+' : ''}${fmt(change)} menciones (${fmt(pct, 1)}%); oscilación típica entre periodos: ±${fmt(sd)} (en ${historyWindows + 1} periodos)`),
         why: L(lang, 'una variazione di questa ampiezza capita anche senza che succeda niente: comunicarla come cambiamento è rumore.',
-          'a swing of this size happens even when nothing happens: reporting it as a change is noise.'),
+          'una oscilación de este tamaño ocurre aunque no pase nada: comunicarla como cambio es ruido.'),
         confidence: historyWindows >= 6 ? 'high' : 'medium',
-        verify: L(lang, 'guarda se la tendenza continua nel prossimo periodo prima di commentarla.', 'check whether the trend continues next period before commenting on it.'),
+        verify: L(lang, 'guarda se la tendenza continua nel prossimo periodo prima di commentarla.', 'revisa si la tendencia continúa en el próximo periodo antes de comentarla.'),
       });
-      caution('mentions', L(lang, 'il valore è solido, la variazione è nella norma', 'the value is solid, the change is within normal range'));
+      caution('mentions', L(lang, 'il valore è solido, la variazione è nella norma', 'el valor es sólido, la variación está dentro de lo normal'));
       cannotSay.push(L(lang,
         `Non si può dire che le menzioni sono ${change > 0 ? 'cresciute' : 'calate'} del ${fmt(Math.abs(pct), 1)}%: la variazione sta dentro l’oscillazione normale (±${fmt(sd)}).`,
-        `You can't say mentions ${change > 0 ? 'grew' : 'fell'} ${fmt(Math.abs(pct), 1)}%: the change is within normal fluctuation (±${fmt(sd)}).`));
+        `No se puede decir que las menciones ${change > 0 ? 'crecieron' : 'cayeron'} un ${fmt(Math.abs(pct), 1)}%: la variación está dentro de la oscilación normal (±${fmt(sd)}).`));
     } else if (noise === null) {
       findings.push({
         id: 'shortHistory', area: 'significance', severity: 'info',
-        observation: L(lang, 'Storico troppo corto per dire se una variazione è normale', 'History too short to tell whether a change is normal'),
+        observation: L(lang, 'Storico troppo corto per dire se una variazione è normale', 'Histórico demasiado corto para saber si una variación es normal'),
         evidence: L(lang, `${historyWindows + 1} periodi di ${days} giorni disponibili; ne servono almeno 5`,
-          `${historyWindows + 1} periods of ${days} days available; at least 5 are needed`),
+          `${historyWindows + 1} periodos de ${days} días disponibles; se necesitan al menos 5`),
         why: L(lang, 'senza una misura dell’oscillazione abituale ogni variazione sembra un segnale.',
-          'without a measure of the usual swing every change looks like a signal.'),
+          'sin una medida de la oscilación habitual, cualquier variación parece una señal.'),
         confidence: 'high',
         verify: L(lang, isUpload ? 'importa un periodo più lungo, o usa un periodo più breve.' : `usa un periodo più breve: le menzioni raccolte restano ${RETENTION_DAYS} giorni.`,
-          isUpload ? 'import a longer period, or use a shorter one.' : `use a shorter period: collected mentions are kept ${RETENTION_DAYS} days.`),
+          isUpload ? 'importa un periodo más largo o usa uno más corto.' : `usa un periodo más corto: las menciones recopiladas se conservan ${RETENTION_DAYS} días.`),
       });
     }
 
@@ -402,10 +402,10 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
     if (nssNow !== null && nssPrev !== null) {
       const n = withinNoise(nssNow - nssPrev, nssSeries);
       if (n.noise === true && Math.abs(nssNow - nssPrev) >= 1) {
-        caution('nss', L(lang, `variazione dentro l’oscillazione normale (±${fmt(n.sd, 1)} punti)`, `change within normal fluctuation (±${fmt(n.sd, 1)} points)`));
+        caution('nss', L(lang, `variazione dentro l’oscillazione normale (±${fmt(n.sd, 1)} punti)`, `variación dentro de la oscilación normal (±${fmt(n.sd, 1)} puntos)`));
         cannotSay.push(L(lang,
           `Non si può dire che il sentiment è ${nssNow > nssPrev ? 'migliorato' : 'peggiorato'}: lo scarto di ${fmt(Math.abs(nssNow - nssPrev), 1)} punti di NSS è nella norma.`,
-          `You can't say sentiment ${nssNow > nssPrev ? 'improved' : 'worsened'}: the ${fmt(Math.abs(nssNow - nssPrev), 1)}-point NSS shift is within normal range.`));
+          `No se puede decir que el sentimiento ${nssNow > nssPrev ? 'mejoró' : 'empeoró'}: el cambio de ${fmt(Math.abs(nssNow - nssPrev), 1)} puntos de NSS está dentro de lo normal.`));
       }
     }
   }
@@ -415,29 +415,29 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
   if (cur.withSentiment && covSent < 0.9) {
     findings.push({
       id: 'sentimentPending', area: 'sentiment', severity: 'caution',
-      observation: L(lang, 'Una parte delle menzioni non ha ancora il sentiment', 'Part of the mentions has no sentiment yet'),
+      observation: L(lang, 'Una parte delle menzioni non ha ancora il sentiment', 'Una parte de las menciones aún no tiene sentimiento'),
       evidence: L(lang, `sentiment calcolato su ${fmt(cur.withSentiment)} menzioni su ${fmt(cur.n)} (${fmt(covSent * 100)}%)`,
-        `sentiment computed on ${fmt(cur.withSentiment)} of ${fmt(cur.n)} mentions (${fmt(covSent * 100)}%)`),
+        `sentimiento calculado sobre ${fmt(cur.withSentiment)} de ${fmt(cur.n)} menciones (${fmt(covSent * 100)}%)`),
       why: L(lang, 'le percentuali si riferiscono alle sole menzioni analizzate: le altre possono spostarle.',
-        'percentages refer to analysed mentions only: the rest may shift them.'),
+        'los porcentajes se refieren solo a las menciones analizadas: las demás pueden moverlos.'),
       confidence: 'high',
-      verify: L(lang, 'lancia l’analisi delle menzioni in attesa e ricontrolla.', 'run the analysis on pending mentions and check again.'),
+      verify: L(lang, 'lancia l’analisi delle menzioni in attesa e ricontrolla.', 'ejecuta el análisis de las menciones pendientes y vuelve a revisar.'),
     });
     for (const id of ['positive', 'neutral', 'negative', 'nss'] as KpiId[]) {
-      caution(id, L(lang, `sentiment su ${fmt(covSent * 100)}% delle menzioni`, `sentiment on ${fmt(covSent * 100)}% of mentions`));
+      caution(id, L(lang, `sentiment su ${fmt(covSent * 100)}% delle menzioni`, `sentimiento sobre el ${fmt(covSent * 100)}% de las menciones`));
     }
   }
   if (cur.withSentiment) {
     findings.push({
       id: 'sentimentError', area: 'sentiment', severity: 'info',
-      observation: L(lang, 'Il tasso d’errore del sentiment automatico non è misurato', 'The error rate of automatic sentiment is not measured'),
+      observation: L(lang, 'Il tasso d’errore del sentiment automatico non è misurato', 'La tasa de error del sentimiento automático no está medida'),
       evidence: L(lang, `${fmt(cur.withSentiment)} menzioni classificate dal modello, nessuna verificata a mano`,
-        `${fmt(cur.withSentiment)} mentions classified by the model, none checked by hand`),
+        `${fmt(cur.withSentiment)} menciones clasificadas por el modelo, ninguna verificada a mano`),
       why: L(lang, 'ironia, sarcasmo e dialetto ingannano la classificazione; senza una verifica non si sa in che direzione sbaglia.',
-        'irony, sarcasm and dialect fool the classifier; without a check you don’t know which way it errs.'),
+        'la ironía, el sarcasmo y el lenguaje coloquial engañan al clasificador; sin una verificación no sabes hacia dónde se equivoca.'),
       confidence: 'medium',
       verify: L(lang, 'leggi 30 menzioni a caso e conta quante hanno il sentiment giusto; se l’accordo è sotto l’80%, presenta il NSS come indicativo.',
-        'read 30 random mentions and count how many have the right sentiment; if agreement is under 80%, present NSS as indicative.'),
+        'lee 30 menciones al azar y cuenta cuántas tienen el sentimiento correcto; si la coincidencia es menor al 80%, presenta el NSS como indicativo.'),
     });
   }
 
@@ -452,51 +452,51 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
     const growth = delta(cur.n, prev.n).pct;
     findings.push({
       id: 'newSources', area: 'comparison', severity: 'critical',
-      observation: L(lang, 'Una parte del periodo viene da fonti che prima non c’erano', 'Part of the period comes from sources that weren’t there before'),
+      observation: L(lang, 'Una parte del periodo viene da fonti che prima non c’erano', 'Una parte del periodo viene de fuentes que antes no existían'),
       evidence: L(lang,
         `${fmt(fromNew)} menzioni su ${fmt(cur.n)} (${fmt((fromNew / cur.n) * 100)}%) da fonti assenti nel periodo precedente: ${newSources.slice(0, 5).map((c) => `${c.source} ${fmt(c.mentions)}`).join(', ')}`,
-        `${fmt(fromNew)} of ${fmt(cur.n)} mentions (${fmt((fromNew / cur.n) * 100)}%) from sources absent in the previous period: ${newSources.slice(0, 5).map((c) => `${c.source} ${fmt(c.mentions)}`).join(', ')}`),
+        `${fmt(fromNew)} de ${fmt(cur.n)} menciones (${fmt((fromNew / cur.n) * 100)}%) de fuentes ausentes en el periodo anterior: ${newSources.slice(0, 5).map((c) => `${c.source} ${fmt(c.mentions)}`).join(', ')}`),
       why: L(lang, 'la variazione misura il perimetro della raccolta che si è allargato, non la conversazione che cresce.',
-        'the change measures a wider collection scope, not a growing conversation.'),
+        'la variación mide un alcance de recopilación más amplio, no una conversación que crece.'),
       confidence: 'high',
       verify: L(lang, 'confronta i due periodi sulle sole fonti presenti in entrambi (tabella per canale).',
-        'compare the two periods on the sources present in both (channel table).'),
+        'compara los dos periodos solo con las fuentes presentes en ambos (tabla por canal).'),
     });
     for (const id of ['mentions', 'perDay', 'engagement', 'reach', 'authors', 'peakIndex'] as KpiId[]) {
-      caution(id, L(lang, 'il confronto include fonti nuove', 'the comparison includes new sources'));
+      caution(id, L(lang, 'il confronto include fonti nuove', 'la comparación incluye fuentes nuevas'));
     }
     if (growth !== null) {
       cannotSay.push(L(lang,
         `Non si può attribuire alla conversazione la variazione delle menzioni (${growth >= 0 ? '+' : '−'}${fmt(Math.abs(growth), 1)}%): il ${fmt((fromNew / cur.n) * 100)}% del periodo viene da fonti che prima non c’erano.`,
-        `The change in mentions (${growth >= 0 ? '+' : '−'}${fmt(Math.abs(growth), 1)}%) can’t be attributed to the conversation: ${fmt((fromNew / cur.n) * 100)}% of the period comes from sources that weren’t there before.`));
+        `La variación de las menciones (${growth >= 0 ? '+' : '−'}${fmt(Math.abs(growth), 1)}%) no se puede atribuir a la conversación: el ${fmt((fromNew / cur.n) * 100)}% del periodo viene de fuentes que antes no existían.`));
     }
   }
 
   if (k.previousIncomplete) {
     findings.push({
       id: 'comparisonRetention', area: 'comparison', severity: 'critical',
-      observation: L(lang, 'Il periodo di confronto è incompleto', 'The comparison period is incomplete'),
+      observation: L(lang, 'Il periodo di confronto è incompleto', 'El periodo de comparación está incompleto'),
       evidence: L(lang, `comincia il ${k.previous.from.toISOString().slice(0, 10)}, oltre i ${RETENTION_DAYS} giorni di conservazione delle menzioni raccolte`,
-        `it starts on ${k.previous.from.toISOString().slice(0, 10)}, beyond the ${RETENTION_DAYS}-day retention of collected mentions`),
+        `empieza el ${k.previous.from.toISOString().slice(0, 10)}, más allá de los ${RETENTION_DAYS} días de conservación de las menciones recopiladas`),
       why: L(lang, 'ogni variazione sembrerebbe una crescita: è solo la parte di archivio che non c’è più.',
-        'every change would look like growth: it is only the part of the archive that no longer exists.'),
+        'cualquier variación parecería crecimiento: es solo la parte del archivo que ya no existe.'),
       confidence: 'high',
-      verify: L(lang, 'usa un periodo di 30 giorni o meno per i confronti.', 'use a period of 30 days or less for comparisons.'),
+      verify: L(lang, 'usa un periodo di 30 giorni o meno per i confronti.', 'usa un periodo de 30 días o menos para las comparaciones.'),
     });
     cannotSay.push(L(lang, 'Non si può confrontare questo periodo con il precedente: il precedente è incompleto.',
-      'This period can’t be compared with the previous one: the previous one is incomplete.'));
+      'Este periodo no se puede comparar con el anterior: el anterior está incompleto.'));
   } else if (prev.n > 0 && prev.n < cur.n * 0.2 && historyWindows === 1) {
     findings.push({
       id: 'comparisonThin', area: 'comparison', severity: 'caution',
-      observation: L(lang, 'Il periodo di confronto è molto più povero', 'The comparison period is much thinner'),
+      observation: L(lang, 'Il periodo di confronto è molto più povero', 'El periodo de comparación es mucho más pobre'),
       evidence: L(lang, `${fmt(prev.n)} menzioni contro ${fmt(cur.n)}, e nessun periodo più vecchio`,
-        `${fmt(prev.n)} mentions against ${fmt(cur.n)}, and no older period`),
+        `${fmt(prev.n)} menciones frente a ${fmt(cur.n)}, y ningún periodo más antiguo`),
       why: L(lang, 'quando il progetto è appena nato, la crescita è la raccolta che si avvia, non la conversazione che aumenta.',
-        'when the project has just started, growth is the collection ramping up, not the conversation growing.'),
+        'cuando el proyecto acaba de empezar, el crecimiento es la recopilación que arranca, no la conversación que aumenta.'),
       confidence: 'medium',
-      verify: L(lang, 'controlla la data di creazione del progetto e delle fonti.', 'check when the project and its sources were set up.'),
+      verify: L(lang, 'controlla la data di creazione del progetto e delle fonti.', 'revisa cuándo se configuraron el proyecto y sus fuentes.'),
     });
-    caution('mentions', L(lang, 'confronto con un periodo quasi vuoto', 'compared with an almost empty period'));
+    caution('mentions', L(lang, 'confronto con un periodo quasi vuoto', 'comparado con un periodo casi vacío'));
   }
 
   // Chi nasce da un altro KPI ne eredita i dubbi: la velocità è il volume
@@ -512,28 +512,28 @@ export async function assessReliability(projectId: number, k: StandardKpis, now 
   // --- Verdetto per KPI ---
   const verdicts: KpiVerdict[] = k.kpis.map((x: Kpi) => {
     if (x.value === null) {
-      return { id: x.id, label: x.label, verdict: 'unusable', reason: x.note ?? L(lang, 'non disponibile', 'not available') };
+      return { id: x.id, label: x.label, verdict: 'unusable', reason: x.note ?? L(lang, 'non disponibile', 'no disponible') };
     }
     if (x.base < 30) {
-      return { id: x.id, label: x.label, verdict: 'unusable', reason: L(lang, `base di ${x.base} menzioni: troppo piccola`, `base of ${x.base} mentions: too small`) };
+      return { id: x.id, label: x.label, verdict: 'unusable', reason: L(lang, `base di ${x.base} menzioni: troppo piccola`, `base de ${x.base} menciones: demasiado pequeña`) };
     }
     const c = cautions.get(x.id);
     if (c) return { id: x.id, label: x.label, verdict: 'caution', reason: c };
     if (x.smallSample) {
-      return { id: x.id, label: x.label, verdict: 'caution', reason: L(lang, `campione limitato (${x.base} menzioni, sotto ${SMALL_SAMPLE})`, `limited sample (${x.base} mentions, under ${SMALL_SAMPLE})`) };
+      return { id: x.id, label: x.label, verdict: 'caution', reason: L(lang, `campione limitato (${x.base} menzioni, sotto ${SMALL_SAMPLE})`, `muestra limitada (${x.base} menciones, menos de ${SMALL_SAMPLE})`) };
     }
-    return { id: x.id, label: x.label, verdict: 'reliable', reason: L(lang, 'base ampia, nessun rilievo', 'large base, no issues') };
+    return { id: x.id, label: x.label, verdict: 'reliable', reason: L(lang, 'base ampia, nessun rilievo', 'base amplia, sin observaciones') };
   });
 
   const criticals = findings.filter((f) => f.severity === 'critical').length;
   const cautionsN = findings.filter((f) => f.severity === 'caution').length;
   const overall: Reliability['overall'] = cur.n < 30 ? 'unsuitable' : criticals || cautionsN ? 'caution' : 'suitable';
   const overallReason = cur.n < 30
-    ? L(lang, `solo ${cur.n} menzioni nel periodo: troppo poche per un report`, `only ${cur.n} mentions in the period: too few for a report`)
+    ? L(lang, `solo ${cur.n} menzioni nel periodo: troppo poche per un report`, `solo ${cur.n} menciones en el periodo: muy pocas para un reporte`)
     : overall === 'suitable'
-      ? L(lang, 'nessun rilievo sui dati del periodo', 'no issues with this period’s data')
+      ? L(lang, 'nessun rilievo sui dati del periodo', 'sin observaciones sobre los datos del periodo')
       : L(lang, `${criticals + cautionsN} ${criticals + cautionsN === 1 ? 'rilievo' : 'rilievi'} da dichiarare nel report`,
-        `${criticals + cautionsN} ${criticals + cautionsN === 1 ? 'issue' : 'issues'} to disclose in the report`);
+        `${criticals + cautionsN} ${criticals + cautionsN === 1 ? 'observación' : 'observaciones'} para declarar en el reporte`);
 
   const order: Record<Severity, number> = { critical: 0, caution: 1, info: 2 };
   findings.sort((a, b) => order[a.severity] - order[b.severity]);

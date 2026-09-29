@@ -8,11 +8,11 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
-  if (!await claudeAvailable()) return NextResponse.json({ error: 'Claude API key not configured' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
+  if (!await claudeAvailable()) return NextResponse.json({ error: 'La clave de API de Claude no está configurada' }, { status: 400 });
 
   const { concept } = await req.json() as { concept: string };
-  if (!concept?.trim()) return NextResponse.json({ error: 'empty concept' }, { status: 400 });
+  if (!concept?.trim()) return NextResponse.json({ error: 'el concepto está vacío' }, { status: 400 });
 
   // Examples of what works in the sector: the highest-engagement headlines
   const top = (await contentData(project.id)).slice(0, 8)
@@ -20,12 +20,12 @@ export async function POST(req: Request) {
 
   const text = await callClaude(
     MODELS.haiku, 'studio_hooks',
-    `You are a copywriting expert. Generate 10 alternative HOOKS/HEADLINES for a piece of content, in English: strong, curious, scroll-stopping. Vary the styles (question, shocking stat, contrarian, promise, storytelling).
+    `You are a copywriting expert. Generate 10 alternative HOOKS/HEADLINES for a piece of content, in Spanish (Latin American): strong, curious, scroll-stopping. Vary the styles (question, shocking stat, contrarian, promise, storytelling).
 Take inspiration from what performs in the sector but do NOT copy. Respond ONLY with a JSON array of 10 short strings.`,
     `Concept: ${concept}${top.length ? `\n\nContent that performs in the sector:\n${top.map((t) => `- ${t}`).join('\n')}` : ''}`,
     700, true,
   );
-  if (!text) return NextResponse.json({ error: 'spend cap reached or API error' }, { status: 429 });
+  if (!text) return NextResponse.json({ error: 'se alcanzó el tope de gasto o hubo un error de la API' }, { status: 429 });
 
   try {
     const start = text.indexOf('[');
@@ -33,6 +33,6 @@ Take inspiration from what performs in the sector but do NOT copy. Respond ONLY 
       .map((h) => String(h).trim()).filter(Boolean).slice(0, 10);
     return NextResponse.json({ hooks });
   } catch {
-    return NextResponse.json({ error: 'unparseable response, please retry' }, { status: 502 });
+    return NextResponse.json({ error: 'respuesta ilegible, inténtalo de nuevo' }, { status: 502 });
   }
 }

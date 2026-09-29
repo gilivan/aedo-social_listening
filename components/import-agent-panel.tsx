@@ -59,7 +59,7 @@ export function ImportAgentPanel({ projectId, onApplied, onRead, highlight }: {
       const d = await res.json();
       // Le relazioni sono calcolate: arrivano anche quando il modello no.
       if (Array.isArray(d.relations)) setRelations(d.relations);
-      if (!res.ok) { setError(d.error ?? 'Lettura non riuscita'); return; }
+      if (!res.ok) { setError(d.error ?? 'No se pudo leer'); return; }
       setReading(d.reading);
       onRead?.();
     } catch (e) { setError((e as Error).message); }
@@ -76,7 +76,7 @@ export function ImportAgentPanel({ projectId, onApplied, onRead, highlight }: {
         body: JSON.stringify({ projectId, action: opt.action }),
       });
       const d = await res.json();
-      if (!res.ok) { setError(d.error ?? 'Non riuscito'); return; }
+      if (!res.ok) { setError(d.error ?? 'No se pudo aplicar'); return; }
       setAnswered((a) => ({ ...a, [q.id]: optionId }));
       setNotes((n) => ({ ...n, [q.id]: d.note ?? '' }));
       onApplied();
@@ -90,16 +90,16 @@ export function ImportAgentPanel({ projectId, onApplied, onRead, highlight }: {
     <section className={`panel px-5 py-4 ${highlight ? 'border-sky-500/40 bg-sky-500/[0.04]' : ''}`}>
       <div className="flex flex-wrap items-center gap-2">
         <Brain className="size-4 shrink-0 text-violet-300" />
-        <h2 className="text-sm font-semibold text-slate-200">Data Scientist</h2>
+        <h2 className="text-sm font-semibold text-slate-200">Científico de datos</h2>
         <p className="min-w-0 flex-1 text-[11px] text-slate-600">
-          Guardo tutti i fogli <span className="text-slate-500">insieme</span> — distribuzioni, che
-          cosa si somiglia, le trappole dei fogli fatti a mano — e ti dico che cosa hai caricato.
-          Poi chiedo solo dove la tua risposta cambia il risultato.
+          Reviso todas las hojas <span className="text-slate-500">juntas</span> (distribuciones, qué
+          se parece, las trampas de las hojas hechas a mano) y te digo qué cargaste.
+          Luego solo pregunto donde tu respuesta cambia el resultado.
         </p>
         <button onClick={read} disabled={busy}
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 text-xs text-violet-200 hover:bg-violet-500/20 disabled:opacity-50">
           {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Brain className="size-3.5" />}
-          {busy ? 'Sto leggendo tutto…' : reading ? 'Rileggi' : 'Leggi i file'}
+          {busy ? 'Leyendo todo…' : reading ? 'Volver a leer' : 'Leer los archivos'}
         </button>
       </div>
 
@@ -108,8 +108,8 @@ export function ImportAgentPanel({ projectId, onApplied, onRead, highlight }: {
       {relations.length > 0 && (
         <div className="mt-4">
           <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-            Come si parlano le tabelle
-            <span className="ml-1.5 normal-case tracking-normal text-slate-600">— calcolato dai numeri, non dedotto</span>
+            Cómo se relacionan las tablas
+            <span className="ml-1.5 normal-case tracking-normal text-slate-600">— calculado a partir de los números, no deducido</span>
           </p>
           <ul className="flex flex-col gap-1.5">
             {relations.map((r, i) => (
@@ -163,8 +163,8 @@ export function ImportAgentPanel({ projectId, onApplied, onRead, highlight }: {
             <div className="flex flex-col gap-2.5">
               <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">
                 {open === 0
-                  ? 'Hai risposto a tutto'
-                  : `${open} ${open === 1 ? 'domanda' : 'domande'} — solo dove la risposta cambia qualcosa`}
+                  ? 'Ya respondiste todo'
+                  : `${open} ${open === 1 ? 'pregunta' : 'preguntas'}: solo donde la respuesta cambia algo`}
               </p>
               {reading.questions.map((q) => (
                 <QuestionCard
@@ -178,7 +178,7 @@ export function ImportAgentPanel({ projectId, onApplied, onRead, highlight }: {
           ) : (
             <p className="flex items-center gap-1.5 text-xs text-emerald-300">
               <Check className="size-3.5 shrink-0" />
-              Non c’è niente di ambiguo: i fogli si leggono da soli.
+              No hay nada ambiguo: las hojas se entienden solas.
             </p>
           )}
         </div>
@@ -213,7 +213,7 @@ function QuestionCard({ q, chosen, note, busy, onAnswer }: {
       {q.why && <p className="mb-1 pl-5 text-[11px] leading-relaxed text-slate-500">{q.why}</p>}
       {q.sheets.length > 0 && (
         <p className="mb-2.5 pl-5 text-[11px] text-slate-600">
-          Riguarda: {q.sheets.slice(0, 6).join(', ')}{q.sheets.length > 6 ? ` e altri ${q.sheets.length - 6}` : ''}
+          Aplica a: {q.sheets.slice(0, 6).join(', ')}{q.sheets.length > 6 ? ` y ${q.sheets.length - 6} más` : ''}
         </p>
       )}
       <div className="flex flex-col gap-1.5 pl-5">
@@ -229,7 +229,7 @@ function QuestionCard({ q, chosen, note, busy, onAnswer }: {
             <span className="min-w-0">
               <span className="block text-xs text-slate-200">
                 {o.label}
-                {o.id === q.recommended && <span className="ml-1.5 text-[10px] text-sky-400">consigliato</span>}
+                {o.id === q.recommended && <span className="ml-1.5 text-[10px] text-sky-400">recomendado</span>}
               </span>
               {o.effect && <span className="block text-[11px] leading-snug text-slate-600">{o.effect}</span>}
             </span>

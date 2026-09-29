@@ -36,7 +36,7 @@ export const tiktok: Connector = {
   label: 'TikTok',
   tier: 'premium',
   enabled: () => Boolean(cfg('TIKTOK_CLIENT_KEY') && cfg('TIKTOK_CLIENT_SECRET')),
-  disabledReason: 'Requires TikTok Client Key and Secret (Research API): enter them here',
+  disabledReason: 'Requiere el Client Key y el Secret de TikTok (Research API): ingrésalos aquí',
   async fetchMentions(q) {
     const token = await getToken();
     const end = new Date();

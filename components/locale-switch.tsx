@@ -10,7 +10,14 @@ import { LOCALES, type Locale } from '@/lib/i18n-dict';
  * che l'AI genererà d'ora in poi (brief, narrazioni, Point of View…).
  * I contenuti già salvati restano come sono: si riscrivono al prossimo giro.
  */
-export function LocaleSwitch({ current, compact = false, publicPage = false }: {
+// AEDO: interfaz y contenidos solo en español; el selector de idioma no se muestra.
+// Se conserva el componente original (LocaleSwitchOriginal) por si se reactiva.
+export function LocaleSwitch(_props: Parameters<typeof LocaleSwitchOriginal>[0]) {
+  void _props;
+  return null;
+}
+
+export function LocaleSwitchOriginal({ current, compact = false, publicPage = false }: {
   current: Locale;
   compact?: boolean;
   /** Landing pubblica: nessun login, quindi imposta solo il cookie della lingua. */
@@ -47,8 +54,8 @@ export function LocaleSwitch({ current, compact = false, publicPage = false }: {
             disabled={pending}
             aria-label={l.label}
             title={active
-              ? `${l.label} — active`
-              : `Switch to ${l.label}: interface and newly generated AI content (briefs, narratives, Point of View). Collected data is never translated.`}
+              ? `${l.label} — activo`
+              : `Cambiar a ${l.label}: interfaz y nuevo contenido generado por IA (briefs, narrativas, Punto de vista). Los datos recolectados nunca se traducen.`}
             className={`rounded px-1 text-base leading-none transition ${
               active ? 'opacity-100' : 'opacity-40 grayscale hover:opacity-80 hover:grayscale-0'
             }`}

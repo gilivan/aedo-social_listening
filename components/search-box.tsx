@@ -46,22 +46,22 @@ export function SearchBox() {
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder={semantic ? 'Search a concept (e.g. complaints about prices)…' : 'Search text…'}
+        placeholder={semantic ? 'Busca un concepto (p. ej. quejas por precios)…' : 'Buscar texto…'}
         className="w-64 rounded-lg border border-[var(--border)] bg-[var(--panel)] px-3 py-1.5 text-xs outline-none placeholder:text-slate-600"
       />
       <button
         type="button"
         onClick={() => setSemantic(!semantic)}
-        title="Semantic search: AI expands the concept into synonyms and expressions, across all languages"
+        title="Búsqueda semántica: la IA amplía el concepto en sinónimos y expresiones, en todos los idiomas"
         className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs transition ${
           semantic ? 'bg-violet-500/20 text-violet-300' : 'bg-white/5 text-slate-500 hover:text-slate-300'
         }`}
       >
-        <Sparkles className="size-3" /> semantic
+        <Sparkles className="size-3" /> semántica
       </button>
       <button type="submit" disabled={busy}
         className="rounded-lg bg-sky-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400 disabled:opacity-60">
-        {busy ? <Loader2 className="size-3.5 animate-spin" /> : 'Search'}
+        {busy ? <Loader2 className="size-3.5 animate-spin" /> : 'Buscar'}
       </button>
     </form>
   );

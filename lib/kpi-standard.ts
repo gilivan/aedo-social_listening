@@ -205,11 +205,11 @@ async function dailyCounts(projectId: number, p: Period): Promise<{ day: string;
   const res = await db.execute(sql`
     with giorni as (
       select generate_series(
-        (${p.from.toISOString()}::timestamptz at time zone 'Europe/Rome')::date,
-        ((${p.to.toISOString()}::timestamptz - interval '1 millisecond') at time zone 'Europe/Rome')::date,
+        (${p.from.toISOString()}::timestamptz at time zone 'America/Bogota')::date,
+        ((${p.to.toISOString()}::timestamptz - interval '1 millisecond') at time zone 'America/Bogota')::date,
         interval '1 day')::date as day
     ), conti as (
-      select (published_at at time zone 'Europe/Rome')::date as day, count(*) as n
+      select (published_at at time zone 'America/Bogota')::date as day, count(*) as n
       from mentions
       where project_id = ${projectId}
         and published_at >= ${p.from.toISOString()}::timestamptz
@@ -295,7 +295,7 @@ function coverage(lang: Lang, part: number, total: number): string | undefined {
   if (!total || part >= total) return undefined;
   const pct = Math.round((part / total) * 100);
   return L(lang, `calcolato sul ${pct}% delle menzioni (${part} su ${total}): le altre non riportano il dato`,
-    `computed on ${pct}% of mentions (${part} of ${total}): the others don't carry the value`);
+    `calculado sobre el ${pct}% de las menciones (${part} de ${total}): las demás no reportan el dato`);
 }
 
 export async function standardKpis(
@@ -325,14 +325,14 @@ export async function standardKpis(
   if (previousIncomplete) {
     notes.push(L(lang,
       `Il periodo di confronto comincia oltre i ${RETENTION_DAYS} giorni di conservazione delle menzioni raccolte: i suoi valori sono incompleti e le variazioni non vanno comunicate.`,
-      `The comparison period starts beyond the ${RETENTION_DAYS}-day retention of collected mentions: its values are incomplete and the changes shouldn't be reported.`));
+      `El periodo de comparación empieza antes de los ${RETENTION_DAYS} días de conservación de las menciones recopiladas: sus valores están incompletos y las variaciones no deben comunicarse.`));
   }
 
-  const nd = (why: string) => L(lang, `n.d. — ${why}`, `n/a — ${why}`);
-  const noReach = L(lang, 'nessuna menzione del periodo riporta la reach', 'no mention in the period carries reach');
+  const nd = (why: string) => L(lang, `n.d. — ${why}`, `n/d — ${why}`);
+  const noReach = L(lang, 'nessuna menzione del periodo riporta la reach', 'ninguna mención del periodo reporta alcance');
   const noEng = L(lang, 'nessuna menzione del periodo riporta like, commenti o condivisioni',
-    'no mention in the period carries likes, comments or shares');
-  const noSent = L(lang, 'il sentiment non è ancora stato calcolato', 'sentiment has not been computed yet');
+    'ninguna mención del periodo reporta likes, comentarios ni compartidos');
+  const noSent = L(lang, 'il sentiment non è ancora stato calcolato', 'el sentimiento aún no se ha calculado');
 
   const engTot = (a: Agg) => (a.withEng ? a.likes + a.comments + a.shares : null);
   const reachTot = (a: Agg) => (a.withReach ? a.reach : null);
@@ -345,102 +345,102 @@ export async function standardKpis(
   const peakIdx = previousIncomplete || maxDay.value === 0 ? null : ratio(maxDay.value, prevDailyAvg);
 
   const kpis: Kpi[] = [
-    kpi('mentions', L(lang, 'Menzioni', 'Mentions'), cur.n, prev.n, {
+    kpi('mentions', L(lang, 'Menzioni', 'Menciones'), cur.n, prev.n, {
       unit: 'count', kind: 'absolute', base: cur.n,
-      formula: L(lang, 'contenuti che corrispondono al progetto nel periodo', 'items matching the project in the period'),
+      formula: L(lang, 'contenuti che corrispondono al progetto nel periodo', 'contenidos que coinciden con el proyecto en el periodo'),
     }),
-    kpi('perDay', L(lang, 'Velocità (menzioni/giorno)', 'Velocity (mentions/day)'), cur.n / days, prev.n / days, {
-      unit: 'perDay', base: cur.n, formula: L(lang, 'Menzioni / giorni del periodo', 'Mentions / days in the period'),
+    kpi('perDay', L(lang, 'Velocità (menzioni/giorno)', 'Velocidad (menciones/día)'), cur.n / days, prev.n / days, {
+      unit: 'perDay', base: cur.n, formula: L(lang, 'Menzioni / giorni del periodo', 'Menciones / días del periodo'),
     }),
-    kpi('authors', L(lang, 'Autori unici', 'Unique authors'), cur.withAuthor ? cur.authors : null, prev.withAuthor ? prev.authors : null, {
+    kpi('authors', L(lang, 'Autori unici', 'Autores únicos'), cur.withAuthor ? cur.authors : null, prev.withAuthor ? prev.authors : null, {
       unit: 'count', kind: 'absolute', base: cur.withAuthor,
-      formula: L(lang, 'account distinti (handle, altrimenti nome)', 'distinct accounts (handle, else name)'),
-      note: cur.withAuthor ? coverage(lang, cur.withAuthor, cur.n) : nd(L(lang, 'le fonti non riportano l’autore', 'sources carry no author')),
+      formula: L(lang, 'account distinti (handle, altrimenti nome)', 'cuentas distintas (handle o, si no, nombre)'),
+      note: cur.withAuthor ? coverage(lang, cur.withAuthor, cur.n) : nd(L(lang, 'le fonti non riportano l’autore', 'las fuentes no reportan el autor')),
     }),
-    kpi('reach', L(lang, 'Reach potenziale', 'Potential reach'), reachTot(cur), reachTot(prev), {
+    kpi('reach', L(lang, 'Reach potenziale', 'Alcance potencial'), reachTot(cur), reachTot(prev), {
       unit: 'count', kind: 'absolute', base: cur.withReach,
       formula: L(lang, 'somma della reach stimata dalle fonti: è un pubblico potenziale, non persone raggiunte',
-        'sum of source-estimated reach: a potential audience, not people reached'),
+        'suma del alcance estimado por las fuentes: es una audiencia potencial, no personas alcanzadas'),
       note: cur.withReach ? coverage(lang, cur.withReach, cur.n) : nd(noReach),
     }),
-    kpi('engagement', L(lang, 'Engagement totale', 'Total engagement'), engTot(cur), engTot(prev), {
+    kpi('engagement', L(lang, 'Engagement totale', 'Engagement total'), engTot(cur), engTot(prev), {
       unit: 'count', kind: 'calculated', base: cur.withEng,
       formula: L(lang, 'like/reaction + commenti + condivisioni (salvataggi n.d.: nessuna fonte li riporta)',
-        'likes/reactions + comments + shares (saves n/a: no source reports them)'),
+        'likes/reacciones + comentarios + compartidos (guardados n/d: ninguna fuente los reporta)'),
       note: cur.withEng ? coverage(lang, cur.withEng, cur.n) : nd(noEng),
     }),
-    kpi('likes', L(lang, '· like / reaction', '· likes / reactions'), cur.withEng ? cur.likes : null, prev.withEng ? prev.likes : null, {
+    kpi('likes', L(lang, '· like / reaction', '· likes / reacciones'), cur.withEng ? cur.likes : null, prev.withEng ? prev.likes : null, {
       unit: 'count', kind: 'absolute', base: cur.withEng,
     }),
-    kpi('comments', L(lang, '· commenti', '· comments'), cur.withEng ? cur.comments : null, prev.withEng ? prev.comments : null, {
+    kpi('comments', L(lang, '· commenti', '· comentarios'), cur.withEng ? cur.comments : null, prev.withEng ? prev.comments : null, {
       unit: 'count', kind: 'absolute', base: cur.withEng,
     }),
-    kpi('shares', L(lang, '· condivisioni', '· shares'), cur.withEng ? cur.shares : null, prev.withEng ? prev.shares : null, {
+    kpi('shares', L(lang, '· condivisioni', '· compartidos'), cur.withEng ? cur.shares : null, prev.withEng ? prev.shares : null, {
       unit: 'count', kind: 'absolute', base: cur.withEng,
     }),
-    kpi('engPerMention', L(lang, 'Engagement medio per menzione', 'Avg engagement per mention'),
+    kpi('engPerMention', L(lang, 'Engagement medio per menzione', 'Engagement promedio por mención'),
       ratio(engTot(cur), cur.withEng), ratio(engTot(prev), prev.withEng), {
         unit: 'ratio', base: cur.withEng,
         // Scostamento dichiarato dalla formula di manuale (÷ tutte le menzioni):
         // un articolo di giornale non ha like, e contarlo abbasserebbe la media
         // di chi invece li ha.
         formula: L(lang, 'Engagement totale / menzioni che riportano l’engagement',
-          'Total engagement / mentions that carry engagement'),
+          'Engagement total / menciones que reportan engagement'),
         note: cur.withEng ? undefined : nd(noEng),
       }),
-    kpi('erReach', L(lang, 'Engagement rate sulla reach', 'Engagement rate on reach'),
+    kpi('erReach', L(lang, 'Engagement rate sulla reach', 'Engagement rate sobre el alcance'),
       ratio(cur.engBoth, cur.reachBoth, 100), ratio(prev.engBoth, prev.reachBoth, 100), {
         unit: 'pct', base: cur.bothN, pctAsPoints: true,
         formula: L(lang, 'Engagement / Reach potenziale × 100, sulle sole menzioni che riportano entrambi',
-          'Engagement / Potential reach × 100, only on mentions carrying both'),
+          'Engagement / Alcance potencial × 100, solo en menciones que reportan ambos'),
         note: cur.bothN ? coverage(lang, cur.bothN, cur.n)
-          : nd(L(lang, 'nessuna menzione riporta insieme reach ed engagement', 'no mention carries both reach and engagement')),
+          : nd(L(lang, 'nessuna menzione riporta insieme reach ed engagement', 'ninguna mención reporta alcance y engagement a la vez')),
       }),
-    kpi('amplification', L(lang, 'Tasso di amplificazione', 'Amplification rate'),
+    kpi('amplification', L(lang, 'Tasso di amplificazione', 'Tasa de amplificación'),
       ratio(cur.withEng ? cur.shares : null, cur.withEng), ratio(prev.withEng ? prev.shares : null, prev.withEng), {
         unit: 'ratio', base: cur.withEng,
-        formula: L(lang, 'Condivisioni / menzioni che riportano l’engagement', 'Shares / mentions that carry engagement'),
+        formula: L(lang, 'Condivisioni / menzioni che riportano l’engagement', 'Compartidos / menciones que reportan engagement'),
         note: cur.withEng ? undefined : nd(noEng),
       }),
-    kpi('conversation', L(lang, 'Tasso di conversazione', 'Conversation rate'),
+    kpi('conversation', L(lang, 'Tasso di conversazione', 'Tasa de conversación'),
       ratio(cur.withEng ? cur.comments : null, cur.withEng), ratio(prev.withEng ? prev.comments : null, prev.withEng), {
         unit: 'ratio', base: cur.withEng,
-        formula: L(lang, 'Commenti / menzioni che riportano l’engagement', 'Comments / mentions that carry engagement'),
+        formula: L(lang, 'Commenti / menzioni che riportano l’engagement', 'Comentarios / menciones que reportan engagement'),
         note: cur.withEng ? undefined : nd(noEng),
       }),
-    kpi('positive', L(lang, 'Positive (sentiment automatico)', 'Positive (automatic sentiment)'), pctOf(cur.positive, cur), pctOf(prev.positive, prev), {
+    kpi('positive', L(lang, 'Positive (sentiment automatico)', 'Positivas (sentimiento automático)'), pctOf(cur.positive, cur), pctOf(prev.positive, prev), {
       unit: 'pct', base: cur.withSentiment, pctAsPoints: true,
-      formula: L(lang, 'positive / menzioni con sentiment × 100', 'positive / mentions with sentiment × 100'),
+      formula: L(lang, 'positive / menzioni con sentiment × 100', 'positivas / menciones con sentimiento × 100'),
       note: cur.withSentiment ? coverage(lang, cur.withSentiment, cur.n) : nd(noSent),
     }),
-    kpi('neutral', L(lang, 'Neutre (sentiment automatico)', 'Neutral (automatic sentiment)'), pctOf(cur.neutral, cur), pctOf(prev.neutral, prev), {
+    kpi('neutral', L(lang, 'Neutre (sentiment automatico)', 'Neutras (sentimiento automático)'), pctOf(cur.neutral, cur), pctOf(prev.neutral, prev), {
       unit: 'pct', base: cur.withSentiment, pctAsPoints: true,
       note: cur.withSentiment ? undefined : nd(noSent),
     }),
-    kpi('negative', L(lang, 'Negative (sentiment automatico)', 'Negative (automatic sentiment)'), pctOf(cur.negative, cur), pctOf(prev.negative, prev), {
+    kpi('negative', L(lang, 'Negative (sentiment automatico)', 'Negativas (sentimiento automático)'), pctOf(cur.negative, cur), pctOf(prev.negative, prev), {
       unit: 'pct', base: cur.withSentiment, pctAsPoints: true,
       note: cur.withSentiment ? undefined : nd(noSent),
     }),
     kpi('nss', 'Net Sentiment Score (NSS)', nss(cur.positive, cur.negative), nss(prev.positive, prev.negative), {
       unit: 'points', base: cur.positive + cur.negative, pctAsPoints: true,
-      formula: '(Positive − Negative) / (Positive + Negative) × 100',
+      formula: '(Positivas − Negativas) / (Positivas + Negativas) × 100',
       note: cur.positive + cur.negative ? undefined
-        : nd(L(lang, 'nessuna menzione positiva o negativa nel periodo', 'no positive or negative mention in the period')),
+        : nd(L(lang, 'nessuna menzione positiva o negativa nel periodo', 'ninguna mención positiva o negativa en el periodo')),
     }),
-    kpi('authorConcentration', L(lang, 'Concentrazione autori (top 10)', 'Author concentration (top 10)'),
+    kpi('authorConcentration', L(lang, 'Concentrazione autori (top 10)', 'Concentración de autores (top 10)'),
       cur.withAuthor ? concentration(authors.map((a) => a.n), cur.n) : null, null, {
         unit: 'pct', base: cur.n, pctAsPoints: true,
-        formula: L(lang, 'menzioni dei primi 10 autori / menzioni × 100', 'mentions by the top 10 authors / mentions × 100'),
-        note: cur.withAuthor ? undefined : nd(L(lang, 'le fonti non riportano l’autore', 'sources carry no author')),
+        formula: L(lang, 'menzioni dei primi 10 autori / menzioni × 100', 'menciones de los 10 primeros autores / menciones × 100'),
+        note: cur.withAuthor ? undefined : nd(L(lang, 'le fonti non riportano l’autore', 'las fuentes no reportan el autor')),
       }),
-    kpi('peakIndex', L(lang, 'Indice di picco', 'Peak index'), peakIdx, null, {
+    kpi('peakIndex', L(lang, 'Indice di picco', 'Índice de pico'), peakIdx, null, {
       unit: 'index', base: cur.n,
       formula: L(lang, 'menzioni del giorno più alto / media giornaliera del periodo di confronto',
-        'mentions on the highest day / daily average of the comparison period'),
-      note: peakIdx !== null ? (maxDay.day ? L(lang, `giorno di picco: ${maxDay.day}`, `peak day: ${maxDay.day}`) : undefined)
+        'menciones del día más alto / promedio diario del periodo de comparación'),
+      note: peakIdx !== null ? (maxDay.day ? L(lang, `giorno di picco: ${maxDay.day}`, `día pico: ${maxDay.day}`) : undefined)
         : nd(previousIncomplete
-          ? L(lang, 'periodo di confronto incompleto', 'comparison period incomplete')
-          : L(lang, 'nessuna menzione nel periodo di confronto', 'no mention in the comparison period')),
+          ? L(lang, 'periodo di confronto incompleto', 'periodo de comparación incompleto')
+          : L(lang, 'nessuna menzione nel periodo di confronto', 'ninguna mención en el periodo de comparación')),
     }),
   ];
 
@@ -513,14 +513,14 @@ async function competitiveKpis(
   if (sumN > union.n) {
     notes.push(L(lang,
       `${fmtNumber(sumN - union.n, 'it')} menzioni citano più di un’entità del set e contano per ciascuna: le quote (SOV, SOE) sono calcolate sulle citazioni.`,
-      `${fmtNumber(sumN - union.n, 'en')} mentions name more than one entity in the set and count for each: shares (SOV, SOE) are computed on citations.`));
+      `${fmtNumber(sumN - union.n, 'en')} menciones nombran más de una entidad del set y cuentan para cada una: las cuotas (SOV, SOE) se calculan sobre las citas.`));
   }
 
   const thin = rows.filter((r) => r.c.positive + r.c.negative < MIN_NSS_BASE).map((r) => r.e.name);
   if (thin.length) {
     notes.push(L(lang,
       `NSS non mostrato per ${thin.join(', ')}: meno di ${MIN_NSS_BASE} menzioni positive o negative.`,
-      `NSS not shown for ${thin.join(', ')}: fewer than ${MIN_NSS_BASE} positive or negative mentions.`));
+      `NSS no mostrado para ${thin.join(', ')}: menos de ${MIN_NSS_BASE} menciones positivas o negativas.`));
   }
   const small = rows.filter((r) => {
     const b = r.c.positive + r.c.negative;
@@ -529,7 +529,7 @@ async function competitiveKpis(
   if (small.length) {
     notes.push(L(lang,
       `NSS su campione limitato (meno di ${SMALL_SAMPLE} menzioni con sentiment): ${small.map((r) => `${r.e.name} ${r.c.positive + r.c.negative}`).join(', ')}.`,
-      `NSS on a limited sample (fewer than ${SMALL_SAMPLE} mentions with sentiment): ${small.map((r) => `${r.e.name} ${r.c.positive + r.c.negative}`).join(', ')}.`));
+      `NSS sobre una muestra limitada (menos de ${SMALL_SAMPLE} menciones con sentimiento): ${small.map((r) => `${r.e.name} ${r.c.positive + r.c.negative}`).join(', ')}.`));
   }
 
   const totN = sumN;
@@ -566,7 +566,7 @@ async function competitiveKpis(
  * dei report chiedono "1.234,5".
  */
 export function fmtNumber(v: number, lang: Lang, digits = 0): string {
-  return v.toLocaleString(lang === 'it' ? 'it-IT' : 'en-US', {
+  return v.toLocaleString(lang === 'it' ? 'it-IT' : 'es-CO', {
     minimumFractionDigits: digits, maximumFractionDigits: digits,
     useGrouping: 'always',
   } as Intl.NumberFormatOptions);
@@ -574,7 +574,7 @@ export function fmtNumber(v: number, lang: Lang, digits = 0): string {
 
 /** Numeri all'italiana (1.234,5) o all'inglese, con le cifre giuste per unità. */
 export function formatKpi(v: number | null, unit: KpiUnit, lang: Lang): string {
-  if (v === null || !Number.isFinite(v)) return lang === 'it' ? 'n.d.' : 'n/a';
+  if (v === null || !Number.isFinite(v)) return lang === 'it' ? 'n.d.' : 'n/d';
   const f = (digits: number) => fmtNumber(v, lang, digits);
   switch (unit) {
     case 'count': return f(0);

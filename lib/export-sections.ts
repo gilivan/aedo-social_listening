@@ -8,40 +8,40 @@ export type ExportSection = { id: string; label: string; group: string };
 
 export const EXPORT_SECTIONS = [
   // Overview — il colpo d'occhio del progetto
-  { id: 'kpi', label: 'Summary (KPIs)', group: 'Overview' },
-  { id: 'kpiStandard', label: 'Standard KPIs (with formulas)', group: 'Overview' },
-  { id: 'reliability', label: 'Data reliability (critical analysis L1)', group: 'Overview' },
-  { id: 'health', label: 'Brand Health Index', group: 'Overview' },
-  { id: 'trends', label: 'Emerging trends', group: 'Overview' },
-  { id: 'volume', label: 'Volume by source', group: 'Overview' },
-  { id: 'sentiment', label: 'Sentiment', group: 'Overview' },
-  { id: 'topics', label: 'Top topics', group: 'Overview' },
+  { id: 'kpi', label: 'Resumen (KPI)', group: 'Resumen' },
+  { id: 'kpiStandard', label: 'KPI estándar (con fórmulas)', group: 'Resumen' },
+  { id: 'reliability', label: 'Confiabilidad de los datos (análisis crítico L1)', group: 'Resumen' },
+  { id: 'health', label: 'Brand Health Index', group: 'Resumen' },
+  { id: 'trends', label: 'Tendencias emergentes', group: 'Resumen' },
+  { id: 'volume', label: 'Volumen por fuente', group: 'Resumen' },
+  { id: 'sentiment', label: 'Sentimiento', group: 'Resumen' },
+  { id: 'topics', label: 'Temas principales', group: 'Resumen' },
   // Deep analysis — le analisi avanzate
-  { id: 'emotions', label: 'Emotion radar', group: 'Deep analysis' },
-  { id: 'momentum', label: 'Momentum quadrant', group: 'Deep analysis' },
-  { id: 'flow', label: 'Conversation flow', group: 'Deep analysis' },
-  { id: 'constellation', label: 'Semantic constellation', group: 'Deep analysis' },
-  { id: 'geo', label: 'Countries', group: 'Deep analysis' },
-  { id: 'crisis', label: 'Crisis radar & peak', group: 'Deep analysis' },
+  { id: 'emotions', label: 'Radar de emociones', group: 'Análisis profundo' },
+  { id: 'momentum', label: 'Cuadrante de momentum', group: 'Análisis profundo' },
+  { id: 'flow', label: 'Flujo de conversación', group: 'Análisis profundo' },
+  { id: 'constellation', label: 'Constelación semántica', group: 'Análisis profundo' },
+  { id: 'geo', label: 'Países', group: 'Análisis profundo' },
+  { id: 'crisis', label: 'Radar de crisis y pico', group: 'Análisis profundo' },
   // Benchmark & audience — confronti e chi parla
-  { id: 'benchmark', label: 'Benchmark', group: 'Benchmark & audience' },
-  { id: 'sov', label: 'Share of Voice over time', group: 'Benchmark & audience' },
-  { id: 'audience', label: 'Audience', group: 'Benchmark & audience' },
-  { id: 'network', label: 'Influencer network', group: 'Benchmark & audience' },
-  { id: 'pyramid', label: 'Author pyramid', group: 'Benchmark & audience' },
+  { id: 'benchmark', label: 'Benchmark', group: 'Benchmark y audiencia' },
+  { id: 'sov', label: 'Share of Voice en el tiempo', group: 'Benchmark y audiencia' },
+  { id: 'audience', label: 'Audiencia', group: 'Benchmark y audiencia' },
+  { id: 'network', label: 'Red de influenciadores', group: 'Benchmark y audiencia' },
+  { id: 'pyramid', label: 'Pirámide de autores', group: 'Benchmark y audiencia' },
   // People — personal branding, quando il progetto segue delle persone
-  { id: 'people', label: 'People leaderboard', group: 'People' },
-  { id: 'peopleGrowth', label: 'Audience growth per person', group: 'People' },
-  { id: 'peopleDetail', label: 'Person cards (detail)', group: 'People' },
+  { id: 'people', label: 'Ranking de personas', group: 'Personas' },
+  { id: 'peopleGrowth', label: 'Crecimiento de audiencia por persona', group: 'Personas' },
+  { id: 'peopleDetail', label: 'Fichas de personas (detalle)', group: 'Personas' },
   // Intelligence — narrazione e sintesi
-  { id: 'pov', label: 'Point of View', group: 'Intelligence' },
-  { id: 'narratives', label: 'Narratives', group: 'Intelligence' },
-  { id: 'timeline', label: 'Event timeline', group: 'Intelligence' },
-  { id: 'alerts', label: 'Alerts', group: 'Intelligence' },
-  { id: 'brief', label: 'Daily brief', group: 'Intelligence' },
+  { id: 'pov', label: 'Punto de vista', group: 'Inteligencia' },
+  { id: 'narratives', label: 'Narrativas', group: 'Inteligencia' },
+  { id: 'timeline', label: 'Línea de tiempo de eventos', group: 'Inteligencia' },
+  { id: 'alerts', label: 'Alertas', group: 'Inteligencia' },
+  { id: 'brief', label: 'Brief diario', group: 'Inteligencia' },
   // Raw data — dati grezzi
-  { id: 'content', label: 'Top content', group: 'Raw data' },
-  { id: 'mentions', label: 'Mentions list', group: 'Raw data' },
+  { id: 'content', label: 'Contenido destacado', group: 'Datos en bruto' },
+  { id: 'mentions', label: 'Lista de menciones', group: 'Datos en bruto' },
 ] as const satisfies readonly ExportSection[];
 
 export type SectionId = (typeof EXPORT_SECTIONS)[number]['id'];
@@ -49,5 +49,5 @@ export const ALL_SECTION_IDS = EXPORT_SECTIONS.map((s) => s.id) as SectionId[];
 
 /** Ordine dei gruppi per il selettore. */
 export const SECTION_GROUPS = [
-  'Overview', 'Deep analysis', 'Benchmark & audience', 'People', 'Intelligence', 'Raw data',
+  'Resumen', 'Análisis profundo', 'Benchmark y audiencia', 'Personas', 'Inteligencia', 'Datos en bruto',
 ] as const;

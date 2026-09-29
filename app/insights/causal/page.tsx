@@ -6,31 +6,31 @@ import { getT } from '@/lib/i18n';
 import { GenerateRefresh } from '@/components/generate-refresh';
 import { Zap, ArrowRight, GitBranch } from 'lucide-react';
 
-export const metadata = { title: 'Cause-Effect' };
+export const metadata = { title: 'Causa-efecto' };
 
 export default async function CausalPage() {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const chains = await getCausalChains(project.id);
   const aiOn = await claudeAvailable();
 
   return (
     <>
       <PageHeader
-        title={t('ins.causal.title', 'Cause-Effect chart')}
-        info="The cause → effect chains the AI reconstructs for the period: which events produced measurable consequences (spikes, sentiment shifts, new narratives). Data: your mentions plus AI reasoning — shown as an AI reconstruction, not a measured fact. Period: last 14 days. Source: your collected mentions across all active sources."
-        subtitle="The AI's reconstruction of how events produced consequences: volume spikes, sentiment shifts, new narratives. An interpretive reading of the links, not statistical proof."
+        title={t('ins.causal.title', 'Gráfico causa-efecto')}
+        info="Las cadenas causa → efecto que la IA reconstruye para el periodo: qué eventos produjeron consecuencias medibles (picos, cambios de sentimiento, nuevas narrativas). Datos: tus menciones más el razonamiento de la IA; se muestra como una reconstrucción de IA, no como un hecho medido. Periodo: últimos 14 días. Fuente: las menciones recopiladas en todas las fuentes activas."
+        subtitle="La reconstrucción que hace la IA de cómo los eventos produjeron consecuencias: picos de volumen, cambios de sentimiento, nuevas narrativas. Una lectura interpretativa de los vínculos, no una prueba estadística."
       />
       {!chains ? (
         <div className="panel flex flex-col items-center gap-3 px-6 py-12">
           <p className="text-sm text-slate-400">
             {aiOn
-              ? 'Reconstruct the cause → effect chains for the period (once a day, ~3 cents).'
-              : 'You need the Claude API key.'}
+              ? 'Reconstruye las cadenas causa → efecto del periodo (una vez al día, ~3 centavos de dólar).'
+              : 'Necesitas la clave de API de Claude.'}
           </p>
           {aiOn && (
-            <GenerateRefresh endpoint="/api/insights/causal" label="Generate the chart" busyLabel="Reconstructing links…" />
+            <GenerateRefresh endpoint="/api/insights/causal" label="Generar el gráfico" busyLabel="Reconstruyendo vínculos…" />
           )}
         </div>
       ) : (
@@ -42,7 +42,7 @@ export default async function CausalPage() {
                 <div className="flex items-start gap-3">
                   <span className="mt-0.5 shrink-0 rounded-lg bg-amber-500/15 p-2 text-amber-400"><Zap className="size-4" /></span>
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-400/80">Cause{c.date ? ` · ${new Date(c.date).toLocaleDateString('en-US')}` : ''}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-400/80">Causa{c.date ? ` · ${new Date(c.date).toLocaleDateString('es-CO')}` : ''}</p>
                     <p className="text-sm font-semibold">{c.cause}</p>
                   </div>
                 </div>
@@ -69,7 +69,7 @@ export default async function CausalPage() {
             ))}
           </div>
           <div className="mt-4">
-            <GenerateRefresh endpoint="/api/insights/causal" label="Regenerate" busyLabel="Reconstructing…" />
+            <GenerateRefresh endpoint="/api/insights/causal" label="Regenerar" busyLabel="Reconstruyendo…" />
           </div>
         </>
       )}

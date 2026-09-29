@@ -70,7 +70,7 @@ export async function registerFile(
   archetype: string; people: boolean;
 }> {
   const { columns, rows, issues } = await parseSheet(buffer, filename, { sheet: sheetName, workbook });
-  if (columns.length === 0) throw new Error('Il foglio non ha colonne leggibili');
+  if (columns.length === 0) throw new Error('La hoja no tiene columnas legibles');
 
   const profiles = profileColumns(columns, rows);
 
@@ -194,8 +194,8 @@ export async function deriveMentions(fileId: number, projectId: number): Promise
   const db = await getDb();
   const [file] = await db.select().from(importFiles)
     .where(and(eq(importFiles.id, fileId), eq(importFiles.projectId, projectId)));
-  if (!file) throw new Error('File non trovato');
-  if (file.rawPurged === 1) throw new Error('Le righe grezze di questo file sono state eliminate: non è più ri-derivabile');
+  if (!file) throw new Error('Archivo no encontrado');
+  if (file.rawPurged === 1) throw new Error('Las filas originales de este archivo fueron eliminadas: ya no se puede volver a derivar');
 
   // La persona a cui il foglio è intestato vale come costante di ogni riga, e
   // si ricava qui e non solo al caricamento: i file registrati prima che Radar
@@ -217,7 +217,7 @@ export async function deriveMentions(fileId: number, projectId: number): Promise
     extras: file.extras ?? {},
     constants,
   } as unknown as ColumnMap;
-  if (!map.content) throw new Error('Manca la colonna del testo');
+  if (!map.content) throw new Error('Falta la columna de texto');
 
   await db.delete(mentions).where(eq(mentions.importFileId, fileId));
 
@@ -279,7 +279,7 @@ export async function purgeRaw(fileId: number, projectId: number): Promise<void>
   const db = await getDb();
   const [file] = await db.select({ id: importFiles.id }).from(importFiles)
     .where(and(eq(importFiles.id, fileId), eq(importFiles.projectId, projectId)));
-  if (!file) throw new Error('File non trovato');
+  if (!file) throw new Error('Archivo no encontrado');
   await db.delete(importRows).where(eq(importRows.fileId, fileId));
   await db.update(importFiles).set({ rawPurged: 1 }).where(eq(importFiles.id, fileId));
 }
@@ -349,12 +349,12 @@ export async function deriveMetricPoints(fileId: number, projectId: number): Pro
   const db = await getDb();
   const [file] = await db.select().from(importFiles)
     .where(and(eq(importFiles.id, fileId), eq(importFiles.projectId, projectId)));
-  if (!file) throw new Error('File non trovato');
-  if (file.rawPurged === 1) throw new Error('Le righe grezze di questo file sono state eliminate: non è più ri-derivabile');
+  if (!file) throw new Error('Archivo no encontrado');
+  if (file.rawPurged === 1) throw new Error('Las filas originales de este archivo fueron eliminadas: ya no se puede volver a derivar');
 
   const map = (file.metricMap ?? null) as MetricMap | null;
-  if (!map?.date) throw new Error('Manca la colonna della data');
-  if (!map.metrics?.length) throw new Error('Nessuna colonna di valori selezionata');
+  if (!map?.date) throw new Error('Falta la columna de fecha');
+  if (!map.metrics?.length) throw new Error('No hay ninguna columna de valores seleccionada');
 
   await db.delete(metricPoints).where(eq(metricPoints.importFileId, fileId));
 
@@ -416,7 +416,7 @@ export async function updateKind(
   const db = await getDb();
   const [file] = await db.select().from(importFiles)
     .where(and(eq(importFiles.id, fileId), eq(importFiles.projectId, projectId)));
-  if (!file) throw new Error('File non trovato');
+  if (!file) throw new Error('Archivo no encontrado');
   if (file.kind === kind) return;
 
   await db.delete(mentions).where(eq(mentions.importFileId, fileId));
@@ -493,10 +493,10 @@ export async function auditProject(projectId: number): Promise<FileAudit[]> {
 
     const mapped = f.kind === 'metrics'
       ? [
-        ...(metricMap.date ? [{ column: metricMap.date, field: 'data' }] : []),
-        ...(metricMap.entity ? [{ column: metricMap.entity, field: 'entità' }] : []),
-        ...(metricMap.metrics ?? []).map((c) => ({ column: c, field: 'valore' })),
-        ...(metricMap.dims ?? []).map((c) => ({ column: c, field: 'dimensione' })),
+        ...(metricMap.date ? [{ column: metricMap.date, field: 'fecha' }] : []),
+        ...(metricMap.entity ? [{ column: metricMap.entity, field: 'entidad' }] : []),
+        ...(metricMap.metrics ?? []).map((c) => ({ column: c, field: 'valor' })),
+        ...(metricMap.dims ?? []).map((c) => ({ column: c, field: 'dimensión' })),
       ]
       : Object.entries(mapping).map(([field, column]) => ({ column, field }));
 
@@ -506,8 +506,8 @@ export async function auditProject(projectId: number): Promise<FileAudit[]> {
 
     const skipped: { reason: string; rows: number }[] = [];
     if (f.kind === 'mentions') {
-      if (report.skippedEmpty) skipped.push({ reason: 'senza testo né titolo', rows: report.skippedEmpty });
-      if (report.duplicates) skipped.push({ reason: 'righe identiche fra loro', rows: report.duplicates });
+      if (report.skippedEmpty) skipped.push({ reason: 'sin texto ni título', rows: report.skippedEmpty });
+      if (report.duplicates) skipped.push({ reason: 'filas idénticas entre sí', rows: report.duplicates });
     }
 
     const produced = Number(report.inserted ?? 0);
@@ -520,11 +520,11 @@ export async function auditProject(projectId: number): Promise<FileAudit[]> {
       : f.kind === 'metrics' ? true
         : accounted === f.rowCount;
     if (f.status === 'imported' && f.kind === 'mentions' && !balanced) {
-      notes.push(`${f.rowCount - accounted} righe non spiegate: segnalalo, è un difetto.`);
+      notes.push(`${f.rowCount - accounted} filas sin explicar: repórtalo, es un error.`);
     }
-    if (f.status !== 'imported') notes.push('Foglio non ancora importato.');
-    if (report.datesFailed) notes.push(`${report.datesFailed} date illeggibili: quelle righe sono finite a oggi.`);
-    if (ignored.length) notes.push(`${ignored.length} colonne non usate: puoi conservarle come campi.`);
+    if (f.status !== 'imported') notes.push('Hoja aún no importada.');
+    if (report.datesFailed) notes.push(`${report.datesFailed} fechas ilegibles: esas filas quedaron con la fecha de hoy.`);
+    if (ignored.length) notes.push(`${ignored.length} columnas sin usar: puedes conservarlas como campos.`);
 
     out.push({
       fileId: f.id,
@@ -592,9 +592,9 @@ export type SpotCheck = {
 };
 
 const showCell = (v: unknown): string => {
-  if (v === null || v === undefined || v === '') return '(vuoto)';
+  if (v === null || v === undefined || v === '') return '(vacío)';
   if (v instanceof Date) return v.toISOString().slice(0, 10);
-  if (typeof v === 'number') return v.toLocaleString('it-IT');
+  if (typeof v === 'number') return v.toLocaleString('es-CO');
   return String(v).slice(0, 160);
 };
 
@@ -617,7 +617,7 @@ export async function spotCheck(fileId: number, projectId: number, n = 3): Promi
   const db = await getDb();
   const [file] = await db.select().from(importFiles)
     .where(and(eq(importFiles.id, fileId), eq(importFiles.projectId, projectId)));
-  if (!file) throw new Error('File non trovato');
+  if (!file) throw new Error('Archivo no encontrado');
 
   const base: SpotCheck = {
     fileId,
@@ -625,14 +625,14 @@ export async function spotCheck(fileId: number, projectId: number, n = 3): Promi
     kind: file.kind as 'mentions' | 'metrics',
     rows: [], checked: 0, matched: 0,
   };
-  if (file.status !== 'imported') return { ...base, note: 'Questo foglio non è ancora stato importato.' };
+  if (file.status !== 'imported') return { ...base, note: 'Esta hoja todavía no se ha importado.' };
   if (file.rawPurged === 1) {
-    return { ...base, note: 'Le righe originali di questo file sono state eliminate: il confronto con il foglio non è più possibile.' };
+    return { ...base, note: 'Las filas originales de este archivo fueron eliminadas: ya no es posible compararlas con la hoja.' };
   }
 
   const rawRows = await db.select({ data: importRows.data, rowIndex: importRows.rowIndex })
     .from(importRows).where(eq(importRows.fileId, fileId)).orderBy(asc(importRows.rowIndex));
-  if (!rawRows.length) return { ...base, note: 'Nessuna riga originale conservata per questo file.' };
+  if (!rawRows.length) return { ...base, note: 'No se conservó ninguna fila original de este archivo.' };
 
   // Prima, centrale e ultima riga: un disallineamento si vede agli estremi,
   // non nelle prime tre righe, che sono quelle che uno guarda comunque.
@@ -677,14 +677,14 @@ export async function spotCheck(fileId: number, projectId: number, n = 3): Promi
 
       const eng = (stored?.engagement ?? {}) as Record<string, number | undefined>;
       const candidates: [string, unknown, unknown][] = [
-        ['Testo', derived.content, stored?.content],
-        ['Titolo', derived.title, stored?.title],
-        ['Data', derived.publishedAt, stored?.publishedAt],
-        ['Autore', derived.author, stored?.author],
+        ['Texto', derived.content, stored?.content],
+        ['Título', derived.title, stored?.title],
+        ['Fecha', derived.publishedAt, stored?.publishedAt],
+        ['Autor', derived.author, stored?.author],
         ['Like', derived.likes, eng.likes],
-        ['Commenti', derived.comments, eng.comments],
-        ['Condivisioni', derived.shares, eng.shares],
-        ['Visualizzazioni', derived.views, eng.views],
+        ['Comentarios', derived.comments, eng.comments],
+        ['Compartidos', derived.shares, eng.shares],
+        ['Reproducciones', derived.views, eng.views],
       ];
       base.rows.push({
         rowNumber: excelRow(i),
@@ -699,7 +699,7 @@ export async function spotCheck(fileId: number, projectId: number, n = 3): Promi
           })),
         extras: Object.entries(extrasMap)
           .map(([col, label]) => ({ label, value: showCell(all[i][col]) }))
-          .filter((x) => x.value !== '(vuoto)')
+          .filter((x) => x.value !== '(vacío)')
           .slice(0, 6),
       });
     }
@@ -759,7 +759,7 @@ export async function spotCheck(fileId: number, projectId: number, n = 3): Promi
       fields,
       extras: (metricMap.dims ?? [])
         .map((c) => ({ label: c, value: showCell(all[i][c]) }))
-        .filter((x) => x.value !== '(vuoto)')
+        .filter((x) => x.value !== '(vacío)')
         .slice(0, 6),
     });
   }

@@ -33,17 +33,17 @@ const LABEL: Record<string, string> = Object.fromEntries(EXPORT_SECTIONS.map((s)
 // etichetta e filetto: chi compone a schermo riconosce a colpo d'occhio che
 // cosa troverà stampato.
 const ROLE: Record<Role, { label: string; icon: typeof Sparkles; cls: string; rule: string }> = {
-  intro: { label: 'Presentazione', icon: Presentation, cls: 'text-sky-300', rule: 'bg-sky-500' },
-  comment: { label: 'Commento', icon: MessageSquareText, cls: 'text-violet-300', rule: 'bg-violet-500' },
-  synthesis: { label: 'Sintesi della pagina', icon: GitMerge, cls: 'text-teal-300', rule: 'bg-teal-500' },
+  intro: { label: 'Presentación', icon: Presentation, cls: 'text-sky-300', rule: 'bg-sky-500' },
+  comment: { label: 'Comentario', icon: MessageSquareText, cls: 'text-violet-300', rule: 'bg-violet-500' },
+  synthesis: { label: 'Síntesis de la página', icon: GitMerge, cls: 'text-teal-300', rule: 'bg-teal-500' },
   free: { label: 'Nota', icon: PenLine, cls: 'text-slate-400', rule: 'bg-slate-500' },
 };
 
 const REQUESTS: { key: 'intro' | 'comment' | 'both' | 'synthesis'; label: string; hint: string }[] = [
-  { key: 'comment', label: 'Commento (dopo il grafico)', hint: 'legge i numeri e ne trae l’implicazione' },
-  { key: 'intro', label: 'Presentazione (prima del grafico)', hint: 'prepara la lettura senza anticipare la conclusione' },
-  { key: 'both', label: 'Entrambi (prima e dopo)', hint: 'due testi distinti, non lo stesso spostato' },
-  { key: 'synthesis', label: 'Sintesi della pagina (in fondo)', hint: 'che cosa dicono insieme i grafici della pagina' },
+  { key: 'comment', label: 'Comentario (después del gráfico)', hint: 'lee las cifras y extrae su implicación' },
+  { key: 'intro', label: 'Presentación (antes del gráfico)', hint: 'prepara la lectura sin anticipar la conclusión' },
+  { key: 'both', label: 'Ambos (antes y después)', hint: 'dos textos distintos, no el mismo movido de lugar' },
+  { key: 'synthesis', label: 'Síntesis de la página (al final)', hint: 'qué dicen en conjunto los gráficos de la página' },
 ];
 
 export function ReportBuilder() {
@@ -63,7 +63,7 @@ export function ReportBuilder() {
   const load = useCallback(async () => {
     const res = await fetch('/api/report/custom');
     const d = await res.json();
-    if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'Errore di caricamento' }); return; }
+    if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'Error de carga' }); return; }
     setReports(d.reports ?? []);
     setCurrent((c) => (c ? (d.reports ?? []).find((r: Report) => r.id === c.id) ?? c : (d.reports ?? [])[0] ?? null));
   }, []);
@@ -90,14 +90,14 @@ export function ReportBuilder() {
 
   const addChart = (section: string) => setPages((ps) => {
     const next = structuredClone(ps);
-    if (!next[pageIdx]) next.push({ title: `Pagina ${next.length + 1}`, blocks: [] });
+    if (!next[pageIdx]) next.push({ title: `Página ${next.length + 1}`, blocks: [] });
     next[pageIdx].blocks.push({ type: 'chart', section });
     return next;
   });
 
   const addStudio = (chartId: number) => setPages((ps) => {
     const next = structuredClone(ps);
-    if (!next[pageIdx]) next.push({ title: `Pagina ${next.length + 1}`, blocks: [] });
+    if (!next[pageIdx]) next.push({ title: `Página ${next.length + 1}`, blocks: [] });
     next[pageIdx].blocks.push({ type: 'studio', chartId });
     return next;
   });
@@ -144,11 +144,11 @@ export function ReportBuilder() {
     setBusy('new');
     const res = await fetch('/api/report/custom', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: `Report ${new Date().toLocaleDateString('it-IT')}`, days: 30 }),
+      body: JSON.stringify({ title: `Informe ${new Date().toLocaleDateString('es-CO')}`, days: 30 }),
     });
     const d = await res.json();
     setBusy('');
-    if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'Creazione fallita' }); return; }
+    if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'La creación falló' }); return; }
     const res2 = await fetch('/api/report/custom');
     const all = (await res2.json()).reports as Report[];
     setReports(all);
@@ -165,14 +165,14 @@ export function ReportBuilder() {
       body: JSON.stringify({ id: current.id, title: current.title, days: current.days, pages: current.pages }),
     });
     setBusy('');
-    if (!res.ok) { setMsg({ kind: 'warn', text: (await res.json()).error ?? 'Salvataggio fallito' }); return; }
+    if (!res.ok) { setMsg({ kind: 'warn', text: (await res.json()).error ?? 'No se pudo guardar' }); return; }
     setDirty(false);
-    setMsg({ kind: 'ok', text: 'Report salvato.' });
+    setMsg({ kind: 'ok', text: 'Informe guardado.' });
     load();
   };
 
   const remove = async () => {
-    if (!current || !confirm(`Eliminare “${current.title}”?`)) return;
+    if (!current || !confirm(`¿Eliminar “${current.title}”?`)) return;
     await fetch(`/api/report/custom?id=${current.id}`, { method: 'DELETE' });
     setCurrent(null);
     setPageIdx(0);
@@ -188,7 +188,7 @@ export function ReportBuilder() {
     b.type === 'chart' ? b.section : b.type === 'studio' ? `studio:${b.chartId}` : null;
 
   const targetLabel = (key: string) => (key.startsWith('studio:')
-    ? studio.find((g) => g.id === Number(key.slice(7)))?.title ?? 'grafico di Studio Graph'
+    ? studio.find((g) => g.id === Number(key.slice(7)))?.title ?? 'gráfico de Studio Graph'
     : LABEL[key] ?? key);
 
   /**
@@ -225,7 +225,7 @@ export function ReportBuilder() {
       targets.push(key);
     });
     if (!targets.length) {
-      setMsg({ kind: 'warn', text: 'Ogni grafico di questa pagina ha già il testo che hai chiesto.' });
+      setMsg({ kind: 'warn', text: 'Cada gráfico de esta página ya tiene el texto que pediste.' });
       return;
     }
 
@@ -243,11 +243,11 @@ export function ReportBuilder() {
         }),
       });
       const d = await res.json();
-      if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'Generazione fallita' }); return; }
+      if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'La generación falló' }); return; }
 
       if (request === 'synthesis') {
         const text = d.synthesis as string | undefined;
-        if (!text) { setMsg({ kind: 'warn', text: 'Il modello non ha restituito una sintesi. Riprova.' }); return; }
+        if (!text) { setMsg({ kind: 'warn', text: 'El modelo no devolvió una síntesis. Intenta de nuevo.' }); return; }
         setPages((ps) => {
           const next = structuredClone(ps);
           const blocks = next[pageIdx].blocks;
@@ -257,7 +257,7 @@ export function ReportBuilder() {
           if (at >= 0) blocks[at] = block; else blocks.push(block);
           return next;
         });
-        setMsg({ kind: 'ok', text: 'Sintesi della pagina generata. Rileggila prima di esportare: la responsabilità editoriale resta tua.' });
+        setMsg({ kind: 'ok', text: 'Síntesis de la página generada. Reléela antes de exportar: la responsabilidad editorial sigue siendo tuya.' });
         return;
       }
 
@@ -301,8 +301,8 @@ export function ReportBuilder() {
       setMsg({
         kind: missing.length ? 'warn' : 'ok',
         text: missing.length
-          ? `Testi scritti: ${written}. Senza testo: ${missing.map(targetLabel).join(', ')}${emptyIds.length || (d.emptyStudio ?? []).length ? ' (nessun dato nel periodo scelto)' : ''}.`
-          : `${written} testi generati. Rileggili prima di esportare: la responsabilità editoriale resta tua.`,
+          ? `Textos escritos: ${written}. Sin texto: ${missing.map(targetLabel).join(', ')}${emptyIds.length || (d.emptyStudio ?? []).length ? ' (no hay datos en el periodo elegido)' : ''}.`
+          : `${written} textos generados. Reléelos antes de exportar: la responsabilidad editorial sigue siendo tuya.`,
       });
     } catch (e) {
       setMsg({ kind: 'warn', text: (e as Error).message });
@@ -331,13 +331,13 @@ export function ReportBuilder() {
     return (
       <section className="panel px-6 py-10 text-center">
         <BarChart3 className="mx-auto mb-3 size-8 text-slate-600" />
-        <p className="mb-1 text-sm text-slate-300">Nessun report personalizzato in questo progetto.</p>
+        <p className="mb-1 text-sm text-slate-300">No hay informes personalizados en este proyecto.</p>
         <p className="mb-5 text-xs text-slate-500">
-          Scegli i grafici che ti servono, mettili nell&rsquo;ordine che vuoi e aggiungi i commenti — a mano o generati dall&rsquo;AI.
+          Elige los gráficos que necesitas, ordénalos como quieras y agrega comentarios, escritos a mano o generados con IA.
         </p>
         <button onClick={newReport} disabled={!!busy}
           className="inline-flex items-center gap-2 rounded-lg border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm text-sky-200 hover:bg-sky-500/20 disabled:opacity-50">
-          {busy === 'new' ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />} Crea il primo report
+          {busy === 'new' ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />} Crear el primer informe
         </button>
         {msg && <p className="mt-4 text-xs text-amber-300">{msg.text}</p>}
       </section>
@@ -355,27 +355,27 @@ export function ReportBuilder() {
         </select>
         <input value={current.title} onChange={(e) => mutate((r) => ({ ...r, title: e.target.value }))}
           className="min-w-[14rem] flex-1 rounded-lg border border-[var(--border)] bg-white/[0.03] px-3 py-1.5 text-sm text-slate-100"
-          placeholder="Titolo del report" />
+          placeholder="Título del informe" />
         <label className="flex items-center gap-1.5 text-xs text-slate-500">
           periodo
           <select value={current.days} onChange={(e) => mutate((r) => ({ ...r, days: Number(e.target.value) }))}
             className="rounded-lg border border-[var(--border)] bg-white/[0.03] px-2 py-1.5 text-sm text-slate-200">
-            {[7, 14, 30, 60, 90].map((d) => <option key={d} value={d}>{d} giorni</option>)}
+            {[7, 14, 30, 60, 90].map((d) => <option key={d} value={d}>{d} días</option>)}
           </select>
         </label>
-        <span className="text-xs text-slate-600">{chartCount} grafici · {textCount} commenti</span>
+        <span className="text-xs text-slate-600">{chartCount} gráficos · {textCount} comentarios</span>
         <div className="ml-auto flex items-center gap-2">
           <button onClick={newReport} disabled={!!busy}
             className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs text-slate-300 hover:bg-white/5 disabled:opacity-50">
-            <Plus className="size-3.5" /> Nuovo
+            <Plus className="size-3.5" /> Nuevo
           </button>
           <button onClick={save} disabled={!!busy || !dirty}
             className="inline-flex items-center gap-1.5 rounded-lg border border-sky-500/40 bg-sky-500/10 px-3 py-1.5 text-xs text-sky-200 hover:bg-sky-500/20 disabled:opacity-40">
             {busy === 'save' ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
-            {dirty ? 'Salva' : 'Salvato'}
+            {dirty ? 'Guardar' : 'Guardado'}
           </button>
           <button onClick={download} disabled={!!busy || dirty || chartCount + textCount === 0}
-            title={dirty ? 'Salva prima di scaricare' : undefined}
+            title={dirty ? 'Guarda antes de descargar' : undefined}
             className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-200 hover:bg-emerald-500/20 disabled:opacity-40">
             <Download className="size-3.5" /> PDF
           </button>
@@ -398,8 +398,8 @@ export function ReportBuilder() {
       <div className="grid gap-4 lg:grid-cols-[19rem_1fr]">
         {/* Catalogo dei grafici */}
         <section className="panel h-fit px-4 py-4">
-          <h2 className="mb-1 text-sm font-semibold text-slate-200">Grafici disponibili</h2>
-          <p className="mb-3 text-[11px] text-slate-600">Clicca per aggiungerli alla pagina aperta.</p>
+          <h2 className="mb-1 text-sm font-semibold text-slate-200">Gráficos disponibles</h2>
+          <p className="mb-3 text-[11px] text-slate-600">Haz clic para agregarlos a la página abierta.</p>
           <div className="flex flex-col gap-3">
             {SECTION_GROUPS.map((g) => (
               <div key={g}>
@@ -421,7 +421,7 @@ export function ReportBuilder() {
                 <div className="flex flex-wrap gap-1.5">
                   {studio.map((g) => (
                     <button key={g.id} onClick={() => addStudio(g.id)}
-                      title="Grafico costruito da te in Studio Graph"
+                      title="Gráfico creado por ti en Studio Graph"
                       className="rounded-lg border border-violet-500/30 px-2 py-1 text-[11px] text-violet-200 hover:border-violet-400/60 hover:bg-violet-500/10">
                       + {g.title}
                     </button>
@@ -429,8 +429,8 @@ export function ReportBuilder() {
                 </div>
               ) : (
                 <p className="text-[11px] leading-snug text-slate-600">
-                  Nessuno ancora. In <a href="/graph" className="text-sky-400 hover:underline">Studio Graph</a> puoi
-                  costruire un grafico scegliendo tu gli assi: una volta salvato lo ritrovi qui.
+                  Ninguno todavía. En <a href="/graph" className="text-sky-400 hover:underline">Studio Graph</a> puedes
+                  crear un gráfico eligiendo tú los ejes: una vez guardado, lo encuentras aquí.
                 </p>
               )}
             </div>
@@ -445,13 +445,13 @@ export function ReportBuilder() {
                 className={`rounded-lg border px-3 py-1.5 text-xs ${i === pageIdx
                   ? 'border-sky-500/50 bg-sky-500/10 text-sky-200'
                   : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>
-                {p.title?.trim() || `Pagina ${i + 1}`}
+                {p.title?.trim() || `Página ${i + 1}`}
                 <span className="ml-1.5 text-slate-600">{p.blocks.length}</span>
               </button>
             ))}
-            <button onClick={() => { setPages((ps) => [...ps, { title: `Pagina ${ps.length + 1}`, blocks: [] }]); setPageIdx(pages.length); }}
+            <button onClick={() => { setPages((ps) => [...ps, { title: `Página ${ps.length + 1}`, blocks: [] }]); setPageIdx(pages.length); }}
               className="rounded-lg border border-dashed border-[var(--border)] px-2.5 py-1.5 text-xs text-slate-500 hover:text-slate-300">
-              <Plus className="inline size-3" /> pagina
+              <Plus className="inline size-3" /> página
             </button>
             {pages.length > 1 && (
               <button onClick={() => { setPages((ps) => ps.filter((_, i) => i !== pageIdx)); setPageIdx(Math.max(0, pageIdx - 1)); }}
@@ -466,11 +466,11 @@ export function ReportBuilder() {
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <input value={page.title ?? ''}
                   onChange={(e) => setPages((ps) => { const n = structuredClone(ps); n[pageIdx].title = e.target.value; return n; })}
-                  placeholder="Titolo della pagina (facoltativo)"
+                  placeholder="Título de la página (opcional)"
                   className="flex-1 rounded-lg border border-[var(--border)] bg-white/[0.03] px-3 py-1.5 text-sm text-slate-100" />
                 <button onClick={() => addText()}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs text-slate-300 hover:bg-white/5">
-                  <PenLine className="size-3.5" /> Scrivi
+                  <PenLine className="size-3.5" /> Escribir
                 </button>
                 <select value={request} onChange={(e) => setRequest(e.target.value as typeof request)}
                   title={REQUESTS.find((r) => r.key === request)?.hint}
@@ -480,7 +480,7 @@ export function ReportBuilder() {
                 <button onClick={() => comment()} disabled={!!busy}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 text-xs text-violet-200 hover:bg-violet-500/20 disabled:opacity-50">
                   {busy === 'comment' ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
-                  Genera con l&rsquo;AI
+                  Generar con IA
                 </button>
               </div>
               <p className="-mt-1 mb-3 text-[11px] text-slate-600">
@@ -489,7 +489,7 @@ export function ReportBuilder() {
 
               {page.blocks.length === 0 && (
                 <p className="py-8 text-center text-xs text-slate-600">
-                  Pagina vuota. Aggiungi un grafico dal catalogo a sinistra.
+                  Página vacía. Agrega un gráfico desde el catálogo de la izquierda.
                 </p>
               )}
 
@@ -507,22 +507,22 @@ export function ReportBuilder() {
                       <div className="flex flex-1 flex-wrap items-center gap-2">
                         <Shapes className="size-4 text-violet-400" />
                         <span className="text-sm text-slate-200">
-                          {studio.find((g) => g.id === b.chartId)?.title ?? 'Grafico di Studio Graph'}
+                          {studio.find((g) => g.id === b.chartId)?.title ?? 'Gráfico de Studio Graph'}
                         </span>
                         {!studio.some((g) => g.id === b.chartId) && (
                           <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] text-amber-300">
-                            cancellato da Studio Graph
+                            eliminado de Studio Graph
                           </span>
                         )}
                         <button onClick={() => comment(`studio:${b.chartId}`)} disabled={!!busy}
-                          title={`Genera: ${REQUESTS.find((r) => r.key === request)?.label}`}
+                          title={`Generar: ${REQUESTS.find((r) => r.key === request)?.label}`}
                           className="ml-auto inline-flex items-center gap-1 rounded-lg border border-violet-500/30 px-2 py-1 text-[11px] text-violet-300 hover:bg-violet-500/10 disabled:opacity-50">
                           {busy === `comment-studio:${b.chartId}` ? <Loader2 className="size-3 animate-spin" /> : <Sparkles className="size-3" />}
-                          genera
+                          generar
                         </button>
                         <button onClick={() => addText(i + 1)}
                           className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2 py-1 text-[11px] text-slate-400 hover:bg-white/5">
-                          <PenLine className="size-3" /> scrivi
+                          <PenLine className="size-3" /> escribir
                         </button>
                       </div>
                     ) : b.type === 'chart' ? (
@@ -530,14 +530,14 @@ export function ReportBuilder() {
                         <BarChart3 className="size-4 text-sky-400" />
                         <span className="text-sm text-slate-200">{LABEL[b.section] ?? b.section}</span>
                         <button onClick={() => comment(b.section)} disabled={!!busy}
-                          title={`Genera: ${REQUESTS.find((r) => r.key === request)?.label}`}
+                          title={`Generar: ${REQUESTS.find((r) => r.key === request)?.label}`}
                           className="ml-auto inline-flex items-center gap-1 rounded-lg border border-violet-500/30 px-2 py-1 text-[11px] text-violet-300 hover:bg-violet-500/10 disabled:opacity-50">
                           {busy === `comment-${b.section}` ? <Loader2 className="size-3 animate-spin" /> : <Sparkles className="size-3" />}
-                          genera
+                          generar
                         </button>
                         <button onClick={() => addText(i + 1)}
                           className="inline-flex items-center gap-1 rounded-lg border border-[var(--border)] px-2 py-1 text-[11px] text-slate-400 hover:bg-white/5">
-                          <PenLine className="size-3" /> scrivi
+                          <PenLine className="size-3" /> escribir
                         </button>
                       </div>
                     ) : (() => {
@@ -560,12 +560,12 @@ export function ReportBuilder() {
                               </select>
                               {b.ai && (
                                 <span className="inline-flex items-center gap-1 text-[11px] text-violet-300/80">
-                                  <Sparkles className="size-3" /> AI — rileggilo, modificandolo diventa tuo
+                                  <Sparkles className="size-3" /> IA: reléelo; al editarlo pasa a ser tuyo
                                 </span>
                               )}
                             </div>
                             <textarea value={b.text} onChange={(e) => editText(i, e.target.value)} rows={3}
-                              placeholder="Il tuo testo…"
+                              placeholder="Tu texto…"
                               className="w-full resize-y rounded-lg border border-[var(--border)] bg-white/[0.03] px-3 py-2 text-sm text-slate-100" />
                           </div>
                         </div>
@@ -582,8 +582,8 @@ export function ReportBuilder() {
 
           <p className="flex items-start gap-2 px-1 text-[11px] text-slate-600">
             <FileText className="mt-0.5 size-3.5 shrink-0" />
-            I grafici vengono ridisegnati con i dati del periodo scelto ogni volta che esporti: il report è una scaletta,
-            non una fotografia. Ogni file esportato porta l&rsquo;informativa sull&rsquo;uso dell&rsquo;intelligenza artificiale.
+            Los gráficos se redibujan con los datos del periodo elegido cada vez que exportas: el informe es un guion,
+            no una fotografía. Cada archivo exportado incluye el aviso sobre el uso de inteligencia artificial.
           </p>
         </section>
       </div>

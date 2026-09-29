@@ -130,9 +130,9 @@ export async function listTalkwalkerTopics(projectId: string): Promise<{ id: str
   // Demo pubblica: topic di fantasia, nessuna chiamata a Talkwalker.
   if (process.env.DEMO_MODE === '1') {
     return [
-      { id: 'brand', label: 'Brand – all mentions' }, { id: 'leadership', label: 'CEO & leadership' },
-      { id: 'esg', label: 'ESG & sustainability' }, { id: 'crisis', label: 'Crisis watch' },
-      { id: 'products', label: 'Products & launches' },
+      { id: 'brand', label: 'Marca – todas las menciones' }, { id: 'leadership', label: 'CEO y liderazgo' },
+      { id: 'esg', label: 'ESG y sostenibilidad' }, { id: 'crisis', label: 'Vigilancia de crisis' },
+      { id: 'products', label: 'Productos y lanzamientos' },
     ];
   }
   const token = cfg('TALKWALKER_ACCESS_TOKEN');
@@ -147,7 +147,7 @@ export async function listTalkwalkerTopics(projectId: string): Promise<{ id: str
     const res = await fetch(url.toString(), { headers: { accept: 'application/json' } });
     const body = await res.json().catch(() => null) as
       { status_message?: string; result_topics?: unknown; result_resources?: unknown } | null;
-    if (!res.ok) throw new Error(`Talkwalker ${res.status}: ${body?.status_message ?? 'richiesta rifiutata'}`);
+    if (!res.ok) throw new Error(`Talkwalker ${res.status}: ${body?.status_message ?? 'solicitud rechazada'}`);
     return body;
   };
 
@@ -173,7 +173,7 @@ export const talkwalker: Connector = {
   label: 'Talkwalker (API)',
   tier: 'premium',
   enabled: () => Boolean(cfg('TALKWALKER_ACCESS_TOKEN')),
-  disabledReason: 'Requires a Talkwalker API token: ask your Customer Success Manager for a read_only token, then enter it here',
+  disabledReason: 'Requiere un token de la API de Talkwalker: pide un token read_only a tu Customer Success Manager y luego ingrésalo aquí',
   async fetchMentions(q) {
     const token = cfg('TALKWALKER_ACCESS_TOKEN');
     if (!token) return [];
@@ -208,7 +208,7 @@ export const talkwalker: Connector = {
       | null;
     if (!res.ok) {
       // Il messaggio dell'API è più utile del codice: 401 = token, 403 = progetto.
-      throw new Error(`Talkwalker ${res.status}: ${body?.status_message ?? 'chiamata rifiutata'}`);
+      throw new Error(`Talkwalker ${res.status}: ${body?.status_message ?? 'llamada rechazada'}`);
     }
     const items = (body?.result_content?.data ?? []) as { data?: TalkwalkerDoc }[];
     return items

@@ -9,7 +9,7 @@ export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
 const SYSTEM = `You are a senior crisis communication consultant. You receive a media monitoring alert and the related conversations.
-Generate a CRISIS PLAYBOOK in English, in Markdown, with this structure:
+Generate a CRISIS PLAYBOOK in Spanish (Latin American), in Markdown, with this structure:
 ## Assessment (severity 1-5 and why, in 2 sentences)
 ## Who is driving the conversation (main sources/accounts and their weight)
 ## Response options (3 options: don't respond / measured response / firm response — with pros and cons in one line each)
@@ -19,14 +19,14 @@ Max 450 words total. Base it ONLY on the provided data.`;
 
 export async function POST(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
-  if (!await claudeAvailable()) return NextResponse.json({ error: 'Claude API key not configured' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
+  if (!await claudeAvailable()) return NextResponse.json({ error: 'La clave de API de Claude no está configurada' }, { status: 400 });
 
   const { alertId } = await req.json() as { alertId: number };
   const db = await getDb();
   const [alert] = await db.select().from(alerts)
     .where(and(eq(alerts.id, alertId), eq(alerts.projectId, project.id)));
-  if (!alert) return NextResponse.json({ error: 'alert not found' }, { status: 404 });
+  if (!alert) return NextResponse.json({ error: 'alerta no encontrada' }, { status: 404 });
 
   // Riuso: se il playbook esiste già, non si paga due volte
   const existing = (alert.data as Record<string, unknown> | null)?.playbook;
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     }))).slice(0, 12000)}`,
     1300, true,
   );
-  if (!playbook) return NextResponse.json({ error: 'spend cap reached or API error' }, { status: 429 });
+  if (!playbook) return NextResponse.json({ error: 'se alcanzó el tope de gasto o hubo un error de la API' }, { status: 429 });
 
   await db.update(alerts)
     .set({ data: { ...(alert.data ?? {}), playbook } })

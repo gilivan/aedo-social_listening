@@ -24,9 +24,9 @@ Regole ferree:
 
 /** Il commento salvato, se i dati sono ancora quelli che descriveva. */
 export async function GET(req: Request) {
-  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Solo gli amministratori' }, { status: 403 });
+  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Solo para administradores' }, { status: 403 });
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'Nessun progetto' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'No hay proyecto' }, { status: 400 });
 
   const url = new URL(req.url);
   const id = Number(url.searchParams.get('id'));
@@ -38,15 +38,15 @@ export async function GET(req: Request) {
 
 /** Scrive il commento su un grafico salvato. */
 export async function POST(req: Request) {
-  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Solo gli amministratori' }, { status: 403 });
+  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Solo para administradores' }, { status: 403 });
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'Nessun progetto' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'No hay proyecto' }, { status: 400 });
 
   const body = await req.json().catch(() => ({}));
   const id = Number(body.id);
   const spec = body.spec as StudioSpec | undefined;
-  if (!id) return NextResponse.json({ error: 'Salva prima il grafico: il commento vive attaccato a lui.' }, { status: 400 });
-  if (!spec?.x || !spec?.y) return NextResponse.json({ error: 'Grafico incompleto' }, { status: 400 });
+  if (!id) return NextResponse.json({ error: 'Primero guarda el gráfico: el comentario queda asociado a él.' }, { status: 400 });
+  if (!spec?.x || !spec?.y) return NextResponse.json({ error: 'Gráfico incompleto' }, { status: 400 });
 
   try {
     // Il modello non vede mai le righe: riceve le cifre già calcolate dal
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     // quelle: l'impronta si prende adesso, non prima.
     const result = await runStudio(project.id, spec);
     if (!result.rows.length) {
-      return NextResponse.json({ error: 'Questo grafico non ha dati da commentare nel periodo scelto.' }, { status: 400 });
+      return NextResponse.json({ error: 'Este gráfico no tiene datos para comentar en el periodo elegido.' }, { status: 400 });
     }
     const facts = studioFacts({
       title: String(body.title ?? '').trim() || `${result.yLabel} per ${result.xLabel}`,
@@ -66,11 +66,11 @@ export async function POST(req: Request) {
     const text = await callClaude(MODELS.sonnet, 'studio-comment', SYSTEM, user, 500, true);
     if (text === null) {
       return NextResponse.json({
-        error: 'Motore AI non disponibile: manca la chiave o il tetto di spesa è stato raggiunto.',
+        error: 'Motor de IA no disponible: falta la clave o se alcanzó el tope de gasto.',
       }, { status: 503 });
     }
     const clean = text.trim();
-    if (!clean) return NextResponse.json({ error: 'Il modello non ha scritto niente. Riprova.' }, { status: 502 });
+    if (!clean) return NextResponse.json({ error: 'El modelo no escribió nada. Inténtalo de nuevo.' }, { status: 502 });
 
     const at = await saveChartComment(id, project.id, clean, fingerprint(spec, result));
     return NextResponse.json({ comment: { text: clean, at, stale: false }, disclosure: AI_DISCLOSURE_SHORT });
@@ -81,11 +81,11 @@ export async function POST(req: Request) {
 
 /** Toglie il commento a mano. */
 export async function DELETE(req: Request) {
-  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Solo gli amministratori' }, { status: 403 });
+  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Solo para administradores' }, { status: 403 });
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'Nessun progetto' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'No hay proyecto' }, { status: 400 });
   const id = Number(new URL(req.url).searchParams.get('id'));
-  if (!id) return NextResponse.json({ error: 'Grafico mancante' }, { status: 400 });
+  if (!id) return NextResponse.json({ error: 'Falta el gráfico' }, { status: 400 });
   await saveChartComment(id, project.id, '', '');
   return NextResponse.json({ ok: true });
 }

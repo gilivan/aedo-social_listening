@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
   const url = new URL(req.url);
   const { sections, days } = parseExportOptions(url);
   const [data, studio] = await Promise.all([
@@ -19,11 +19,11 @@ export async function GET(req: Request) {
 
   const buffer = await buildReportPdf({ project, data, days, sections, studio });
 
-  const parts = sections.size >= 20 ? 'complete' : 'selection';
+  const parts = sections.size >= 20 ? 'completo' : 'seleccion';
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="radar-${slugify(project.name)}-${parts}-${todayStamp()}.pdf"`,
+      'Content-Disposition': `attachment; filename="aedo-${slugify(project.name)}-${parts}-${todayStamp()}.pdf"`,
     },
   });
 }

@@ -67,7 +67,7 @@ test('numeri all\'italiana, n.d. dove manca il dato', () => {
   assert.equal(formatKpi(1234.5, 'pct', 'it'), '1.234,5%');
   assert.equal(formatKpi(1234567, 'count', 'it'), '1.234.567');
   assert.equal(formatKpi(null, 'count', 'it'), 'n.d.');
-  assert.equal(formatKpi(null, 'count', 'en'), 'n/a');
+  assert.equal(formatKpi(null, 'count', 'en'), 'n/d');
 });
 
 test('le percentuali si confrontano in punti', () => {

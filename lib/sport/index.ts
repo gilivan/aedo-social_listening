@@ -4,7 +4,7 @@ import { sportSources, sportMatches, stockPrices, mentions } from '@/lib/db/sche
 import { fetchTeamMatches, footballDataEnabled } from './football-data';
 import { fetchDailyCloses, alphaVantageEnabled } from './alphavantage';
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 const todayKey = () => new Date().toLocaleDateString('en-CA', { timeZone: TZ });
 
 /**

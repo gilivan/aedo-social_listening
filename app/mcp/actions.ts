@@ -13,7 +13,7 @@ import { saveConnectorCredentials } from '@/lib/connector-credentials';
  * smettono di funzionare, e la pagina lo dice prima del clic.
  */
 export async function generateMcpTokenAction(): Promise<{ token?: string; error?: string }> {
-  if (!isAdmin(await getCurrentUser())) return { error: 'Solo un amministratore può generare il token.' };
+  if (!isAdmin(await getCurrentUser())) return { error: 'Solo un administrador puede generar el token.' };
   const token = `rdr_${randomBytes(32).toString('base64url')}`;
   await saveConnectorCredentials('mcp', { RADAR_MCP_TOKEN: token });
   revalidatePath('/mcp');

@@ -10,7 +10,7 @@ import { QueryStudio } from '@/components/query-studio';
 // Query: che cosa Radar ascolta, separato da come è fatto il progetto.
 // ---------------------------------------------------------------------------
 
-export const metadata = { title: 'Query' };
+export const metadata = { title: 'Consultas' };
 // Costruire un piano chiama il modello; provarlo interroga Google News.
 export const maxDuration = 120;
 
@@ -27,18 +27,18 @@ export default async function QueryPage({ searchParams }: {
   const project = wanted
     ? (await getProjects()).find((p) => p.id === wanted) ?? await getCurrentProject()
     : await getCurrentProject();
-  if (!project) return <EmptyState message={L('Nessun progetto selezionato.', 'No project selected.')} />;
+  if (!project) return <EmptyState message={L('Nessun progetto selezionato.', 'No hay ningún proyecto seleccionado.')} />;
 
   const header = (
     <PageHeader
-      title="Query"
+      title="Consultas"
       subtitle={L(
         `Che cosa ascolta “${project.name}”: scrivilo a parole, Radar costruisce e prova le query.`,
-        `What “${project.name}” listens to: write it in words, Radar builds and tests the queries.`,
+        `Qué escucha “${project.name}”: escríbelo con tus palabras y AEDO construye y prueba las consultas.`,
       )}
       info={L(
         'Le query sono fatte di mattoncini: il soggetto, i contesti a cui legarlo, i competitor e il rumore da escludere, ognuno con i suoi termini. Ogni query è una combinazione di mattoncini: correggi un termine una volta e cambia ovunque. Prima di salvare, la prova sul campo cerca ogni termine e ogni query nelle notizie dell’ultima settimana. Dopo il salvataggio ogni menzione porta l’etichetta delle query che l’hanno trovata.',
-        'Queries are made of building blocks: the subject, the contexts to relate it to, the competitors and the noise to exclude, each with its own terms. Each query combines blocks: fix a term once and it changes everywhere. Before saving, the field test looks up every term and query in the last week of news. After saving, each mention is tagged with the queries that found it.',
+        'Las consultas se arman con bloques: el sujeto, los contextos con los que relacionarlo, los competidores y el ruido que hay que excluir, cada uno con sus términos. Cada consulta combina bloques: corriges un término una vez y cambia en todas partes. Antes de guardar, la prueba de campo busca cada término y cada consulta en las noticias de la última semana. Después de guardar, cada mención queda etiquetada con las consultas que la encontraron.',
       )}
     />
   );
@@ -47,7 +47,7 @@ export default async function QueryPage({ searchParams }: {
     return (
       <>
         {header}
-        <EmptyState message={L('Questo progetto importa file: non ha query da costruire.', 'This project imports files: it has no queries to build.')} />
+        <EmptyState message={L('Questo progetto importa file: non ha query da costruire.', 'Este proyecto importa archivos: no tiene consultas que construir.')} />
       </>
     );
   }
@@ -63,14 +63,14 @@ export default async function QueryPage({ searchParams }: {
       {lens && (
         <p className="mb-4 rounded-lg border border-teal-500/30 bg-teal-500/[0.05] px-4 py-2 text-xs text-teal-100">
           {L('Progetto Talkwalker: qui le query sono una lente. La raccolta resta quella dei topic scelti in Talkwalker e non si spende nessun credito in più; il piano serve a etichettare i documenti arrivati (soggetto, contesti, competitor) e a filtrarli in Ascolto. Ogni query si può copiare in sintassi booleana e incollare in Talkwalker.',
-            'Talkwalker project: here queries are a lens. Collection stays with the topics chosen in Talkwalker and no extra credit is spent; the plan tags the incoming documents (subject, contexts, competitors) so you can filter them in Listening. Each query can be copied as boolean syntax and pasted into Talkwalker.')}
+            'Proyecto Talkwalker: aquí las consultas son un lente. La recolección sigue siendo la de los temas elegidos en Talkwalker y no se gasta ningún crédito adicional; el plan etiqueta los documentos que llegan (sujeto, contextos, competidores) para que puedas filtrarlos en Escucha. Cada consulta se puede copiar en sintaxis booleana y pegar en Talkwalker.')}
         </p>
       )}
       {sp.new && (
         <p className="mb-4 rounded-lg border border-sky-500/30 bg-sky-500/[0.05] px-4 py-2 text-xs text-sky-200">
           {L('Progetto creato. Ora dì a Radar che cosa ascoltare: finché non salvi un piano, il progetto non raccoglie niente.',
-            'Project created. Now tell Radar what to listen to: until you save a plan, the project collects nothing.')}
-          {' '}<Link href={`/settings?p=${project.id}`} className="underline">{L('Impostazioni del progetto', 'Project settings')}</Link>
+            'Proyecto creado. Ahora dile a AEDO qué escuchar: hasta que guardes un plan, el proyecto no recolecta nada.')}
+          {' '}<Link href={`/settings?p=${project.id}`} className="underline">{L('Impostazioni del progetto', 'Configuración del proyecto')}</Link>
         </p>
       )}
       <QueryStudio

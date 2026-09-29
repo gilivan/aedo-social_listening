@@ -15,10 +15,10 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 
 export const metadata: Metadata = {
   title: {
-    default: 'Radar — Signal over noise',
-    template: '%s — Radar',
+    default: 'AEDO — Señal sobre el ruido',
+    template: '%s — AEDO',
   },
-  description: 'Social listening and media intelligence',
+  description: 'Social listening e inteligencia de medios',
 };
 
 // Tutte le pagine leggono dal database a ogni richiesta: niente prerender statico.
@@ -45,7 +45,7 @@ export default async function RootLayout({
       <body className="min-h-full">
         {demo && (
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 bg-sky-500/15 px-4 py-2 text-center text-xs text-sky-200">
-            <span>🛰️ <strong>Live demo</strong> — read-only, sample data. Interactive AI features run when you self-host with your own key.</span>
+            <span>🛰️ <strong>Demo en vivo</strong>: solo lectura, datos de ejemplo. Las funciones interactivas de IA se activan cuando instalas AEDO en tu propio servidor con tu clave.</span>
             <a href="https://github.com/Scognamiglio1969/radar-intelligence" target="_blank" rel="noopener noreferrer"
               className="rounded-full bg-sky-500/90 px-3 py-0.5 font-semibold text-slate-950 transition hover:bg-sky-400">
               ⭐ GitHub

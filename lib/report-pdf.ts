@@ -27,6 +27,13 @@ const MUTED = '#64748b';
 const BORDER = '#e2e8f0';
 const PANEL = '#f1f5f9';
 const SENT: Record<string, string> = { positive: '#16a34a', neutral: '#64748b', negative: '#dc2626' };
+/** Etiquetas visibles para los valores de sentimiento (los valores no cambian). */
+const SENT_LABEL: Record<string, string> = { positive: 'positivo', neutral: 'neutro', negative: 'negativo' };
+const CONF_LABEL: Record<string, string> = { high: 'alta', medium: 'media', low: 'baja' };
+const KIND_LABEL: Record<string, string> = {
+  trend: 'tendencia', innovation: 'innovación', concept: 'concepto', risk: 'riesgo', opportunity: 'oportunidad',
+};
+const STANCE_LABEL: Record<string, string> = { polarizzante: 'polarizante', neutral: 'neutra' };
 
 // pdfkit con font standard (Helvetica) codifica in WinAnsi: rimuovo i caratteri
 // fuori da Latin-1 (emoji, CJK, arabo) per evitare crash di rendering.
@@ -87,7 +94,7 @@ function makeCtx(doc: Doc): Ctx {
       ensure(20);
       const y = doc.y;
       doc.font('Helvetica').fontSize(9).fillColor(TEXT).text(sanitize(it.label), left, y, { width: contentW * 0.42, ellipsis: true });
-      doc.fillColor(MUTED).text(`${it.value.toLocaleString('en-US')}${it.sub ? ` · ${it.sub}` : ''}`, right - 120, y, { width: 120, align: 'right' });
+      doc.fillColor(MUTED).text(`${it.value.toLocaleString('es-CO')}${it.sub ? ` · ${it.sub}` : ''}`, right - 120, y, { width: 120, align: 'right' });
       const barY = y + 12;
       const trackX = left + contentW * 0.44;
       const trackW = contentW - contentW * 0.44 - 130;
@@ -185,14 +192,14 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
     has: () => true,
     render: (c, d) => {
       const kpi = d.dashboard.kpi;
-      const sentimentLabel = kpi.avgSentiment === null ? 'analyzing'
-        : kpi.avgSentiment > 0.15 ? 'positive' : kpi.avgSentiment < -0.15 ? 'negative' : 'neutral';
-      c.heading('Summary');
+      const sentimentLabel = kpi.avgSentiment === null ? 'en análisis'
+        : kpi.avgSentiment > 0.15 ? 'positivo' : kpi.avgSentiment < -0.15 ? 'negativo' : 'neutro';
+      c.heading('Resumen');
       const cards: [string, string][] = [
-        ['Mentions (7 days)', kpi.total7.toLocaleString('en-US')],
-        ['Avg sentiment', sentimentLabel],
-        ['Active sources', String(kpi.sources)],
-        ['Topics detected', String(d.dashboard.topTopics.length)],
+        ['Menciones (7 días)', kpi.total7.toLocaleString('es-CO')],
+        ['Sentimiento prom.', sentimentLabel],
+        ['Fuentes activas', String(kpi.sources)],
+        ['Temas detectados', String(d.dashboard.topTopics.length)],
       ];
       c.ensure(70);
       const cw = (c.contentW - 24) / 4;
@@ -220,7 +227,7 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
       // sarebbero illeggibili, e chi rifà il conto le cerca comunque qui.
       const formulas = k.kpis.filter((x) => x.formula || x.note);
       if (formulas.length) {
-        c.para(k.lang === 'it' ? 'Formule e note' : 'Formulas and notes', { bold: true, size: 9, gap: 0.1 });
+        c.para(k.lang === 'it' ? 'Formule e note' : 'Fórmulas y notas', { bold: true, size: 9, gap: 0.1 });
         for (const x of formulas) {
           c.para(`${x.label}: ${[x.formula, x.note].filter(Boolean).join(' · ')}`, { size: 7.5, color: MUTED, gap: 0.05 });
         }
@@ -269,15 +276,15 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   health: {
     has: (d) => d.health.theme.total > 0,
     render: (c, d) => {
-      c.heading(`Market Health Index — ${d.health.theme.score}/100 (${d.health.theme.grade})`);
+      c.heading(`Índice de salud del mercado — ${d.health.theme.score}/100 (${d.health.theme.grade})`);
       c.hbars(d.health.theme.components.map((x) => ({ label: x.label, value: x.value })));
       if (d.health.brand) {
         const b = d.health.brand;
-        c.para(`Brand health — ${b.name}: ${b.health.score}/100 (${b.health.grade}), ${b.health.score - d.health.theme.score >= 0 ? '+' : ''}${b.health.score - d.health.theme.score} vs market`, { bold: true, size: 10, gap: 0.2 });
+        c.para(`Salud de la marca — ${b.name}: ${b.health.score}/100 (${b.health.grade}), ${b.health.score - d.health.theme.score >= 0 ? '+' : ''}${b.health.score - d.health.theme.score} vs. mercado`, { bold: true, size: 10, gap: 0.2 });
         c.hbars(b.health.components.map((x) => ({ label: x.label, value: x.value })));
       }
       if (d.health.compare.length > 1) {
-        c.para('Health ranking — your brand vs competitors:', { bold: true, size: 10, gap: 0.2 });
+        c.para('Ranking de salud — tu marca vs. competidores:', { bold: true, size: 10, gap: 0.2 });
         c.hbars(d.health.compare.map((x) => ({ label: `${x.isBrand ? '★ ' : ''}${x.name}`, value: x.score })));
       }
     },
@@ -286,9 +293,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   trends: {
     has: (d) => d.trends.length > 0,
     render: (c, d) => {
-      c.heading('Emerging trends (last 24 hours)');
+      c.heading('Tendencias emergentes (últimas 24 horas)');
       for (const t of d.trends.slice(0, 6)) {
-        c.para(`x${t.score.toFixed(0)}  ${t.topic}  —  ${t.n24} mentions/24h`, { bold: true, size: 10, gap: 0.1 });
+        c.para(`x${t.score.toFixed(0)}  ${t.topic}  —  ${t.n24} menciones/24 h`, { bold: true, size: 10, gap: 0.1 });
         if (t.explanation) c.para(t.explanation, { size: 9, color: MUTED, gap: 0.4 });
       }
     },
@@ -297,7 +304,7 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   volume: {
     has: (d) => d.dashboard.volumeByDay.length > 0,
     render: (c, d) => {
-      c.heading('Volume by source');
+      c.heading('Volumen por fuente');
       c.stackedBars(d.dashboard.volumeByDay.map((r) => ({ ...r, n: Number(r.n) })));
     },
   },
@@ -305,10 +312,10 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   sentiment: {
     has: (d) => d.dashboard.sentimentDist.length > 0,
     render: (c, d) => {
-      c.heading('Sentiment');
+      c.heading('Sentimiento');
       const tot = d.dashboard.sentimentDist.reduce((s, r) => s + r.n, 0) || 1;
       c.hbars(d.dashboard.sentimentDist.map((r) => ({
-        label: r.sentiment, value: r.n, color: SENT[r.sentiment] ?? MUTED,
+        label: SENT_LABEL[r.sentiment] ?? r.sentiment, value: r.n, color: SENT[r.sentiment] ?? MUTED,
         sub: `${Math.round((r.n / tot) * 100)}%`,
       })));
     },
@@ -317,7 +324,7 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   topics: {
     has: (d) => d.dashboard.topTopics.length > 0,
     render: (c, d) => {
-      c.heading('Top topics');
+      c.heading('Temas principales');
       c.hbars(d.dashboard.topTopics.slice(0, 12).map((t) => ({ label: t.topic, value: Number(t.n) })));
     },
   },
@@ -325,10 +332,10 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   constellation: {
     has: (d) => d.constellation.nodes.length > 0,
     render: (c, d) => {
-      c.heading('Semantic constellation — key terms');
+      c.heading('Constelación semántica — términos clave');
       c.hbars(d.constellation.nodes.slice(0, 14).map((n) => ({ label: n.term, value: n.freq })));
       if (d.constellation.edges.length) {
-        c.para('Strongest co-occurrences:', { bold: true, size: 10, gap: 0.2 });
+        c.para('Coocurrencias más fuertes:', { bold: true, size: 10, gap: 0.2 });
         for (const e of d.constellation.edges.slice(0, 10)) {
           c.para(`${e.a} + ${e.b} — ${e.weight}x`, { size: 9, color: MUTED, gap: 0.15 });
         }
@@ -339,7 +346,7 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   pyramid: {
     has: (d) => d.pyramid.tiers.length > 0,
     render: (c, d) => {
-      c.heading(`Author influence pyramid — top tier holds ${d.pyramid.topConcentration}% of reach`);
+      c.heading(`Pirámide de influencia de autores — el nivel superior concentra el ${d.pyramid.topConcentration}% del alcance`);
       c.hbars(d.pyramid.tiers.map((t) => ({ label: `${t.label} (${t.authors})`, value: t.sharePct })));
     },
   },
@@ -347,11 +354,11 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   network: {
     has: (d) => d.network.nodes.length > 0,
     render: (c, d) => {
-      c.heading('Influencer network — top voices by community');
+      c.heading('Red de influenciadores — voces principales por comunidad');
       c.table(
-        ['Author', 'Focus topic', 'Posts', 'Engagement'],
+        ['Autor', 'Tema principal', 'Posts', 'Engagement'],
         [...d.network.nodes].sort((a, b) => b.engagement - a.engagement).slice(0, 20)
-          .map((n) => [n.label, n.community, String(n.posts), n.engagement.toLocaleString('en-US')]),
+          .map((n) => [n.label, n.community, String(n.posts), n.engagement.toLocaleString('es-CO')]),
         [0.36, 0.34, 0.14, 0.16], ['left', 'left', 'right', 'right'],
       );
     },
@@ -361,9 +368,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
     has: (d) => d.flow.links.length > 0,
     render: (c, d) => {
       const lbl = new Map(d.flow.nodes.map((n) => [n.key, n.label]));
-      c.heading('Conversation flow — Source → Topic → Sentiment');
+      c.heading('Flujo de conversación — Fuente → Tema → Sentimiento');
       c.table(
-        ['From', 'To', 'Mentions'],
+        ['Desde', 'Hacia', 'Menciones'],
         [...d.flow.links].sort((a, b) => b.value - a.value).slice(0, 22)
           .map((l) => [String(lbl.get(l.source) ?? l.source), String(lbl.get(l.target) ?? l.target), String(l.value)]),
         [0.44, 0.44, 0.12], ['left', 'left', 'right'],
@@ -374,9 +381,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   momentum: {
     has: (d) => d.momentum.length > 0,
     render: (c, d) => {
-      c.heading('Momentum quadrant — volume × acceleration');
+      c.heading('Cuadrante de momentum — volumen × aceleración');
       c.table(
-        ['Topic', 'Volume', 'Acceleration', 'Quadrant'],
+        ['Tema', 'Volumen', 'Aceleración', 'Cuadrante'],
         [...d.momentum].sort((a, b) => b.volume - a.volume).map((p) => [
           p.topic, String(p.volume), `${p.acceleration > 0 ? '+' : ''}${p.acceleration}%`, p.quadrant,
         ]),
@@ -388,7 +395,7 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   emotions: {
     has: (d) => d.emotions.length > 0,
     render: (c, d) => {
-      c.heading('Emotion radar — emotional fingerprint');
+      c.heading('Radar de emociones — huella emocional');
       c.hbars(d.emotions.map((e) => ({ label: e.emotion, value: e.value })));
     },
   },
@@ -396,9 +403,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   geo: {
     has: (d) => d.geo.length > 0,
     render: (c, d) => {
-      c.heading('Geographic map — by area (language-inferred)');
+      c.heading('Mapa geográfico — por área (inferida del idioma)');
       c.table(
-        ['Area / language', 'Mentions', 'Share', 'Sentiment'],
+        ['Área / idioma', 'Menciones', 'Cuota', 'Sentimiento'],
         d.geo.map((g) => [
           g.country, String(g.volume), `${g.share}%`,
           g.sentiment === null ? '—' : g.sentiment.toFixed(2),
@@ -413,7 +420,7 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
     render: (c, d) => {
       const totals = d.sov.entities.map((e) => ({ e, n: d.sov.days.reduce((s, x) => s + Number(x[e] ?? 0), 0) }));
       const grand = totals.reduce((s, t) => s + t.n, 0) || 1;
-      c.heading('Share of Voice over time (30 days)');
+      c.heading('Share of Voice en el tiempo (30 días)');
       c.hbars(totals.sort((a, b) => b.n - a.n).map((t) => ({ label: `${t.e} (${((t.n / grand) * 100).toFixed(0)}%)`, value: t.n })));
     },
   },
@@ -421,10 +428,10 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   benchmark: {
     has: (d) => d.benchmark.length > 0,
     render: (c, d) => {
-      c.heading('Benchmark — share of voice');
+      c.heading('Benchmark — Share of Voice');
       const tot = d.benchmark.reduce((s, r) => s + r.total, 0) || 1;
       c.table(
-        ['Entity', 'Mentions', 'Share of voice', 'Sentiment'],
+        ['Entidad', 'Menciones', 'Share of Voice', 'Sentimiento'],
         d.benchmark.map((r) => [
           r.entity.name, String(r.total), `${((r.total / tot) * 100).toFixed(1)}%`,
           r.avgSentiment === null ? '—' : r.avgSentiment.toFixed(2),
@@ -437,13 +444,13 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   audience: {
     has: (d) => d.audience.communities.length > 0,
     render: (c, d) => {
-      c.heading('Audience — where the conversation happens');
+      c.heading('Audiencia — dónde ocurre la conversación');
       c.hbars(d.audience.communities.slice(0, 10).map((x) => ({
         label: `${x.community ?? '—'} (${sourceLabel(x.source)})`, value: x.n,
       })), '#7c3aed');
       if (d.audience.languages.length) {
         c.doc.moveDown(0.3);
-        c.para('Lingue: ' + d.audience.languages.map((l) => `${l.language.toUpperCase()} (${l.n})`).join('  ·  '), { size: 9, color: MUTED });
+        c.para('Idiomas: ' + d.audience.languages.map((l) => `${l.language.toUpperCase()} (${l.n})`).join('  ·  '), { size: 9, color: MUTED });
       }
     },
   },
@@ -451,9 +458,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   content: {
     has: (d) => d.ratings.length > 0,
     render: (c, d) => {
-      c.heading('Top content by engagement');
+      c.heading('Contenido destacado por engagement');
       c.table(
-        ['Content', 'Source', 'Engagement', 'AI', 'Risk'],
+        ['Contenido', 'Fuente', 'Engagement', 'IA', 'Riesgo'],
         d.ratings.slice(0, 15).map((r) => [
           (r.title || r.content).slice(0, 110), sourceLabel(r.source),
           String(Math.round(r.engagementScore)), r.quality ? String(r.quality.score) : '—', r.quality?.risk ?? '—',
@@ -468,27 +475,27 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
     render: (c, d) => {
       const p = d.pov.pov;
       if (!p) return;
-      c.heading('Point of View');
+      c.heading('Punto de vista');
       c.para(p.headline, { bold: true, size: 12, gap: 0.4 });
       for (const par of p.intro ?? []) c.para(par.text, { size: 10, gap: 0.35 });
       if ((p.intro ?? []).length) c.doc.moveDown(0.2);
       for (const [i, b] of p.blocks.entries()) {
-        c.para(`${i + 1}. ${b.title}  [${b.kind} · ${b.confidence} confidence]`, { bold: true, size: 10.5, gap: 0.2 });
+        c.para(`${i + 1}. ${b.title}  [${KIND_LABEL[b.kind] ?? b.kind} · confianza ${CONF_LABEL[b.confidence] ?? b.confidence}]`, { bold: true, size: 10.5, gap: 0.2 });
         if (b.stats.length) {
           c.para(b.stats.map((s) => `${s.value} — ${s.label}`).join('   ·   '), { size: 9, color: ACCENT, gap: 0.2 });
         }
         c.para(b.body, { size: 9.5, gap: 0.45 });
       }
       if (p.counterSignals.length) {
-        c.para('Counter-signals', { bold: true, size: 10.5, gap: 0.2 });
+        c.para('Contraseñales', { bold: true, size: 10.5, gap: 0.2 });
         for (const x of p.counterSignals) c.para(`•  ${x.point}`, { size: 9.5, color: MUTED, gap: 0.2 });
       }
       if (p.implications.length) {
-        c.para('So what', { bold: true, size: 10.5, gap: 0.2 });
+        c.para('Y entonces qué', { bold: true, size: 10.5, gap: 0.2 });
         for (const t of p.implications) c.para(`→  ${t}`, { size: 9.5, gap: 0.2 });
       }
       if (p.watch.length) {
-        c.para('What to watch', { bold: true, size: 10.5, gap: 0.2 });
+        c.para('Qué vigilar', { bold: true, size: 10.5, gap: 0.2 });
         for (const t of p.watch) c.para(`◦  ${t}`, { size: 9.5, gap: 0.2 });
       }
     },
@@ -497,9 +504,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   narratives: {
     has: (d) => d.narratives.length > 0,
     render: (c, d) => {
-      c.heading('Narratives');
+      c.heading('Narrativas');
       for (const n of d.narratives) {
-        c.para(`${n.title}  [${n.stance ?? 'neutral'}${n.coordinated ? ', coordinated' : ''}]  · ${n.mentionCount} posts`, { bold: true, size: 10, gap: 0.1 });
+        c.para(`${n.title}  [${STANCE_LABEL[n.stance ?? 'neutral'] ?? n.stance}${n.coordinated ? ', coordinada' : ''}]  · ${n.mentionCount} posts`, { bold: true, size: 10, gap: 0.1 });
         if (n.description) c.para(n.description, { size: 9, color: MUTED, gap: 0.4 });
       }
     },
@@ -508,9 +515,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   timeline: {
     has: (d) => d.timeline.length > 0,
     render: (c, d) => {
-      c.heading('Sector timeline');
+      c.heading('Línea de tiempo del sector');
       for (const e of d.timeline.slice(0, 25)) {
-        c.para(`${new Date(e.eventDate).toLocaleDateString('en-US')} — ${e.title}${e.importance === 3 ? '  (turning point)' : ''}`, { bold: true, size: 9.5, gap: 0.1 });
+        c.para(`${new Date(e.eventDate).toLocaleDateString('es-CO')} — ${e.title}${e.importance === 3 ? '  (punto de inflexión)' : ''}`, { bold: true, size: 9.5, gap: 0.1 });
         if (e.description) c.para(e.description, { size: 9, color: MUTED, gap: 0.4 });
       }
     },
@@ -521,10 +528,10 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
     render: (c, d) => {
       const pk = d.crisis.peak;
       if (!pk) return;
-      c.heading(`Crisis radar — risk ${d.crisis.risk}/100 (${d.crisis.level})`);
-      c.para(`Risk drivers: ${d.crisis.drivers.map((x) => `${x.label} +${x.value}`).join('  ·  ')}`, { size: 9, color: MUTED, gap: 0.3 });
-      c.para(`Peak day: ${pk.day} — ${pk.volume} mentions, ${pk.negShare}% negative, avg sentiment ${pk.sentiment}`, { bold: true, size: 10, gap: 0.2 });
-      if (pk.topics.length) c.para(`Topics: ${pk.topics.map((t) => `${t.topic} (${t.n})`).join(', ')}`, { size: 9, color: MUTED, gap: 0.3 });
+      c.heading(`Radar de crisis — riesgo ${d.crisis.risk}/100 (${d.crisis.level})`);
+      c.para(`Factores de riesgo: ${d.crisis.drivers.map((x) => `${x.label} +${x.value}`).join('  ·  ')}`, { size: 9, color: MUTED, gap: 0.3 });
+      c.para(`Día pico: ${pk.day} — ${pk.volume} menciones, ${pk.negShare}% negativas, sentimiento prom. ${pk.sentiment}`, { bold: true, size: 10, gap: 0.2 });
+      if (pk.topics.length) c.para(`Temas: ${pk.topics.map((t) => `${t.topic} (${t.n})`).join(', ')}`, { size: 9, color: MUTED, gap: 0.3 });
       for (const x of pk.content) c.para(`• [${sourceLabel(x.source)}] ${x.title}`, { size: 9, gap: 0.15 });
     },
   },
@@ -532,9 +539,9 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   alerts: {
     has: (d) => d.alerts.length > 0,
     render: (c, d) => {
-      c.heading('Recent alerts');
+      c.heading('Alertas recientes');
       for (const a of d.alerts.slice(0, 12)) {
-        c.para(`[${new Date(a.createdAt).toLocaleDateString('en-US')}] ${a.message}`, { size: 9.5, bold: true, gap: 0.1 });
+        c.para(`[${new Date(a.createdAt).toLocaleDateString('es-CO')}] ${a.message}`, { size: 9.5, bold: true, gap: 0.1 });
         const ex = (a.data as { explanation?: string } | null)?.explanation;
         if (ex) c.para(ex, { size: 9, color: MUTED, gap: 0.4 });
       }
@@ -546,7 +553,7 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
     render: (c, d) => {
       const b0 = d.briefs[0];
       if (!b0) return;
-      c.heading(`Daily brief — ${new Date(b0.briefDate).toLocaleDateString('en-US')}`);
+      c.heading(`Brief diario — ${new Date(b0.briefDate).toLocaleDateString('es-CO')}`);
       for (const b of briefToBlocks(b0.content)) {
         if (b.type === 'h2') c.para(b.text, { bold: true, size: 11, color: ACCENT, gap: 0.2 });
         else if (b.type === 'bullet') c.para(`•  ${b.text}`, { size: 9.5, gap: 0.2 });
@@ -562,18 +569,18 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   people: {
     has: (d) => d.people.ranking.length > 1,
     render: (c, d) => {
-      c.heading('People — the team at a glance');
+      c.heading('Personas — el equipo de un vistazo');
       c.table(
-        ['Person', 'Audience', 'Posts / month', 'Avg engagement'],
+        ['Persona', 'Audiencia', 'Posts / mes', 'Engagement prom.'],
         d.people.ranking.map((r) => [
           r.name,
-          r.followers === null ? '—' : r.followers.toLocaleString('en-US'),
+          r.followers === null ? '—' : r.followers.toLocaleString('es-CO'),
           r.perMonth === null ? '—' : String(r.perMonth),
           r.engagement === null ? '—' : String(Math.round(r.engagement)),
         ]),
         [0.34, 0.22, 0.22, 0.22], ['left', 'right', 'right', 'right'],
       );
-      c.para('Three different measures: whoever has the largest audience is not necessarily the one engaging it most.',
+      c.para('Tres medidas distintas: quien tiene la audiencia más grande no es necesariamente quien más la involucra.',
         { size: 9, color: MUTED });
     },
   },
@@ -581,42 +588,42 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   peopleGrowth: {
     has: (d) => d.people.cards.some((p) => p.followers),
     render: (c, d) => {
-      c.heading('Audience growth per person');
+      c.heading('Crecimiento de audiencia por persona');
       const rows = d.people.cards.filter((p) => p.followers)
         .sort((a, b) => (b.followers!.gained) - (a.followers!.gained));
       c.hbars(rows.map((p) => ({
         label: p.name,
         value: p.followers!.gained,
-        sub: `now ${p.followers!.latest.toLocaleString('en-US')}`,
+        sub: `hoy ${p.followers!.latest.toLocaleString('es-CO')}`,
       })));
       const span = rows[0]?.followers;
-      if (span) c.para(`Gained between ${span.from} and ${span.to}.`, { size: 9, color: MUTED });
+      if (span) c.para(`Ganados entre el ${span.from} y el ${span.to}.`, { size: 9, color: MUTED });
     },
   },
 
   peopleDetail: {
     has: (d) => d.people.cards.length > 0,
     render: (c, d) => {
-      c.heading('Person cards');
+      c.heading('Fichas de personas');
       for (const p of d.people.cards) {
         if (!p.followers && !p.rhythm && !p.averages.length) continue;
         c.para(p.name, { bold: true, size: 11, gap: 0.15 });
         const bits: string[] = [];
         if (p.followers) {
-          bits.push(`${p.followers.latest.toLocaleString('en-US')} followers (${p.followers.gained >= 0 ? '+' : ''}${p.followers.gained.toLocaleString('en-US')} since ${p.followers.from})`);
+          bits.push(`${p.followers.latest.toLocaleString('es-CO')} seguidores (${p.followers.gained >= 0 ? '+' : ''}${p.followers.gained.toLocaleString('es-CO')} desde el ${p.followers.from})`);
         }
         if (p.rhythm) {
-          bits.push(`${p.rhythm.perMonth} posts/month over ${p.rhythm.months} months${p.rhythm.trend !== null ? ` (${p.rhythm.trend >= 0 ? '+' : ''}${p.rhythm.trend}%)` : ''}`);
+          bits.push(`${p.rhythm.perMonth} posts/mes en ${p.rhythm.months} meses${p.rhythm.trend !== null ? ` (${p.rhythm.trend >= 0 ? '+' : ''}${p.rhythm.trend}%)` : ''}`);
         }
         for (const a of p.averages.slice(0, 3)) bits.push(`${a.metric}: ${a.value}`);
         c.para(bits.join('  ·  '), { size: 9, color: MUTED, gap: 0.2 });
         if (p.formats.length) {
-          c.para(`Best format: ${p.formats[0].name} (avg engagement ${p.formats[0].avgEngagement} over ${p.formats[0].posts} posts)`,
+          c.para(`Mejor formato: ${p.formats[0].name} (engagement prom. ${p.formats[0].avgEngagement} en ${p.formats[0].posts} posts)`,
             { size: 9, gap: 0.2 });
         }
         if (p.audience.length) {
           const a = p.audience[0];
-          c.para(`Audience by ${a.dimension}: ${a.rows.slice(0, 4).map((r) => `${r.name} ${(r.share * 100).toFixed(0)}%`).join(', ')}`,
+          c.para(`Audiencia por ${a.dimension}: ${a.rows.slice(0, 4).map((r) => `${r.name} ${(r.share * 100).toFixed(0)}%`).join(', ')}`,
             { size: 9, color: MUTED, gap: 0.4 });
         }
       }
@@ -626,14 +633,14 @@ export const SECTION_RENDERERS: Record<SectionId, Section> = {
   mentions: {
     has: (d) => d.allMentions.length > 0,
     render: (c, d) => {
-      c.heading(`Mentions list (${Math.min(d.allMentions.length, 150)} most recent)`);
+      c.heading(`Lista de menciones (las ${Math.min(d.allMentions.length, 150)} más recientes)`);
       c.table(
-        ['Date', 'Source', 'Title / text', 'Sent.'],
+        ['Fecha', 'Fuente', 'Título / texto', 'Sent.'],
         d.allMentions.slice(0, 150).map((m) => {
           const txt = sanitize(m.title ?? m.content);
           return [
-            new Date(m.publishedAt).toLocaleDateString('en-US'), sourceLabel(m.source),
-            txt || '[non-Latin content — see original]', m.sentiment ?? '—',
+            new Date(m.publishedAt).toLocaleDateString('es-CO'), sourceLabel(m.source),
+            txt || '[contenido en alfabeto no latino — ver original]', m.sentiment ? (SENT_LABEL[m.sentiment] ?? m.sentiment) : '—',
           ];
         }),
         [0.13, 0.15, 0.58, 0.14], ['left', 'left', 'left', 'left'],
@@ -655,9 +662,9 @@ export type CommentRole = 'intro' | 'comment' | 'synthesis' | 'free';
  * "· AI" resta separato dal ruolo: sono due informazioni diverse.
  */
 export const ROLE_STYLE: Record<CommentRole, { label: string; color: string }> = {
-  intro: { label: 'PRESENTAZIONE', color: '#0284c7' },
-  comment: { label: 'COMMENTO', color: '#7c3aed' },
-  synthesis: { label: 'SINTESI DELLA PAGINA', color: '#0d9488' },
+  intro: { label: 'PRESENTACIÓN', color: '#0284c7' },
+  comment: { label: 'COMENTARIO', color: '#7c3aed' },
+  synthesis: { label: 'SÍNTESIS DE LA PÁGINA', color: '#0d9488' },
   free: { label: 'NOTA', color: '#64748b' },
 };
 
@@ -709,26 +716,26 @@ function renderStudio(c: Ctx, chart: StudioRendered, reportDays: number) {
   // è stato costruito. Se non è quello dichiarato in copertina va detto qui,
   // altrimenti il lettore attribuisce alla pagina un arco di tempo che non ha.
   const period = chart.days === reportDays
-    ? `ultimi ${chart.days} giorni`
-    : `ultimi ${chart.days} giorni — periodo proprio del grafico, diverso dai ${reportDays} del report`;
+    ? `últimos ${chart.days} días`
+    : `últimos ${chart.days} días — periodo propio del gráfico, distinto de los ${reportDays} del reporte`;
   // Se il titolo è quello proposto in automatico ("Y per X") la didascalia non
   // lo ripete: dice solo quello che il titolo non dice.
-  const what = `${chart.yLabel} per ${chart.xLabel}`;
+  const what = `${chart.yLabel} por ${chart.xLabel}`;
   const said = chart.title.trim().toLowerCase() === what.toLowerCase();
   const parts = [
     ...(said ? [] : [what]),
-    ...(chart.zLabel ? [`diviso per ${chart.zLabel}`] : []),
+    ...(chart.zLabel ? [`dividido por ${chart.zLabel}`] : []),
     period,
   ];
   c.para(`${parts.join(' · ')}.`, { size: 8.5, color: MUTED, gap: 0.5 });
   if (!chart.rows.length) {
-    c.para('Nessun dato con questi campi nel periodo del report.', { size: 9, color: MUTED });
+    c.para('No hay datos con estos campos en el periodo del reporte.', { size: 9, color: MUTED });
     return;
   }
 
   const series = [...new Set(chart.rows.map((r) => r.z).filter(Boolean))] as string[];
-  const fmtN = (n: number) => (Number.isInteger(n) ? n.toLocaleString('en-US')
-    : n.toLocaleString('en-US', { maximumFractionDigits: 2 }));
+  const fmtN = (n: number) => (Number.isInteger(n) ? n.toLocaleString('es-CO')
+    : n.toLocaleString('es-CO', { maximumFractionDigits: 2 }));
 
   if (series.length < 2) {
     const items = chart.rows.slice(0, 25).map((r, i) => ({
@@ -736,7 +743,7 @@ function renderStudio(c: Ctx, chart: StudioRendered, reportDays: number) {
     }));
     c.hbars(items);
     if (chart.rows.length > items.length) {
-      c.para(`Altre ${chart.rows.length - items.length} voci non mostrate.`, { size: 8, color: MUTED });
+      c.para(`Otros ${chart.rows.length - items.length} elementos no mostrados.`, { size: 8, color: MUTED });
     }
     return;
   }
@@ -755,7 +762,7 @@ function renderStudio(c: Ctx, chart: StudioRendered, reportDays: number) {
     ['left', ...cols.map(() => 'right' as const)],
   );
   if (series.length > cols.length) {
-    c.para(`Altre ${series.length - cols.length} serie non mostrate: nel PDF la tabella resta leggibile fino a cinque colonne.`, { size: 8, color: MUTED });
+    c.para(`Otras ${series.length - cols.length} series no mostradas: en el PDF la tabla es legible hasta cinco columnas.`, { size: 8, color: MUTED });
   }
 }
 
@@ -767,8 +774,8 @@ export async function buildReportPdf(opts: BuildOptions): Promise<Buffer> {
     bufferPages: true,
     margins: { top: 56, bottom: 64, left: 56, right: 56 },
     info: {
-      Title: `Radar — ${sanitize(project.name)}`,
-      Author: 'Radar By Scognamiglio 2026',
+      Title: `AEDO — ${sanitize(project.name)}`,
+      Author: 'AEDO',
       // Marcatura leggibile da una macchina (AI Act art. 50, par. 2).
       Subject: sanitize(AI_DISCLOSURE_META.subject),
       Keywords: sanitize(AI_DISCLOSURE_META.keywords),
@@ -782,15 +789,15 @@ export async function buildReportPdf(opts: BuildOptions): Promise<Buffer> {
 
   // ---- Copertina ----
   doc.moveDown(6);
-  doc.font('Helvetica-Bold').fontSize(11).fillColor(ACCENT).text('RADAR', { align: 'center', characterSpacing: 3 });
+  doc.font('Helvetica-Bold').fontSize(11).fillColor(ACCENT).text('AEDO', { align: 'center', characterSpacing: 3 });
   doc.font('Helvetica').fontSize(9).fillColor(MUTED).text('BY SCOGNAMIGLIO 2026', { align: 'center', characterSpacing: 2 });
   doc.moveDown(2);
   doc.font('Helvetica-Bold').fontSize(30).fillColor(TEXT).text(sanitize(project.name), { align: 'center' });
   doc.moveDown(0.5);
-  doc.font('Helvetica').fontSize(13).fillColor(MUTED).text(sanitize(subtitle ?? 'Media intelligence report'), { align: 'center' });
+  doc.font('Helvetica').fontSize(13).fillColor(MUTED).text(sanitize(subtitle ?? 'Reporte de inteligencia de medios'), { align: 'center' });
   doc.moveDown(0.5);
-  doc.fontSize(10).text(new Date().toLocaleDateString('en-US', { dateStyle: 'full' }), { align: 'center' });
-  doc.fontSize(9).text(`Data from the last ${days} days · Query: ${sanitize(project.keywords.join(', '))}`, { align: 'center' });
+  doc.fontSize(10).text(new Date().toLocaleDateString('es-CO', { dateStyle: 'full' }), { align: 'center' });
+  doc.fontSize(9).text(`Datos de los últimos ${days} días · Consulta: ${sanitize(project.keywords.join(', '))}`, { align: 'center' });
   doc.addPage();
 
   if (pages) {
@@ -811,7 +818,7 @@ export async function buildReportPdf(opts: BuildOptions): Promise<Buffer> {
           c.ensure(48);
           const y0 = doc.y;
           doc.font('Helvetica-Bold').fontSize(6.5).fillColor(style.color)
-            .text(`${style.label}${block.ai ? ' · AI' : ''}`, c.left + 12, y0, { characterSpacing: 1 });
+            .text(`${style.label}${block.ai ? ' · IA' : ''}`, c.left + 12, y0, { characterSpacing: 1 });
           doc.moveDown(0.15);
           doc.font('Helvetica').fontSize(10).fillColor(TEXT)
             .text(sanitize(block.text), c.left + 12, doc.y, { width: c.contentW - 12, align: 'justify' });
@@ -823,14 +830,14 @@ export async function buildReportPdf(opts: BuildOptions): Promise<Buffer> {
         } else if (block.type === 'studio') {
           const chart = studio?.get(block.chartId);
           if (!chart) {
-            c.para('Grafico di Studio Graph non piu disponibile: e stato cancellato dopo essere stato inserito nel report.', { size: 9, color: MUTED });
+            c.para('Gráfico de Studio Graph ya no disponible: se eliminó después de insertarlo en el reporte.', { size: 9, color: MUTED });
             continue;
           }
           renderStudio(c, chart, days);
         } else {
           const s = SECTION_RENDERERS[block.section];
           if (!s) continue;
-          if (!s.has(data)) { c.para('Nessun dato disponibile per questa sezione nel periodo scelto.', { size: 9, color: MUTED }); continue; }
+          if (!s.has(data)) { c.para('No hay datos disponibles para esta sección en el periodo elegido.', { size: 9, color: MUTED }); continue; }
           s.render(c, data, { days });
         }
       }
@@ -850,7 +857,7 @@ export async function buildReportPdf(opts: BuildOptions): Promise<Buffer> {
   // ---- Note (informativa AI Act) ----
   c.ensure(120);
   doc.moveDown(1);
-  doc.font('Helvetica-Bold').fontSize(9).fillColor(MUTED).text('NOTE', c.left, doc.y, { characterSpacing: 1.5 });
+  doc.font('Helvetica-Bold').fontSize(9).fillColor(MUTED).text('NOTAS', c.left, doc.y, { characterSpacing: 1.5 });
   doc.moveDown(0.3);
   doc.font('Helvetica').fontSize(8).fillColor(MUTED)
     .text(sanitize(AI_DISCLOSURE_LONG), c.left, doc.y, { width: c.contentW, align: 'justify' });
@@ -867,8 +874,8 @@ export async function buildReportPdf(opts: BuildOptions): Promise<Buffer> {
     doc.font('Helvetica').fontSize(6.5).fillColor(MUTED)
       .text(sanitize(AI_DISCLOSURE_SHORT), c.left, fy - 11, { width: c.contentW, lineBreak: false });
     doc.fontSize(8);
-    doc.text(`Radar · By Scognamiglio 2026 — ${sanitize(project.name)}`, c.left, fy, { width: c.contentW * 0.7, lineBreak: false });
-    doc.text(`pag. ${i + 1} / ${range.count}`, c.right - 120, fy, { width: 120, align: 'right', lineBreak: false });
+    doc.text(`AEDO · By Scognamiglio 2026 — ${sanitize(project.name)}`, c.left, fy, { width: c.contentW * 0.7, lineBreak: false });
+    doc.text(`pág. ${i + 1} / ${range.count}`, c.right - 120, fy, { width: 120, align: 'right', lineBreak: false });
   }
 
   doc.end();

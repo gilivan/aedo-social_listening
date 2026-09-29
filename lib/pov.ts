@@ -16,7 +16,7 @@ import { getContentLocale, type ContentLocale } from '@/lib/content-locale';
 // Se l'AI non è disponibile, il fact pack resta comunque visibile e utile.
 // ---------------------------------------------------------------------------
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 export type TopicShift = {
   topic: string; nNow: number; nPrev: number; changePct: number | null;

@@ -13,7 +13,7 @@ export function RatingStars({ rating, size = 'md' }: { rating: number | null; si
   const px = size === 'lg' ? 20 : size === 'sm' ? 12 : 15;
   const r = rating ?? 0;
   return (
-    <span className="inline-flex items-center gap-0.5" title={rating !== null ? `${rating.toFixed(2)} / 5` : 'no rating yet'}>
+    <span className="inline-flex items-center gap-0.5" title={rating !== null ? `${rating.toFixed(2)} / 5` : 'aún sin calificación'}>
       {Array.from({ length: 5 }, (_, i) => {
         const fill = Math.max(0, Math.min(1, r - i));
         return (
@@ -57,7 +57,7 @@ export function RatingDistribution({ distribution }: { distribution: number[] })
 /** Voto medio settimana per settimana: la tendenza, non solo lo stato attuale. */
 export function RatingTrend({ trend }: { trend: { week: string; avgRating: number | null; n: number }[] }) {
   const data = trend.filter((t) => t.avgRating !== null);
-  if (data.length < 2) return <p className="py-6 text-center text-xs text-slate-600">Not enough weeks of data yet for a trend line.</p>;
+  if (data.length < 2) return <p className="py-6 text-center text-xs text-slate-600">Aún no hay suficientes semanas de datos para una línea de tendencia.</p>;
   return (
     <ResponsiveContainer width="100%" height={200}>
       <LineChart data={data} margin={{ top: 8, right: 12, bottom: 4, left: -18 }}>
@@ -71,8 +71,8 @@ export function RatingTrend({ trend }: { trend: { week: string; avgRating: numbe
             if (!p) return null;
             return (
               <div style={TOOLTIP} className="px-3 py-2">
-                <p className="font-semibold text-slate-100">week of {new Date(String(label)).toLocaleDateString('en-US')}</p>
-                <p className="text-amber-300">avg {p.avgRating?.toFixed(2)} ★ · {p.n} review{p.n === 1 ? '' : 's'}</p>
+                <p className="font-semibold text-slate-100">semana del {new Date(String(label)).toLocaleDateString('es-CO')}</p>
+                <p className="text-amber-300">prom. {p.avgRating?.toFixed(2)} ★ · {p.n} reseña{p.n === 1 ? '' : 's'}</p>
               </div>
             );
           }} />

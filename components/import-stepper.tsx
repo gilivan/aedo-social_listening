@@ -57,7 +57,7 @@ export function ImportStepper({ list }: { list: Stage[] }) {
               </span>
             </span>
             <span className={`text-[10px] leading-snug ${current ? 'text-slate-400' : 'text-slate-600'}`}>
-              {done && s.outcome ? s.outcome : skipped ? 'a disposizione, se serve' : s.does}
+              {done && s.outcome ? s.outcome : skipped ? 'disponible, si hace falta' : s.does}
             </span>
           </li>
         );

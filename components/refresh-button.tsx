@@ -14,9 +14,9 @@ export function RefreshButton() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const router = useRouter();
 
-  const phase = progress < 35 ? 'Querying sources…'
-    : progress < 75 ? 'AI analysis running…'
-    : 'Almost done…';
+  const phase = progress < 35 ? 'Consultando fuentes…'
+    : progress < 75 ? 'Análisis con IA en curso…'
+    : 'Casi listo…';
 
   async function refresh() {
     setBusy(true);
@@ -36,25 +36,25 @@ export function RefreshButton() {
         setProgress(100);
         setFailed(true);
         setToast(res.status === 504
-          ? 'The update ran out of time and was stopped. Some sources may not have been checked.'
-          : `Update failed (HTTP ${res.status}).`);
+          ? 'La actualización se quedó sin tiempo y se detuvo. Es posible que algunas fuentes no se hayan revisado.'
+          : `La actualización falló (HTTP ${res.status}).`);
         return;
       }
       const data = await res.json() as { skipped?: boolean; summary?: Summary };
       setProgress(100);
       if (data.skipped) {
         setFailed(true);
-        setToast('An update for this project is already running: try again in a minute.');
+        setToast('Ya hay una actualización en curso para este proyecto: intenta de nuevo en un minuto.');
       } else {
         const inserted = (data.summary ?? []).reduce((s, r) => s + (r.inserted ?? 0), 0);
         const analyzed = (data.summary ?? []).reduce((s, r) => s + (r.analyzed ?? 0), 0);
         setFailed(false);
-        setToast(`Update complete: ${inserted} new mentions, ${analyzed} analyzed by AI.`);
+        setToast(`Actualización completa: ${inserted} menciones nuevas, ${analyzed} analizadas con IA.`);
       }
       router.refresh();
     } catch {
       setFailed(true);
-      setToast('Update failed, please retry.');
+      setToast('La actualización falló, intenta de nuevo.');
     } finally {
       if (timerRef.current) clearInterval(timerRef.current);
       setTimeout(() => { setBusy(false); setProgress(0); }, 700);
@@ -70,7 +70,7 @@ export function RefreshButton() {
         className="flex items-center justify-center gap-2 rounded-lg bg-sky-500/90 px-3 py-2 text-sm font-medium text-slate-950 transition hover:bg-sky-400 disabled:opacity-60"
       >
         <RefreshCw className={`size-4 ${busy ? 'animate-spin' : ''}`} />
-        {busy ? `${Math.round(progress)}%` : 'Refresh now'}
+        {busy ? `${Math.round(progress)}%` : 'Actualizar ahora'}
       </button>
 
       {/* Barra di avanzamento globale in cima allo schermo */}

@@ -11,7 +11,7 @@ import type { KeyMessage } from '@/lib/db/schema';
 // SQL puro, quindi verificabile e a costo zero a ogni apertura.
 // ---------------------------------------------------------------------------
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 export type MessageUptake = {
   id: string;

@@ -17,10 +17,10 @@ export const maxDuration = 120;
  */
 export async function POST(req: Request) {
   if (!isAdmin(await getCurrentUser())) {
-    return NextResponse.json({ error: 'Solo gli amministratori possono generare commenti' }, { status: 403 });
+    return NextResponse.json({ error: 'Solo los administradores pueden generar comentarios' }, { status: 403 });
   }
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'Nessun progetto selezionato' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'No hay ningún proyecto seleccionado' }, { status: 400 });
 
   const body = await req.json().catch(() => ({}));
   const days = Math.min(90, Math.max(1, Number(body.days) || 30));
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   const studioIds = (Array.isArray(body.studio) ? body.studio : [])
     .map(Number).filter((n: number) => Number.isFinite(n) && n > 0);
   if (!sections.length && !studioIds.length) {
-    return NextResponse.json({ error: 'Nessun grafico selezionato' }, { status: 400 });
+    return NextResponse.json({ error: 'No hay ningún gráfico seleccionado' }, { status: 400 });
   }
 
   const role: CommentRequest = ['intro', 'comment', 'both', 'synthesis'].includes(body.role)
@@ -47,13 +47,13 @@ export async function POST(req: Request) {
       // `empty` viaggia anche qui: sapere QUALI grafici sono senza dati resta
       // un'informazione utile pure quando il motore AI è spento.
       return NextResponse.json({
-        error: 'Motore AI non disponibile: manca la chiave o il tetto di spesa è stato raggiunto. Puoi comunque scrivere il commento a mano.',
+        error: 'Motor de IA no disponible: falta la clave o se alcanzó el tope de gasto. De todos modos puedes escribir el comentario a mano.',
         empty, emptyStudio,
       }, { status: 503 });
     }
     if (noFacts) {
       return NextResponse.json({
-        error: 'I grafici scelti non hanno dati da descrivere nel periodo impostato: aggiungi un grafico con dei numeri, o allarga il periodo del report.',
+        error: 'Los gráficos elegidos no tienen datos para describir en el periodo configurado: agrega un gráfico con cifras o amplía el periodo del informe.',
         empty, emptyStudio,
       }, { status: 400 });
     }

@@ -12,7 +12,7 @@ type VolRow = { day: string; total: number; src: number };
 export function SourceVolumeCompare({ data, color, label }: {
   data: VolRow[]; color: string; label: string;
 }) {
-  if (!data.length) return <p className="py-8 text-center text-sm text-slate-600">No data in the last 14 days.</p>;
+  if (!data.length) return <p className="py-8 text-center text-sm text-slate-600">Sin datos en los últimos 14 días.</p>;
   const rows = data.map((r) => ({ ...r, dayShort: r.day.slice(5).split('-').reverse().join('/') }));
   return (
     <ResponsiveContainer width="100%" height={220}>
@@ -29,14 +29,14 @@ export function SourceVolumeCompare({ data, color, label }: {
             return (
               <div className="rounded-lg border border-white/10 bg-slate-900/95 px-3 py-2 text-xs shadow-xl">
                 <p className="font-semibold text-slate-200">{p.dayShort}</p>
-                <p style={{ color }}>{label}: {p.src} mentions</p>
-                <p className="text-slate-400">whole project: {p.total} mentions</p>
-                <p className="mt-0.5 text-slate-500">{label} share of the day: {pct}%</p>
+                <p style={{ color }}>{label}: {p.src} menciones</p>
+                <p className="text-slate-400">todo el proyecto: {p.total} menciones</p>
+                <p className="mt-0.5 text-slate-500">participación de {label} en el día: {pct}%</p>
               </div>
             );
           }}
         />
-        <Area type="monotone" dataKey="total" name="whole project" fill="rgba(148,163,184,0.12)"
+        <Area type="monotone" dataKey="total" name="todo el proyecto" fill="rgba(148,163,184,0.12)"
           stroke="rgba(148,163,184,0.45)" strokeWidth={1.5} />
         <Bar dataKey="src" name={label} fill={color} radius={[3, 3, 0, 0]} maxBarSize={22} />
       </ComposedChart>
@@ -45,6 +45,7 @@ export function SourceVolumeCompare({ data, color, label }: {
 }
 
 const SENT_COLORS = { positive: '#34d399', neutral: '#64748b', negative: '#f87171' } as const;
+const SENT_LABELS = { positive: 'positivo', neutral: 'neutral', negative: 'negativo' } as const;
 
 export function SentimentCompareBars({ src, all, label }: {
   src: { positive: number; neutral: number; negative: number };
@@ -53,7 +54,7 @@ export function SentimentCompareBars({ src, all, label }: {
 }) {
   const rows = [
     { name: label, d: src },
-    { name: 'whole project', d: all },
+    { name: 'todo el proyecto', d: all },
   ];
   return (
     <div className="flex flex-col gap-3">
@@ -63,18 +64,18 @@ export function SentimentCompareBars({ src, all, label }: {
           <div key={r.name}>
             <p className="mb-1 flex items-baseline justify-between text-xs">
               <span className="font-medium text-slate-300">{r.name}</span>
-              <span className="text-slate-600">{tot} analyzed mentions</span>
+              <span className="text-slate-600">{tot} menciones analizadas</span>
             </p>
             {tot === 0 ? (
               <div className="h-4 rounded bg-white/5" />
             ) : (
               <div className="flex h-4 overflow-hidden rounded" title={
-                `positive ${Math.round((r.d.positive / tot) * 100)}% · neutral ${Math.round((r.d.neutral / tot) * 100)}% · negative ${Math.round((r.d.negative / tot) * 100)}%`
+                `positivo ${Math.round((r.d.positive / tot) * 100)}% · neutral ${Math.round((r.d.neutral / tot) * 100)}% · negativo ${Math.round((r.d.negative / tot) * 100)}%`
               }>
                 {(['positive', 'neutral', 'negative'] as const).map((s) => (
                   r.d[s] > 0 && (
                     <div key={s} style={{ width: `${(r.d[s] / tot) * 100}%`, background: SENT_COLORS[s] }}
-                      title={`${s}: ${r.d[s]} (${Math.round((r.d[s] / tot) * 100)}%)`} />
+                      title={`${SENT_LABELS[s]}: ${r.d[s]} (${Math.round((r.d[s] / tot) * 100)}%)`} />
                   )
                 ))}
               </div>
@@ -83,9 +84,9 @@ export function SentimentCompareBars({ src, all, label }: {
         );
       })}
       <p className="text-[11px] text-slate-600">
-        <span className="text-emerald-400">■</span> positive ·{' '}
+        <span className="text-emerald-400">■</span> positivo ·{' '}
         <span className="text-slate-400">■</span> neutral ·{' '}
-        <span className="text-red-400">■</span> negative — share of the mentions analyzed by the AI in the last 7 days.
+        <span className="text-red-400">■</span> negativo: participación de las menciones analizadas por la IA en los últimos 7 días.
       </p>
     </div>
   );

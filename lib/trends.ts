@@ -70,7 +70,7 @@ export async function explainTrends(projectId: number): Promise<number> {
       .orderBy(desc(mentions.engagementScore)).limit(8);
     const text = await callClaude(
       MODELS.haiku, 'trend_radar',
-      'You are a media analyst. Explain in ONE sentence in English (max 30 words) why this topic is growing right now, based on the provided content. Respond only with the sentence.',
+      'You are a media analyst. Explain in ONE sentence in Spanish (max 30 words) why this topic is growing right now, based on the provided content. Respond only with the sentence.',
       `Growing topic: "${t.topic}" (${t.n24} mentions in 24h, baseline ${t.baseline.toFixed(1)}/day)\n\nContent:\n${sample.map((s) => `- ${(s.title ?? s.content).slice(0, 150)}`).join('\n')}`,
       150, true,
     );

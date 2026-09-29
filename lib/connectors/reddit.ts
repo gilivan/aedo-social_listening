@@ -27,7 +27,7 @@ async function getToken(): Promise<string | null> {
     headers: {
       Authorization: `Basic ${Buffer.from(`${id}:${secret}`).toString('base64')}`,
       'Content-Type': 'application/x-www-form-urlencoded',
-      'User-Agent': 'SocialRadar/1.0',
+      'User-Agent': 'AEDO/1.0',
     },
     body: 'grant_type=client_credentials',
     signal: AbortSignal.timeout(15000),
@@ -43,7 +43,7 @@ export const reddit: Connector = {
   label: 'Reddit',
   tier: 'freekey',
   enabled: () => Boolean(cfg('REDDIT_CLIENT_ID') && cfg('REDDIT_CLIENT_SECRET')),
-  disabledReason: 'Requires a free Reddit app (type "script"): enter Client ID and Secret here',
+  disabledReason: 'Requiere una app gratuita de Reddit (tipo "script"): ingresa aquí el Client ID y el Secret',
   async fetchMentions(q) {
     const query = q.anyTerms.slice(0, 5).map((k) => `"${k.replace(/"/g, '')}"`).join(' OR ');
     if (!query) return [];

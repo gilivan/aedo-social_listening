@@ -12,8 +12,8 @@ import { translateMentions, TRANSLATE_LANGS, type Translated } from '@/lib/trans
 
 const SENTIMENTS = ['positive', 'neutral', 'negative'];
 const PERIODS = [
-  { v: 1, l: '24 hours', k: 'listening.h24' }, { v: 7, l: '7 days', k: 'listening.d7' },
-  { v: 30, l: '30 days', k: 'listening.d30' }, { v: 90, l: '90 days', k: 'listening.d90' },
+  { v: 1, l: '24 horas', k: 'listening.h24' }, { v: 7, l: '7 días', k: 'listening.d7' },
+  { v: 30, l: '30 días', k: 'listening.d30' }, { v: 90, l: '90 días', k: 'listening.d90' },
 ];
 
 function buildQS(params: Record<string, string | number | undefined>) {
@@ -25,14 +25,14 @@ function buildQS(params: Record<string, string | number | undefined>) {
   return s ? `?${s}` : '';
 }
 
-export const metadata = { title: 'Listening' };
+export const metadata = { title: 'Escucha' };
 
 export default async function ListeningPage({ searchParams }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const sp = await searchParams;
   const semanticTerms = sp.st ? sp.st.split('|').filter(Boolean) : undefined;
   const filters = {
@@ -73,7 +73,7 @@ export default async function ListeningPage({ searchParams }: {
 
   return (
     <>
-      <PageHeader title={t('page.listening.title', 'Listening')} subtitle={`${fmtNum(data.total)} ${t('listening.found', 'mentions found')}`} />
+      <PageHeader title={t('page.listening.title', 'Escucha')} subtitle={`${fmtNum(data.total)} ${t('listening.found', 'menciones encontradas')}`} />
 
       <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
         <div className="mr-2"><SearchBox /></div>
@@ -81,61 +81,61 @@ export default async function ListeningPage({ searchParams }: {
         {semanticTerms && (
           <span className="flex items-center gap-1 rounded-full bg-violet-500/15 px-2.5 py-1 text-violet-300"
             title={semanticTerms.join(', ')}>
-            ✨ semantic search: {semanticTerms.length} terms
+            ✨ búsqueda semántica: {semanticTerms.length} términos
           </span>
         )}
 
-        <FilterGroup label={t('ui.kind', 'Type')} items={[
-          { value: 'article', label: t('ui.articles', 'articles') },
-          { value: 'post', label: t('ui.posts', 'posts') },
+        <FilterGroup label={t('ui.kind', 'Tipo')} items={[
+          { value: 'article', label: t('ui.articles', 'artículos') },
+          { value: 'post', label: t('ui.posts', 'publicaciones') },
         ]} param="tipo" current={current} />
         {planQueries.length > 0 && (
-          <FilterGroup label="Query" items={planQueries.map((q) => ({ value: q.id, label: q.name }))}
+          <FilterGroup label="Consulta" items={planQueries.map((q) => ({ value: q.id, label: q.name }))}
             param="query" current={current} />
         )}
-        <FilterGroup label={t('ui.source', 'Source')} items={sources.map((s) => ({ value: s.id, label: sourceLabel(s.id) }))}
+        <FilterGroup label={t('ui.source', 'Fuente')} items={sources.map((s) => ({ value: s.id, label: sourceLabel(s.id) }))}
           param="fonte" current={current} />
-        <FilterGroup label={t('ui.sentiment', 'Sentiment')} items={SENTIMENTS.map((s) => ({ value: s, label: s }))}
+        <FilterGroup label={t('ui.sentiment', 'Sentimiento')} items={SENTIMENTS.map((s) => ({ value: s, label: ({ positive: 'positivo', neutral: 'neutral', negative: 'negativo' } as Record<string, string>)[s] ?? s }))}
           param="sentiment" current={current} />
-        <FilterGroup label={t('ui.period', 'Period')} items={PERIODS.map((p) => ({ value: String(p.v), label: t(p.k, p.l) }))}
+        <FilterGroup label={t('ui.period', 'Periodo')} items={PERIODS.map((p) => ({ value: String(p.v), label: t(p.k, p.l) }))}
           param="giorni" current={current} />
-        <FilterGroup label={t('ui.language', 'Language')} items={data.languages.map((l) => ({ value: l.language!, label: l.language!.toUpperCase() }))}
+        <FilterGroup label={t('ui.language', 'Idioma')} items={data.languages.map((l) => ({ value: l.language!, label: l.language!.toUpperCase() }))}
           param="lingua" current={current} />
-        <FilterGroup label={t('ui.relevance', 'Relevance')} items={[{ value: '4', label: '★ ≥ 4' }, { value: '5', label: '★ 5' }]}
+        <FilterGroup label={t('ui.relevance', 'Relevancia')} items={[{ value: '4', label: '★ ≥ 4' }, { value: '5', label: '★ 5' }]}
           param="rilevanza" current={current} />
-        <FilterGroup label={t('ui.sort', 'Sort')} items={[
-          { value: 'engagement', label: 'engagement' }, { value: 'rilevanza', label: 'relevance' },
+        <FilterGroup label={t('ui.sort', 'Ordenar')} items={[
+          { value: 'engagement', label: 'engagement' }, { value: 'rilevanza', label: 'relevancia' },
         ]} param="ordina" current={current} />
         {sp.fonte && sources.some((s) => s.id === sp.fonte) && (
           <Link href={`/source/${sp.fonte}`}
             className="flex items-center gap-1 rounded-full border border-sky-500/40 bg-sky-500/10 px-2.5 py-1 font-semibold text-sky-300 transition hover:bg-sky-500/25"
-            title={`Full channel analysis of ${sourceLabel(sp.fonte)}: volume, sentiment, topics and authors compared with the whole project`}>
+            title={`Análisis completo del canal ${sourceLabel(sp.fonte)}: volumen, sentimiento, temas y autores comparados con todo el proyecto`}>
             {/* Il nome va preso dal vocabolario, non dal catalogo dei connettori:
                 una fonte arrivata da un foglio Excel non ha una voce lì, e
                 leggerla faceva cadere l'intera pagina. */}
-            🔬 {t('listening.deepdive', 'Deep-dive')} {sourceLabel(sp.fonte)} →
+            🔬 {t('listening.deepdive', 'Análisis a fondo')} {sourceLabel(sp.fonte)} →
           </Link>
         )}
         {sp.autore && (
           <span className="flex items-center gap-1 rounded-full bg-sky-500/15 px-2.5 py-1 text-sky-300">
-            author: {sp.autore}
+            autor: {sp.autore}
           </span>
         )}
         {sp.ids && (
           <span className="flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-amber-300">
-            a specific set of {filters.ids?.length ?? 0} posts (from a narrative)
+            un conjunto específico de {filters.ids?.length ?? 0} publicaciones (de una narrativa)
           </span>
         )}
         {sp.autori && (
           <span className="flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-amber-300">
-            posts from {filters.authors?.length ?? 0} accounts (from a narrative)
+            publicaciones de {filters.authors?.length ?? 0} cuentas (de una narrativa)
           </span>
         )}
 
         {(sp.query || sp.tipo || sp.fonte || sp.sentiment || sp.lingua || sp.q || sp.st || sp.giorni || sp.rilevanza || sp.autore || sp.autori || sp.ids || sp.ordina) && (
           <Link href="/listening"
             className="flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 px-3.5 py-1.5 font-semibold text-sky-300 transition hover:bg-sky-500/25">
-            ↺ {t('ui.showAll', 'Show all')}
+            ↺ {t('ui.showAll', 'Ver todo')}
           </Link>
         )}
       </div>
@@ -145,14 +145,14 @@ export default async function ListeningPage({ searchParams }: {
       {coverage.articles > 0 && (
         <p className="mb-3 text-xs leading-relaxed text-slate-500">
           <span className="text-slate-400">
-            {fmtNum(coverage.withText)} of {fmtNum(coverage.articles)} articles can be read in full here.
+            {fmtNum(coverage.withText)} de {fmtNum(coverage.articles)} artículos se pueden leer completos aquí.
           </span>
           {coverage.opaque > 0 && (
-            <> {fmtNum(coverage.opaque)} come from Google News, whose links do not lead to the publisher,
-              so their text cannot be retrieved — add that outlet’s RSS feed in Projects to get the full pieces.</>
+            <> {fmtNum(coverage.opaque)} vienen de Google News, cuyos enlaces no llevan al editor,
+              así que su texto no se puede recuperar: agrega el feed RSS de ese medio en Proyectos para obtener las piezas completas.</>
           )}
           {coverage.withText === 0 && coverage.opaque < coverage.articles && (
-            <> Extraction runs with the daily cycle: press “Refresh now” to fetch them straight away.</>
+            <> La extracción corre con el ciclo diario: pulsa “Actualizar ahora” para traerlos de inmediato.</>
           )}
         </p>
       )}
@@ -163,17 +163,17 @@ export default async function ListeningPage({ searchParams }: {
               <MentionCard key={m.id} m={m} translated={translations.get(m.id)}
                 highlight={semanticTerms ?? (sp.q ? [sp.q] : [])} keywords={project.keywords} />
             ))
-          : <EmptyState message={t('listening.noMentions', 'No mentions with these filters.')} />}
+          : <EmptyState message={t('listening.noMentions', 'No hay menciones con estos filtros.')} />}
       </div>
 
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-center gap-3 text-sm">
           {data.page > 1 && (
-            <Link className="text-sky-400 hover:text-sky-300" href={`/listening${buildQS({ ...current, pagina: data.page - 1 })}`}>← {t('ui.previous', 'previous')}</Link>
+            <Link className="text-sky-400 hover:text-sky-300" href={`/listening${buildQS({ ...current, pagina: data.page - 1 })}`}>← {t('ui.previous', 'anterior')}</Link>
           )}
-          <span className="text-slate-500">{t('ui.page', 'page')} {data.page} {t('ui.of', 'of')} {totalPages}</span>
+          <span className="text-slate-500">{t('ui.page', 'página')} {data.page} {t('ui.of', 'de')} {totalPages}</span>
           {data.page < totalPages && (
-            <Link className="text-sky-400 hover:text-sky-300" href={`/listening${buildQS({ ...current, pagina: data.page + 1 })}`}>{t('ui.next', 'next')} →</Link>
+            <Link className="text-sky-400 hover:text-sky-300" href={`/listening${buildQS({ ...current, pagina: data.page + 1 })}`}>{t('ui.next', 'siguiente')} →</Link>
           )}
         </div>
       )}

@@ -13,7 +13,7 @@ import {
 import { TeamSearch } from '@/components/team-search';
 import { addSportSourceAction, removeSportSourceAction } from './actions';
 
-export const metadata = { title: 'Sport' };
+export const metadata = { title: 'Deportes' };
 
 const COMPETITIONS = [
   { code: 'SA', label: 'Serie A' }, { code: 'PL', label: 'Premier League' },
@@ -37,13 +37,13 @@ export default async function SportPage() {
   return (
     <>
       <PageHeader
-        title={t('page.sport.title', 'Sport')}
-        info="A self-contained section, like Reviews: a match result is a fact with a fixed date, not a mention with a sentiment. The point is crossing it with what Radar already measures — does fan sentiment actually move after a win or a loss? — and, for publicly listed clubs, whether the share price moves too. No AI, no invented numbers: sentiment comes from your own analyzed mentions, prices from Alpha Vantage, results from football-data.org."
-        subtitle="Does winning actually move the needle? Match results crossed with fan sentiment and, for listed clubs, the share price — not just a scoreboard."
+        title={t('page.sport.title', 'Deportes')}
+        info="Una sección autónoma, como Reseñas: el resultado de un partido es un hecho con fecha fija, no una mención con sentimiento. La idea es cruzarlo con lo que AEDO ya mide (¿el sentimiento de los hinchas realmente se mueve tras una victoria o una derrota?) y, para los clubes que cotizan en bolsa, si también se mueve el precio de la acción. Sin IA, sin números inventados: el sentimiento viene de tus propias menciones analizadas, los precios de Alpha Vantage y los resultados de football-data.org."
+        subtitle="¿Ganar realmente cambia algo? Resultados de partidos cruzados con el sentimiento de los hinchas y, para clubes que cotizan, el precio de la acción: no solo un marcador."
       />
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <GenerateRefresh endpoint="/api/sport/refresh" label={t('page.sport.refresh', 'Check for updates')} busyLabel={t('page.sport.checking', 'Checking…')} />
+        <GenerateRefresh endpoint="/api/sport/refresh" label={t('page.sport.refresh', 'Buscar actualizaciones')} busyLabel={t('page.sport.checking', 'Revisando…')} />
       </div>
 
       {/* ── Fonti configurate ─────────────────────────────────────────── */}
@@ -51,8 +51,8 @@ export default async function SportPage() {
           configurato, la pagina si apre sulle analisi, non sul form. */}
       <details className="panel mb-4 px-5 py-5" open={stats.sources.length === 0}>
         <summary className="mb-3 flex cursor-pointer list-none items-center gap-2 text-sm font-semibold text-slate-300 [&::-webkit-details-marker]:hidden">
-          {t('page.sport.teams', 'Teams followed')}
-          {stats.sources.length > 0 && <span className="text-xs font-normal text-slate-600">({stats.sources.length}, click to edit)</span>}
+          {t('page.sport.teams', 'Equipos seguidos')}
+          {stats.sources.length > 0 && <span className="text-xs font-normal text-slate-600">({stats.sources.length}, clic para editar)</span>}
         </summary>
 
         {stats.sources.length > 0 && (
@@ -67,12 +67,12 @@ export default async function SportPage() {
                   </p>
                 </div>
                 <span className="ml-auto flex items-center gap-3 text-xs text-slate-500">
-                  {s.totalMatches > 0 && <span>{fmtNum(s.totalMatches)} matches on record</span>}
-                  <span className="hidden sm:inline">{s.lastFetchedAt ? `checked ${fmtDate(s.lastFetchedAt)}` : 'not checked yet'}</span>
+                  {s.totalMatches > 0 && <span>{fmtNum(s.totalMatches)} partidos registrados</span>}
+                  <span className="hidden sm:inline">{s.lastFetchedAt ? `revisado ${fmtDate(s.lastFetchedAt)}` : 'aún sin revisar'}</span>
                 </span>
                 <form action={removeSportSourceAction}>
                   <input type="hidden" name="id" value={s.id} />
-                  <button type="submit" aria-label={`Remove ${s.teamName}`} className="text-slate-600 transition hover:text-red-400">
+                  <button type="submit" aria-label={`Eliminar ${s.teamName}`} className="text-slate-600 transition hover:text-red-400">
                     <Trash2 className="size-4" />
                   </button>
                 </form>
@@ -83,17 +83,17 @@ export default async function SportPage() {
 
         <form action={addSportSourceAction} className="grid gap-2 rounded-lg border border-[var(--border)] px-4 py-3 sm:grid-cols-2">
           <p className="text-xs font-semibold text-slate-300 sm:col-span-2">
-            <Trophy className="mr-1 inline size-3.5" /> Add a team
-            <span className="ml-1.5 rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-300">free key · football-data.org</span>
+            <Trophy className="mr-1 inline size-3.5" /> Agregar un equipo
+            <span className="ml-1.5 rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-300">clave gratuita · football-data.org</span>
           </p>
           <TeamSearch competitions={COMPETITIONS} />
-          <input name="ticker" placeholder="Stock ticker, if listed (e.g. JUVE.MI) — optional"
+          <input name="ticker" placeholder="Ticker bursátil, si cotiza (p. ej. JUVE.MI), opcional"
             className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 outline-none focus:border-sky-500/50" />
           <button type="submit" className="self-start rounded-lg bg-sky-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400 sm:col-span-2">
-            Add team
+            Agregar equipo
           </button>
           <p className="text-[11px] text-slate-600 sm:col-span-2">
-            Search picks up the team&rsquo;s exact name automatically — no more typing it by hand.
+            La búsqueda toma automáticamente el nombre exacto del equipo: ya no tienes que escribirlo a mano.
           </p>
         </form>
 
@@ -108,11 +108,11 @@ export default async function SportPage() {
         {canEditKeys && credStatuses.alphavantage && (
           <div className="mt-3 rounded-lg border border-[var(--border)] px-4 py-3">
             <p className="mb-1 text-xs font-semibold text-slate-300">
-              <TrendingUp className="mr-1 inline size-3.5" /> Stock price (optional, only for listed clubs)
-              <span className="ml-1.5 rounded-full bg-sky-500/15 px-1.5 py-0.5 text-[10px] font-medium text-sky-300">free key · Alpha Vantage</span>
+              <TrendingUp className="mr-1 inline size-3.5" /> Precio de la acción (opcional, solo para clubes que cotizan)
+              <span className="ml-1.5 rounded-full bg-sky-500/15 px-1.5 py-0.5 text-[10px] font-medium text-sky-300">clave gratuita · Alpha Vantage</span>
             </p>
             <p className="mb-2 text-[11px] text-slate-600">
-              Add a ticker above (e.g. JUVE.MI for Juventus, MANU for Manchester United, BVB.DE for Borussia Dortmund) to unlock the share-price crossover. Free quota is tight (25 requests/day), checked at most once a day.
+              Agrega un ticker arriba (p. ej. JUVE.MI para Juventus, MANU para Manchester United, BVB.DE para Borussia Dortmund) para habilitar el cruce con el precio de la acción. La cuota gratuita es limitada (25 solicitudes/día); se consulta como máximo una vez al día.
             </p>
             <ConnectorKeys connectorId="alphavantage" fields={credStatuses.alphavantage.fields} />
           </div>
@@ -122,11 +122,11 @@ export default async function SportPage() {
       {stats.sources.length === 0 ? (
         <div className="panel flex flex-col items-center gap-2 px-6 py-14 text-center">
           <Trophy className="size-6 text-slate-600" />
-          <p className="max-w-md text-sm text-slate-400">Add a team above to start — fixtures, results and, for listed clubs, the share-price crossover.</p>
+          <p className="max-w-md text-sm text-slate-400">Agrega un equipo arriba para empezar: calendario, resultados y, para clubes que cotizan, el cruce con el precio de la acción.</p>
         </div>
       ) : !hasData ? (
         <div className="panel flex flex-col items-center gap-2 px-6 py-14 text-center">
-          <p className="text-sm text-slate-400">Team added — press “Check for updates” above to fetch its fixtures.</p>
+          <p className="text-sm text-slate-400">Equipo agregado: pulsa “Buscar actualizaciones” arriba para traer su calendario.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
@@ -134,40 +134,40 @@ export default async function SportPage() {
           <section className="panel px-5 py-5">
             <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-300">
               <Activity className="size-4 text-sky-400" />
-              {t('page.sport.timeline', 'The season on one axis')}
+              {t('page.sport.timeline', 'La temporada en un solo eje')}
               {stats.primaryTeam && <span className="text-xs font-normal text-slate-600">· {stats.primaryTeam}</span>}
             </h2>
             <p className="mb-3 text-[11px] text-slate-600">
-              League points, fan mood and — for listed clubs — the share price, on the same timeline. Three different units, so the question isn’t the height of each line but whether they move together.
+              Puntos en la liga, ánimo de los hinchas y, para clubes que cotizan, el precio de la acción, en la misma línea de tiempo. Son tres unidades distintas, así que la pregunta no es la altura de cada línea, sino si se mueven juntas.
             </p>
             <SeasonTimeline data={stats.timeline} hasStock={stats.timeline.some((p) => p.stockIndex !== null)} />
           </section>
 
           {stats.aggregate.length > 0 && (
             <section className="panel px-5 py-5">
-              <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.aggregate', 'Does winning move the needle?')}</h2>
+              <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.aggregate', '¿Ganar cambia algo?')}</h2>
               <p className="mb-3 text-[11px] text-slate-600">
-                Average shift in fan sentiment (match day + the day after, vs the week before), share price (next trading day vs the one before) and how much people talk at all, grouped by result.
+                Cambio promedio en el sentimiento de los hinchas (día del partido + el día siguiente, vs. la semana anterior), en el precio de la acción (siguiente día bursátil vs. el anterior) y en cuánto se habla, agrupado por resultado.
               </p>
               <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
                 <div className="flex flex-col gap-2.5">
                   {stats.aggregate.map((a) => (
                     <div key={a.result} className="flex flex-wrap items-center gap-4 rounded-lg bg-white/[0.03] px-4 py-3">
                       <ResultBadge result={a.result} />
-                      <span className="w-20 shrink-0 text-xs text-slate-500">{a.n} match{a.n === 1 ? '' : 'es'}</span>
+                      <span className="w-20 shrink-0 text-xs text-slate-500">{a.n} partido{a.n === 1 ? '' : 's'}</span>
                       <div className="flex items-center gap-2">
-                        <span className="w-20 shrink-0 text-[11px] text-slate-500">sentiment</span>
+                        <span className="w-20 shrink-0 text-[11px] text-slate-500">sentimiento</span>
                         <ShiftBar value={a.avgSentimentShift} max={1} />
                       </div>
                       {a.avgStockShiftPct !== null && (
                         <div className="flex items-center gap-2">
-                          <span className="w-14 shrink-0 text-[11px] text-slate-500">stock</span>
+                          <span className="w-14 shrink-0 text-[11px] text-slate-500">acción</span>
                           <ShiftBar value={a.avgStockShiftPct} max={5} suffix="%" />
                         </div>
                       )}
                       {a.avgVolume > 0 && (
                         <span className="ml-auto text-[11px] text-slate-500">
-                          <MessageSquare className="mr-1 inline size-3" />{fmtNum(a.avgVolume)} mentions
+                          <MessageSquare className="mr-1 inline size-3" />{fmtNum(a.avgVolume)} menciones
                         </span>
                       )}
                     </div>
@@ -179,7 +179,7 @@ export default async function SportPage() {
                     <div key={s.key} className="rounded-lg bg-white/[0.03] px-4 py-2.5">
                       <p className="text-[11px] uppercase tracking-wide text-slate-600">{s.key}</p>
                       <p className="text-sm text-slate-300">
-                        {s.wins}/{s.n} won
+                        {s.wins}/{s.n} ganados
                         {s.avgSentimentShift !== null && (
                           <span className={`ml-2 text-xs tabular-nums ${s.avgSentimentShift >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
                             {s.avgSentimentShift >= 0 ? '+' : ''}{s.avgSentimentShift}
@@ -196,17 +196,17 @@ export default async function SportPage() {
           {/* ── Quanto dura l'effetto ──────────────────────────────────── */}
           <div className="grid gap-4 xl:grid-cols-2">
             <section className="panel px-5 py-5">
-              <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.anatomy', 'How long does it last?')}</h2>
+              <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.anatomy', '¿Cuánto dura el efecto?')}</h2>
               <p className="mb-3 text-[11px] text-slate-600">
-                Fan mood day by day around the match, measured against the week before it (the zero line). Euphoria and disappointment rarely fade at the same speed.
+                El ánimo de los hinchas día a día alrededor del partido, medido frente a la semana anterior (la línea cero). La euforia y la decepción rara vez se desvanecen a la misma velocidad.
               </p>
               <AnatomyCurve data={stats.anatomy} />
             </section>
 
             <section className="panel px-5 py-5">
-              <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.scatter', 'Does the margin matter?')}</h2>
+              <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.scatter', '¿Importa la diferencia de goles?')}</h2>
               <p className="mb-3 text-[11px] text-slate-600">
-                One dot per match: goal difference across, mood shift up. If a thrashing moves people more than a narrow win, the dots climb left to right.
+                Un punto por partido: diferencia de goles en horizontal, cambio de ánimo en vertical. Si una goleada mueve más a la gente que una victoria ajustada, los puntos suben de izquierda a derecha.
               </p>
               <MarginScatter data={stats.scatter} />
             </section>
@@ -215,7 +215,7 @@ export default async function SportPage() {
           {stats.upcoming.length > 0 && (
             <section className="panel px-5 py-5">
               <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-300">
-                <Calendar className="size-4 text-sky-400" /> {t('page.sport.upcoming', 'Next matches')}
+                <Calendar className="size-4 text-sky-400" /> {t('page.sport.upcoming', 'Próximos partidos')}
               </h2>
               <div className="flex flex-col gap-1.5 text-sm">
                 {stats.upcoming.map((m) => (
@@ -229,9 +229,9 @@ export default async function SportPage() {
           )}
 
           <section className="panel px-5 py-5">
-            <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.recent', 'Recent matches')}</h2>
+            <h2 className="mb-1 text-sm font-semibold text-slate-300">{t('page.sport.recent', 'Partidos recientes')}</h2>
             <p className="mb-3 text-[11px] text-slate-600">
-              Sentiment comes from this project’s own analyzed mentions — so the crossover only means something if the project is actually listening to this club.
+              El sentimiento viene de las menciones analizadas de este mismo proyecto: el cruce solo tiene sentido si el proyecto realmente está escuchando a este club.
             </p>
             <div className="flex flex-col gap-2">
               {stats.recent.slice(0, 15).map((m) => (
@@ -244,12 +244,12 @@ export default async function SportPage() {
                     <p className="text-[11px] text-slate-600">{COMPETITION_LABEL[m.competition] ?? m.competition} · {fmtDate(m.utcDate)}</p>
                   </div>
                   <div className="ml-auto flex items-center gap-2">
-                    <span className="text-[11px] text-slate-500">sentiment</span>
+                    <span className="text-[11px] text-slate-500">sentimiento</span>
                     <ShiftBar value={m.sentimentShift} max={1} />
                   </div>
                   {m.stockShiftPct !== null && (
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] text-slate-500">stock</span>
+                      <span className="text-[11px] text-slate-500">acción</span>
                       <ShiftBar value={m.stockShiftPct} max={5} suffix="%" />
                     </div>
                   )}

@@ -7,7 +7,7 @@ import { callClaude, claudeAvailable, MODELS } from '@/lib/claude';
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
-const SYSTEM = `You are a media analyst. Compare the last 7 days with the previous 7 and write in English, in Markdown:
+const SYSTEM = `You are a media analyst. Compare the last 7 days with the previous 7 and write in Spanish (Latin American), in Markdown:
 ## What changed (3-5 bullets with the changes that matter, with numbers and % variations)
 ## Topics rising and falling (what's new, what disappeared)
 ## Sentiment (how the tone changed and where)
@@ -16,8 +16,8 @@ Max 300 words. Base it ONLY on the data; if a difference is small, don't call it
 
 export async function POST() {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
-  if (!await claudeAvailable()) return NextResponse.json({ error: 'Claude API key not configured' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
+  if (!await claudeAvailable()) return NextResponse.json({ error: 'La clave de API de Claude no está configurada' }, { status: 400 });
 
   // Cache giornaliera: il confronto si paga al massimo una volta al giorno
   const cacheKey = `compare:${project.id}:${new Date().toISOString().slice(0, 10)}`;
@@ -62,7 +62,7 @@ export async function POST() {
     `Sector: ${project.name}\n\nVolume and sentiment by source:\n${JSON.stringify(bySource.rows)}\n\nCurrent-week topics:\n${JSON.stringify(topicsNow.rows)}\n\nPrevious-week topics:\n${JSON.stringify(topicsPrev.rows)}\n\nCommunities:\n${JSON.stringify(communities.rows)}`,
     900, true,
   );
-  if (!comparison) return NextResponse.json({ error: 'spend cap reached or API error' }, { status: 429 });
+  if (!comparison) return NextResponse.json({ error: 'se alcanzó el tope de gasto o hubo un error de la API' }, { status: 429 });
 
   await setMeta(cacheKey, comparison);
   return NextResponse.json({ comparison });

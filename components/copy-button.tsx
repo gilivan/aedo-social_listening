@@ -19,7 +19,7 @@ export function CopyButton({ text }: { text: string }) {
       className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-sky-400 transition hover:bg-sky-500/10"
     >
       {copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
-      {en ? (copied ? 'copied' : 'copy') : (copied ? 'copiato' : 'copia')}
+      {en ? (copied ? 'copiado' : 'copiar') : (copied ? 'copiato' : 'copia')}
     </button>
   );
 }

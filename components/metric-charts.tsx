@@ -39,7 +39,7 @@ const fmt = (n: number) => {
   if (a > 0 && a < 1) return n.toFixed(2);
   return String(Math.round(n));
 };
-const month = (d: string) => new Date(d).toLocaleDateString('it-IT', { month: 'short', year: '2-digit' });
+const month = (d: string) => new Date(d).toLocaleDateString('es-CO', { month: 'short', year: '2-digit' });
 
 /** La data più recente fra tutte le serie: è ciò che rende "nuovo" un grafico. */
 const latestOf = (series: Series[]) => series
@@ -55,7 +55,7 @@ function fold(series: Series[]): { kept: Series[]; folded: number } {
   const byDate = new Map<string, number>();
   for (const s of rest) for (const p of s.points) byDate.set(p.date, (byDate.get(p.date) ?? 0) + p.value);
   kept.push({
-    name: 'Altro',
+    name: 'Otros',
     points: [...byDate.entries()].sort((a, b) => a[0].localeCompare(b[0]))
       .map(([date, value]) => ({ date, value })),
   });
@@ -102,17 +102,17 @@ export function TrendChart({ series, title, hint }: {
         newId={`trend:${title}`} latest={latestOf(kept)}
         action={spread >= 8 ? (
           <button onClick={() => setIndexed((v) => !v)}
-            title="Confronta la crescita invece dei valori assoluti: tutte le serie partono da 100"
+            title="Compara el crecimiento en lugar de los valores absolutos: todas las series parten de 100"
             className={`rounded-lg border px-2 py-1 text-[11px] ${indexed
               ? 'border-sky-500/50 bg-sky-500/10 text-sky-200'
               : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>
-            {indexed ? 'valori assoluti' : 'indicizza a 100'}
+            {indexed ? 'valores absolutos' : 'indexar a 100'}
           </button>
         ) : undefined} />
       {spread >= 8 && !indexed && (
         <p className="mb-2 text-[11px] text-amber-300/80">
-          Le serie differiscono di {Math.round(spread)} volte: le più piccole risultano schiacciate.
-          Indicizzando a 100 si confrontano le crescite.
+          Las series difieren {Math.round(spread)} veces: las más pequeñas quedan aplastadas.
+          Al indexar a 100 se comparan los crecimientos.
         </p>
       )}
       <ResponsiveContainer width="100%" height={260}>
@@ -120,12 +120,12 @@ export function TrendChart({ series, title, hint }: {
           <CartesianGrid stroke={GRID} strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="date" tickFormatter={month} stroke={AXIS} fontSize={11} tickLine={false} />
           <YAxis tickFormatter={fmt} stroke={AXIS} fontSize={11} tickLine={false} axisLine={false} width={52} />
-          <Tooltip contentStyle={TOOLTIP} labelFormatter={(d) => new Date(String(d)).toLocaleDateString('it-IT')}
-            formatter={(v) => [indexed ? String(v) : Number(v).toLocaleString('it-IT'), '']} />
+          <Tooltip contentStyle={TOOLTIP} labelFormatter={(d) => new Date(String(d)).toLocaleDateString('es-CO')}
+            formatter={(v) => [indexed ? String(v) : Number(v).toLocaleString('es-CO'), '']} />
           {kept.length > 1 && <Legend wrapperStyle={{ fontSize: 11, color: AXIS }} />}
           {kept.map((s, i) => (
             <Line key={s.name} type="monotone" dataKey={s.name} connectNulls
-              stroke={s.name === 'Altro' ? OVERFLOW_COLOR : entityColor(i)}
+              stroke={s.name === 'Otros' ? OVERFLOW_COLOR : entityColor(i)}
               strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
           ))}
         </LineChart>
@@ -150,7 +150,7 @@ export function RankChart({ rows, title, hint, unit }: {
           <YAxis type="category" dataKey="name" width={150} stroke={AXIS} fontSize={11}
             tickLine={false} axisLine={false} interval={0} />
           <Tooltip contentStyle={TOOLTIP} cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-            formatter={(v) => [`${Number(v).toLocaleString('it-IT')}${unit ? ` ${unit}` : ''}`, '']} />
+            formatter={(v) => [`${Number(v).toLocaleString('es-CO')}${unit ? ` ${unit}` : ''}`, '']} />
           <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={14}>
             {data.map((r, i) => <Cell key={r.name} fill={entityColor(i)} />)}
           </Bar>
@@ -202,15 +202,15 @@ export function CustomPerformance({ rows, field }: {
   return (
     <section className="panel px-5 py-4">
       <Head title={field}
-        hint="Quanti contenuti per ciascuna voce e quanto rende in media: il volume da solo non dice se ha funzionato." />
+        hint="Cuántos contenidos por cada elemento y cuánto rinden en promedio: el volumen por sí solo no dice si funcionó." />
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="text-left text-[10px] uppercase tracking-wide text-slate-600">
-              <th className="pb-1.5 pr-3">Voce</th>
-              <th className="pb-1.5 pr-3 text-right">Contenuti</th>
-              <th className="pb-1.5 pr-3 text-right">Engagement totale</th>
-              <th className="pb-1.5">Engagement medio</th>
+              <th className="pb-1.5 pr-3">Elemento</th>
+              <th className="pb-1.5 pr-3 text-right">Contenidos</th>
+              <th className="pb-1.5 pr-3 text-right">Engagement total</th>
+              <th className="pb-1.5">Engagement promedio</th>
             </tr>
           </thead>
           <tbody>
@@ -251,7 +251,7 @@ function Head({ title, hint, folded, action, newId, latest }: {
         {newId && <NewBadge id={newId} latest={latest} />}
         {folded ? (
           <span className="rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-slate-500">
-            {folded} serie minori raccolte in &ldquo;Altro&rdquo;
+            {folded} series menores agrupadas en &ldquo;Otros&rdquo;
           </span>
         ) : null}
         {action && <span className="ml-auto">{action}</span>}
@@ -265,7 +265,7 @@ function Empty({ title }: { title: string }) {
   return (
     <section className="panel px-5 py-6">
       <h3 className="text-sm font-semibold text-slate-300">{title}</h3>
-      <p className="mt-1 text-xs text-slate-600">Nessun dato per questa vista nel progetto corrente.</p>
+      <p className="mt-1 text-xs text-slate-600">No hay datos para esta vista en el proyecto actual.</p>
     </section>
   );
 }

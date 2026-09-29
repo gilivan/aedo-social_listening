@@ -46,23 +46,23 @@ type Result = {
 type Saved = { id: number; title: string; spec: Spec };
 
 const CHARTS: { id: Spec['chart']; label: string; icon: typeof LineIcon; when: string }[] = [
-  { id: 'line', label: 'Linea', icon: LineIcon, when: 'un andamento nel tempo' },
-  { id: 'area', label: 'Area', icon: AreaIcon, when: 'un andamento di cui conta anche il volume' },
-  { id: 'bar', label: 'Barre', icon: BarChart3, when: 'confronto fra categorie o periodi' },
-  { id: 'hbar', label: 'Barre orizzontali', icon: BarChart3, when: 'una classifica con nomi lunghi' },
-  { id: 'scatter', label: 'Dispersione', icon: ScatterIcon, when: 'la relazione fra due misure' },
-  { id: 'bubble', label: 'Bolle', icon: ScatterIcon, when: 'due misure più una terza nella dimensione' },
-  { id: 'pie', label: 'Torta', icon: PieIcon, when: 'quanto pesa ciascuna voce, se sono poche' },
-  { id: 'map', label: 'Mappa', icon: Globe, when: 'dove: il colore dice una misura, l’asse Z la scomposizione paese per paese' },
+  { id: 'line', label: 'Línea', icon: LineIcon, when: 'una evolución en el tiempo' },
+  { id: 'area', label: 'Área', icon: AreaIcon, when: 'una evolución en la que también importa el volumen' },
+  { id: 'bar', label: 'Barras', icon: BarChart3, when: 'comparar categorías o periodos' },
+  { id: 'hbar', label: 'Barras horizontales', icon: BarChart3, when: 'un ranking con nombres largos' },
+  { id: 'scatter', label: 'Dispersión', icon: ScatterIcon, when: 'la relación entre dos métricas' },
+  { id: 'bubble', label: 'Burbujas', icon: ScatterIcon, when: 'dos métricas más una tercera en el tamaño' },
+  { id: 'pie', label: 'Torta', icon: PieIcon, when: 'cuánto pesa cada elemento, si son pocos' },
+  { id: 'map', label: 'Mapa', icon: Globe, when: 'dónde: el color indica una métrica; el eje Z, el desglose país por país' },
 ];
 
 const AGGS: { id: string; label: string; hint: string }[] = [
-  { id: 'sum', label: 'Somma', hint: 'il totale: giusto per conteggi e volumi' },
-  { id: 'avg', label: 'Media', hint: 'obbligatoria per tassi, punteggi e medie: sommarli non significa niente' },
-  { id: 'count', label: 'Conteggio', hint: 'quante righe, indipendentemente dal valore' },
-  { id: 'max', label: 'Massimo', hint: 'il valore più alto del gruppo' },
-  { id: 'min', label: 'Minimo', hint: 'il valore più basso del gruppo' },
-  { id: 'last', label: 'Ultimo valore', hint: 'per i totali cumulati come i follower' },
+  { id: 'sum', label: 'Suma', hint: 'el total: adecuado para conteos y volúmenes' },
+  { id: 'avg', label: 'Promedio', hint: 'obligatorio para tasas, puntajes y promedios: sumarlos no significa nada' },
+  { id: 'count', label: 'Conteo', hint: 'cuántas filas, sin importar el valor' },
+  { id: 'max', label: 'Máximo', hint: 'el valor más alto del grupo' },
+  { id: 'min', label: 'Mínimo', hint: 'el valor más bajo del grupo' },
+  { id: 'last', label: 'Último valor', hint: 'para totales acumulados como los seguidores' },
 ];
 
 const DEFAULT: Spec = {
@@ -107,9 +107,9 @@ function NoCountries({ unplaced, onRecovered }: {
     try {
       const res = await fetch('/api/studio/countries', { method: 'POST' });
       const d = await res.json();
-      if (!res.ok) { setMsg(d.error ?? 'Non riuscito'); return; }
+      if (!res.ok) { setMsg(d.error ?? 'No se pudo'); return; }
       if (d.recovered > 0) { onRecovered(); return; }
-      setMsg('Nessun paese da ricavare: in queste mention non c’è un indirizzo o un dominio che lo dica.');
+      setMsg('No hay países que obtener: en estas menciones no hay una dirección o un dominio que lo indique.');
     } catch (e) { setMsg((e as Error).message); }
     finally { setBusy(false); }
   };
@@ -118,31 +118,31 @@ function NoCountries({ unplaced, onRecovered }: {
     <div className="px-6 py-10 text-center">
       <Globe className="mx-auto mb-3 size-7 text-slate-700" />
       <p className="mb-1 text-sm text-slate-300">
-        Di queste {unplaced.n.toLocaleString('it-IT')} mention non si sa il paese.
+        De estas {unplaced.n.toLocaleString('es-CO')} menciones no se conoce el país.
       </p>
       <p className="mx-auto mb-3 max-w-md text-xs leading-relaxed text-slate-500">
-        Il paese si conosce quando la fonte lo dichiara (le notizie di GDELT) o quando
-        l’indirizzo ha un dominio nazionale (<span className="text-slate-400">.it</span>,{' '}
-        <span className="text-slate-400">.co.uk</span>). Le piattaforme social non dicono da dove
-        scrive chi pubblica, e ricavarlo dalla lingua sarebbe inventare: lo spagnolo si parla a
-        Madrid come a Città del Messico.
+        El país se conoce cuando la fuente lo declara (las noticias de GDELT) o cuando
+        la dirección tiene un dominio nacional (<span className="text-slate-400">.co</span>,{' '}
+        <span className="text-slate-400">.com.mx</span>). Las plataformas sociales no dicen desde dónde
+        escribe quien publica, y deducirlo del idioma sería inventar: el español se habla en
+        Madrid igual que en Ciudad de México.
       </p>
       <div className="mb-3 flex flex-col items-center gap-1.5">
         <button onClick={recover} disabled={busy}
-          title="Ripassa le mention già in archivio e ricava il paese dal dominio della testata. Non raccoglie niente di nuovo e non consuma quota AI."
+          title="Revisa las menciones que ya están en el archivo y obtiene el país a partir del dominio del medio. No recolecta nada nuevo ni consume cuota de IA."
           className="inline-flex items-center gap-2 rounded-lg border border-sky-500/40 bg-sky-500/10 px-4 py-2 text-sm text-sky-200 transition hover:bg-sky-500/20 disabled:opacity-50">
           {busy ? <Loader2 className="size-4 animate-spin" /> : <Globe className="size-4" />}
-          Ricava i paesi da quello che ho già
+          Obtener los países de lo que ya tengo
         </button>
         <span className="text-[11px] text-slate-600">
-          Legge solo l’archivio: non raccoglie niente di nuovo, non consuma quota.
+          Solo lee el archivo: no recolecta nada nuevo ni consume cuota.
         </span>
         {msg && <span className="max-w-md text-[11px] text-amber-300/90">{msg}</span>}
       </div>
       <div className="mx-auto flex max-w-md flex-wrap justify-center gap-1.5">
         {unplaced.sources.map((s) => (
           <span key={s.source} className="rounded-lg border border-[var(--border)] px-2 py-1 text-[11px] text-slate-500">
-            {s.source} <span className="text-slate-600">{s.n.toLocaleString('it-IT')}</span>
+            {s.source} <span className="text-slate-600">{s.n.toLocaleString('es-CO')}</span>
           </span>
         ))}
       </div>
@@ -196,7 +196,7 @@ export function StudioGraph({ initial, preset }: {
     const res = await fetch(`/api/studio?source=${spec.source}`);
     const d = await res.json();
     if (res.ok) { setFields(d.fields ?? []); setSaved(d.saved ?? []); }
-    else setError(d.error ?? 'Errore');
+    else setError(d.error ?? 'Error');
   }, [spec.source]);
 
   useEffect(() => { loadFields(); }, [loadFields]);
@@ -214,7 +214,7 @@ export function StudioGraph({ initial, preset }: {
       .then((r) => r.json().then((d) => ({ ok: r.ok, d })))
       .then(({ ok, d }) => {
         if (!alive) return;
-        if (!ok) { setResult(null); setComment(null); setError(d.error ?? 'Errore'); return; }
+        if (!ok) { setResult(null); setComment(null); setError(d.error ?? 'Error'); return; }
         setResult(d);
         // Il commento salvato vale solo se descrive QUESTI numeri: l'impronta
         // la calcola il server, che è l'unico a poterla confrontare.
@@ -237,20 +237,20 @@ export function StudioGraph({ initial, preset }: {
       // "Interazioni per canale" di "Grafico senza titolo".
       body: JSON.stringify({
         id: savedId,
-        title: title.trim() || (result ? `${result.yLabel} per ${result.xLabel}` : 'Grafico'),
+        title: title.trim() || (result ? `${result.yLabel} por ${result.xLabel}` : 'Gráfico'),
         spec,
       }),
     });
     const d = await res.json();
     if (res.ok) { setSavedId(d.id); loadFields(); }
-    else setError(d.error ?? 'Salvataggio fallito');
+    else setError(d.error ?? 'No se pudo guardar');
   };
 
   const set = <K extends keyof Spec>(k: K, v: Spec[K]) => setSpec((s) => ({ ...s, [k]: v }));
 
   /** Chiede il commento all'AI. Vive attaccato al grafico salvato. */
   const askComment = async () => {
-    if (!savedId) { setError('Salva prima il grafico: il commento resta attaccato a lui.'); return; }
+    if (!savedId) { setError('Primero guarda el gráfico: el comentario queda asociado a él.'); return; }
     setCommenting(true); setError('');
     try {
       const res = await fetch('/api/studio/comment', {
@@ -258,7 +258,7 @@ export function StudioGraph({ initial, preset }: {
         body: JSON.stringify({ id: savedId, spec, title }),
       });
       const d = await res.json();
-      if (!res.ok) { setError(d.error ?? 'Commento non riuscito'); return; }
+      if (!res.ok) { setError(d.error ?? 'No se pudo generar el comentario'); return; }
       setComment(d.comment);
     } catch (e) { setError((e as Error).message); }
     finally { setCommenting(false); }
@@ -274,26 +274,26 @@ export function StudioGraph({ initial, preset }: {
     <div className="grid gap-4 lg:grid-cols-[20rem_1fr]">
       {/* ---- Le scelte ---- */}
       <section className="panel h-fit px-5 py-4">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Da dove</p>
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-slate-500">De dónde</p>
         <div className="mb-4 flex gap-1.5">
           {(['mentions', 'metrics'] as const).map((s) => (
             <button key={s} onClick={() => setSpec({ ...DEFAULT, source: s, x: s === 'metrics' ? 'month' : 'source', y: s === 'metrics' ? 'value' : 'count', yAgg: s === 'metrics' ? 'sum' : 'count' })}
               title={s === 'mentions'
-                ? 'I contenuti: post, articoli, righe con un testo — dal listening o dai file importati'
-                : 'Le misure: serie di numeri nel tempo importate dai fogli di calcolo'}
+                ? 'Los contenidos: publicaciones, artículos, filas con texto — del listening o de archivos importados'
+                : 'Las métricas: series de números en el tiempo importadas de hojas de cálculo'}
               className={`flex-1 rounded-lg border px-2 py-1.5 text-xs ${spec.source === s
                 ? 'border-sky-500/50 bg-sky-500/10 text-sky-200'
                 : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>
-              {s === 'mentions' ? 'Contenuti' : 'Misure'}
+              {s === 'mentions' ? 'Contenidos' : 'Métricas'}
             </button>
           ))}
         </div>
 
-        <Axis label="Asse X" sub="lungo che cosa lo dispongo"
+        <Axis label="Eje X" sub="a lo largo de qué lo ordeno"
           value={spec.x} onChange={(v) => set('x', v)} options={dims} field={fieldOf(spec.x)} />
 
         <div className="mt-3">
-          <Axis label="Asse Y" sub="che cosa conto"
+          <Axis label="Eje Y" sub="qué cuento"
             value={spec.y} onChange={(v) => {
               const f = fields.find((x) => x.id === v);
               // Un tasso o una media si media: la scelta giusta si propone da sola.
@@ -302,7 +302,7 @@ export function StudioGraph({ initial, preset }: {
             }} options={measures} field={fieldOf(spec.y)} />
           {spec.y !== 'count' && (
             <label className="mt-1.5 flex items-center gap-1.5 text-[11px] text-slate-500">
-              come
+              como
               <select value={spec.yAgg} onChange={(e) => set('yAgg', e.target.value)}
                 className="rounded border border-[var(--border)] bg-[var(--panel-2)] px-1.5 py-0.5 text-slate-300">
                 {AGGS.filter((a) => a.id !== 'count').map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
@@ -313,18 +313,18 @@ export function StudioGraph({ initial, preset }: {
         </div>
 
         <div className="mt-3">
-          <Axis label="Asse Z" sub={spec.chart === 'bubble' ? 'la dimensione della bolla' : 'come lo divido in serie'}
+          <Axis label="Eje Z" sub={spec.chart === 'bubble' ? 'el tamaño de la burbuja' : 'cómo lo divido en series'}
             value={spec.z ?? ''} onChange={(v) => set('z', v || undefined)}
             options={spec.chart === 'bubble' ? measures : dims} allowEmpty
             field={fieldOf(spec.z)} />
         </div>
 
-        <p className="mb-2 mt-5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Che forma</p>
+        <p className="mb-2 mt-5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Qué forma</p>
         <div className="grid grid-cols-2 gap-1.5">
           {CHARTS.map((c) => {
             const Icon = c.icon;
             return (
-              <button key={c.id} onClick={() => set('chart', c.id)} title={`Usalo per: ${c.when}`}
+              <button key={c.id} onClick={() => set('chart', c.id)} title={`Úsalo para: ${c.when}`}
                 className={`flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-[11px] ${spec.chart === c.id
                   ? 'border-sky-500/50 bg-sky-500/10 text-sky-200'
                   : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>
@@ -334,7 +334,7 @@ export function StudioGraph({ initial, preset }: {
           })}
         </div>
 
-        <p className="mb-2 mt-5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Colore</p>
+        <p className="mb-2 mt-5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Color</p>
         <div className="flex flex-col gap-1.5">
           {(Object.keys(PALETTES) as PaletteId[]).map((p) => (
             <button key={p} onClick={() => set('palette', p)} title={PALETTES[p].use}
@@ -357,7 +357,7 @@ export function StudioGraph({ initial, preset }: {
           <select value={spec.days} onChange={(e) => set('days', Number(e.target.value))}
             className="rounded border border-[var(--border)] bg-[var(--panel-2)] px-1.5 py-0.5 text-slate-300">
             {[7, 30, 90, 180, 365, 1095].map((d) => (
-              <option key={d} value={d}>{d >= 365 ? `${Math.round(d / 365)} anni` : `${d} giorni`}</option>
+              <option key={d} value={d}>{d >= 365 ? `${Math.round(d / 365)} años` : `${d} días`}</option>
             ))}
           </select>
           max
@@ -373,12 +373,12 @@ export function StudioGraph({ initial, preset }: {
         <div className="panel px-5 py-4">
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <input value={title} onChange={(e) => setTitle(e.target.value)}
-              placeholder={result ? `${result.yLabel} per ${result.xLabel}` : 'Titolo del grafico'}
+              placeholder={result ? `${result.yLabel} por ${result.xLabel}` : 'Título del gráfico'}
               className="min-w-[12rem] flex-1 rounded-lg border border-[var(--border)] bg-white/[0.03] px-3 py-1.5 text-sm text-slate-100" />
             {busy && <Loader2 className="size-4 animate-spin text-sky-400" />}
             <button onClick={save} disabled={!result}
               className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-200 hover:bg-emerald-500/20 disabled:opacity-40">
-              <Save className="size-3.5" /> {savedId ? 'Aggiorna' : 'Salva'}
+              <Save className="size-3.5" /> {savedId ? 'Actualizar' : 'Guardar'}
             </button>
           </div>
 
@@ -396,7 +396,7 @@ export function StudioGraph({ initial, preset }: {
               spec.chart === 'map' && result?.unplaced?.n
                 ? <NoCountries unplaced={result.unplaced} onRecovered={() => setSpec({ ...spec })} />
                 : <p className="py-10 text-center text-xs text-slate-600">
-                  Nessun dato con queste scelte nel periodo impostato.
+                  No hay datos con estas opciones en el periodo seleccionado.
                 </p>
             )}
 
@@ -405,32 +405,32 @@ export function StudioGraph({ initial, preset }: {
               {comment && !comment.stale ? (
                 <>
                   <p className="mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-violet-300">
-                    <Sparkles className="size-3" /> Commento · AI
+                    <Sparkles className="size-3" /> Comentario · IA
                     <span className="font-normal normal-case tracking-normal text-slate-600">
-                      scritto il {new Date(comment.at).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}
+                      escrito el {new Date(comment.at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}
                     </span>
-                    <button onClick={dropComment} title="Togli il commento"
+                    <button onClick={dropComment} title="Quitar el comentario"
                       className="ml-auto text-slate-600 hover:text-red-300"><X className="size-3.5" /></button>
                   </p>
                   <p className="text-sm leading-relaxed text-slate-300">{comment.text}</p>
                   <p className="mt-1.5 text-[10px] text-slate-600">
-                    Sparisce da solo appena i numeri cambiano: un commento che descrive dati che non ci sono più non è vecchio, è falso.
+                    Desaparece solo en cuanto cambian los números: un comentario que describe datos que ya no existen no es viejo, es falso.
                   </p>
                 </>
               ) : (
                 <div className="flex flex-wrap items-center gap-2">
                   <button onClick={askComment} disabled={commenting || !savedId}
-                    title={savedId ? 'Fai scrivere all’AI che cosa dice questo grafico' : 'Salva prima il grafico'}
+                    title={savedId ? 'Pídele a la IA que escriba qué dice este gráfico' : 'Primero guarda el gráfico'}
                     className="inline-flex items-center gap-1.5 rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-1.5 text-xs text-violet-200 hover:bg-violet-500/20 disabled:opacity-40">
                     {commenting ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
-                    {comment?.stale ? 'Riscrivi il commento' : 'Commenta con l’AI'}
+                    {comment?.stale ? 'Reescribir el comentario' : 'Comentar con IA'}
                   </button>
                   <span className="text-[11px] text-slate-600">
                     {comment?.stale
-                      ? `I dati sono cambiati dal ${new Date(comment.at).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}: il commento è stato tolto.`
+                      ? `Los datos cambiaron desde el ${new Date(comment.at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}: se quitó el comentario.`
                       : savedId
-                        ? 'L’AI legge solo le cifre di questo grafico, mai le righe.'
-                        : 'Salva il grafico e potrai farlo commentare.'}
+                        ? 'La IA solo lee las cifras de este gráfico, nunca las filas.'
+                        : 'Guarda el gráfico y podrás pedir un comentario.'}
                   </span>
                 </div>
               )}
@@ -439,7 +439,7 @@ export function StudioGraph({ initial, preset }: {
 
           {result && result.rows.length > 0 && (
             <p className="mt-2 text-[11px] text-slate-600">
-              {result.rows.length} valori · totale {fmt(result.total)} · {result.xLabel} × {result.yLabel}
+              {result.rows.length} valores · total {fmt(result.total)} · {result.xLabel} × {result.yLabel}
               {result.zLabel ? ` × ${result.zLabel}` : ''}
             </p>
           )}
@@ -448,7 +448,7 @@ export function StudioGraph({ initial, preset }: {
         {saved.length > 0 && (
           <div className="panel px-5 py-4">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-              Grafici salvati <span className="normal-case tracking-normal text-slate-600">— li ritrovi nel report personalizzato</span>
+              Gráficos guardados <span className="normal-case tracking-normal text-slate-600">— los encuentras en el reporte personalizado</span>
             </p>
             <div className="flex flex-wrap gap-1.5">
               {saved.map((s) => (
@@ -464,7 +464,7 @@ export function StudioGraph({ initial, preset }: {
               ))}
               <button onClick={() => { setSpec(DEFAULT); setTitle(''); setSavedId(null); }}
                 className="inline-flex items-center gap-1 rounded-lg border border-dashed border-[var(--border)] px-2 py-1 text-[11px] text-slate-500 hover:text-slate-300">
-                <Plus className="size-3" /> nuovo
+                <Plus className="size-3" /> nuevo
               </button>
             </div>
           </div>
@@ -487,7 +487,7 @@ function Axis({ label, sub, value, onChange, options, allowEmpty, field }: {
       </span>
       <select value={value} onChange={(e) => onChange(e.target.value)}
         className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100">
-        {allowEmpty && <option value="">— nessuno —</option>}
+        {allowEmpty && <option value="">— ninguno —</option>}
         {options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
       </select>
     </label>
@@ -513,7 +513,7 @@ function Chart({ spec, result }: { spec: Spec; result: Result }) {
     const byX = new Map<string, Record<string, string | number>>();
     for (const r of rows) {
       if (!byX.has(r.x)) byX.set(r.x, { x: r.x });
-      const name = kept.includes(r.z ?? '') ? (r.z as string) : 'Altro';
+      const name = kept.includes(r.z ?? '') ? (r.z as string) : 'Otros';
       const row = byX.get(r.x)!;
       row[name] = ((row[name] as number) ?? 0) + r.y;
     }
@@ -521,7 +521,7 @@ function Chart({ spec, result }: { spec: Spec; result: Result }) {
   }, [rows, kept, result.zLabel, result.yLabel, spec.chart]);
 
   const names = result.zLabel && spec.chart !== 'bubble'
-    ? [...kept, ...(series.length > kept.length ? ['Altro'] : [])]
+    ? [...kept, ...(series.length > kept.length ? ['Otros'] : [])]
     : [result.yLabel];
 
   const axes = (
@@ -530,7 +530,7 @@ function Chart({ spec, result }: { spec: Spec; result: Result }) {
       <XAxis dataKey="x" stroke={AXIS} fontSize={11} tickLine={false}
         interval="preserveStartEnd" minTickGap={20} />
       <YAxis tickFormatter={fmt} stroke={AXIS} fontSize={11} tickLine={false} axisLine={false} width={52} />
-      <Tooltip contentStyle={TOOLTIP} formatter={(v) => [Number(v).toLocaleString('it-IT'), '']} />
+      <Tooltip contentStyle={TOOLTIP} formatter={(v) => [Number(v).toLocaleString('es-CO'), '']} />
       {names.length > 1 && <Legend wrapperStyle={{ fontSize: 11, color: AXIS }} />}
     </>
   );
@@ -553,7 +553,7 @@ function Chart({ spec, result }: { spec: Spec; result: Result }) {
     return (
       <ResponsiveContainer width="100%" height={H}>
         <PieChart>
-          <Tooltip contentStyle={TOOLTIP} formatter={(v) => [Number(v).toLocaleString('it-IT'), '']} />
+          <Tooltip contentStyle={TOOLTIP} formatter={(v) => [Number(v).toLocaleString('es-CO'), '']} />
           <Legend wrapperStyle={{ fontSize: 11, color: AXIS }} />
           <Pie data={rows} dataKey="y" nameKey="x" innerRadius="45%" outerRadius="75%" paddingAngle={2}>
             {rows.map((r, i) => (
@@ -590,7 +590,7 @@ function Chart({ spec, result }: { spec: Spec; result: Result }) {
           <YAxis type="category" dataKey="x" width={150} stroke={AXIS} fontSize={11}
             tickLine={false} axisLine={false} interval={0} />
           <Tooltip contentStyle={TOOLTIP} cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-            formatter={(v) => [Number(v).toLocaleString('it-IT'), '']} />
+            formatter={(v) => [Number(v).toLocaleString('es-CO'), '']} />
           {names.length > 1 && <Legend wrapperStyle={{ fontSize: 11, color: AXIS }} />}
           {names.map((n) => (
             <Bar key={n} dataKey={n} stackId={names.length > 1 ? 'a' : undefined}

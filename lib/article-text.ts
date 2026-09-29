@@ -13,7 +13,7 @@
 // paywall e non si riprova all'infinito.
 // ---------------------------------------------------------------------------
 
-const UA = 'Mozilla/5.0 (compatible; RadarBot/1.0; +https://github.com/Scognamiglio1969/radar-intelligence)';
+const UA = 'Mozilla/5.0 (compatible; AEDOBot/1.0; +https://github.com/Scognamiglio1969/radar-intelligence)';
 const TIMEOUT_MS = 12_000;
 const MAX_BYTES = 2_000_000;      // oltre, è una pagina che non vale la pena leggere
 const MAX_CHARS = 20_000;         // tetto al testo conservato

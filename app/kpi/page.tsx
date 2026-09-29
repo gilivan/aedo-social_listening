@@ -31,42 +31,42 @@ export default async function KpiPage({ searchParams }: {
   const locale = await getLocale();
   const lang: Lang = locale === 'it' ? 'it' : 'en';
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={L(lang, 'Nessun progetto selezionato.', 'No project selected.')} />;
+  if (!project) return <EmptyState message={L(lang, 'Nessun progetto selezionato.', 'No hay ningún proyecto seleccionado.')} />;
 
   const days = PERIODS.includes(Number(sp.days) as (typeof PERIODS)[number]) ? Number(sp.days) : 30;
   const k = await standardKpis(project.id, days, lang);
   const r = await assessReliability(project.id, k);
   const verdictOf = new Map(r.verdicts.map((v) => [v.id, v]));
 
-  const date = (d: Date) => d.toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-GB', {
-    day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Europe/Rome',
+  const date = (d: Date) => d.toLocaleDateString(lang === 'it' ? 'it-IT' : 'es-CO', {
+    day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Bogota',
   });
 
   return (
     <>
       <PageHeader
-        title={L(lang, 'KPI e affidabilità', 'KPIs & reliability')}
+        title={L(lang, 'KPI e affidabilità', 'KPI y confiabilidad')}
         subtitle={L(lang,
           'Gli indicatori standard del social listening, con la formula, e il giudizio su quanto reggono.',
-          'Standard social listening indicators, with their formulas, and a judgement on how solid they are.')}
+          'Los indicadores estándar de social listening, con su fórmula, y un juicio sobre qué tan sólidos son.')}
         info={L(lang,
           'Tutti i numeri sono calcolati dal database, nessuno dal modello. Un dato che manca è scritto n.d. con il motivo; la reach è sempre potenziale e il sentiment sempre automatico. L’affidabilità (analisi critica di livello 1) mette in discussione i KPI: oscillazione normale, peso dei contenuti estremi, fonti nuove, campioni piccoli.',
-          'Every number is computed by the database, none by the model. Missing data is written n/a with the reason; reach is always potential and sentiment always automatic. Reliability (level-1 critical analysis) challenges the KPIs: normal fluctuation, weight of extreme items, new sources, small samples.')}
+          'Todas las cifras las calcula la base de datos, ninguna el modelo. Un dato faltante se marca como n. d. con el motivo; el alcance siempre es potencial y el sentimiento siempre automático. La confiabilidad (análisis crítico de nivel 1) pone a prueba los KPI: oscilación normal, peso de los contenidos extremos, fuentes nuevas, muestras pequeñas.')}
       />
 
       {/* Periodo */}
       <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
-        <span className="text-slate-500">{L(lang, 'Periodo', 'Period')}</span>
+        <span className="text-slate-500">{L(lang, 'Periodo', 'Periodo')}</span>
         {PERIODS.map((p) => (
           <Link key={p} href={`/kpi?days=${p}`}
             className={`rounded-full border px-3 py-1 ${p === days
               ? 'border-sky-500/50 bg-sky-500/15 text-sky-200'
               : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>
-            {L(lang, `${p} giorni`, `${p} days`)}
+            {L(lang, `${p} giorni`, `${p} días`)}
           </Link>
         ))}
         <span className="text-slate-600">
-          {date(k.current.from)} → {date(k.current.to)} · {L(lang, 'confronto', 'vs')} {date(k.previous.from)} → {date(k.previous.to)} · Europe/Rome
+          {date(k.current.from)} → {date(k.current.to)} · {L(lang, 'confronto', 'vs.')} {date(k.previous.from)} → {date(k.previous.to)} · America/Bogota
         </span>
       </div>
 
@@ -74,16 +74,16 @@ export default async function KpiPage({ searchParams }: {
 
       {/* KPI globali */}
       <section className="panel mb-4 overflow-x-auto px-0 py-0">
-        <h2 className="px-5 pt-4 text-sm font-semibold text-slate-200">{L(lang, 'KPI del periodo', 'Period KPIs')}</h2>
+        <h2 className="px-5 pt-4 text-sm font-semibold text-slate-200">{L(lang, 'KPI del periodo', 'KPI del periodo')}</h2>
         <table className="mt-3 w-full min-w-[46rem] text-left text-xs">
           <thead>
             <tr className="border-b border-[var(--border)] text-[10px] uppercase tracking-wider text-slate-500">
               <th className="px-5 py-2 font-semibold">KPI</th>
-              <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Valore', 'Value')}</th>
-              <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Periodo prec.', 'Previous')}</th>
+              <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Valore', 'Valor')}</th>
+              <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Periodo prec.', 'Periodo ant.')}</th>
               <th className="px-3 py-2 text-right font-semibold">Δ</th>
               <th className="px-3 py-2 text-right font-semibold">Δ%</th>
-              <th className="px-3 py-2 font-semibold">{L(lang, 'Affidabilità', 'Reliability')}</th>
+              <th className="px-3 py-2 font-semibold">{L(lang, 'Affidabilità', 'Confiabilidad')}</th>
             </tr>
           </thead>
           <tbody>
@@ -104,7 +104,7 @@ export default async function KpiPage({ searchParams }: {
         <section className="panel mb-4 border-amber-500/30 bg-amber-500/[0.04] px-5 py-4">
           <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-200">
             <CircleSlash className="size-4" />
-            {L(lang, 'Cosa non si può scrivere nel report', 'What the report cannot say')}
+            {L(lang, 'Cosa non si può scrivere nel report', 'Lo que el informe no puede afirmar')}
           </h2>
           <ul className="flex flex-col gap-1.5 text-xs text-slate-300">
             {r.cannotSay.map((c) => <li key={c}>{c}</li>)}
@@ -116,10 +116,10 @@ export default async function KpiPage({ searchParams }: {
       {r.findings.length > 0 && (
         <section className="mb-4">
           <h2 className="mb-2 text-sm font-semibold text-slate-200">
-            {L(lang, 'Analisi critica — livello 1', 'Critical analysis — level 1')}
+            {L(lang, 'Analisi critica — livello 1', 'Análisis crítico — nivel 1')}
             <span className="ml-2 text-[11px] font-normal text-slate-500">
               {L(lang, 'i numeri reggono? Osservazione, evidenza, perché conta, confidenza, verifica.',
-                'do the numbers hold? Observation, evidence, why it matters, confidence, check.')}
+                '¿las cifras se sostienen? Observación, evidencia, por qué importa, confianza, verificación.')}
             </span>
           </h2>
           <div className="grid gap-3 md:grid-cols-2">
@@ -131,19 +131,19 @@ export default async function KpiPage({ searchParams }: {
       {/* Per canale */}
       {k.channels.length > 0 && (
         <section className="panel mb-4 overflow-x-auto px-0 py-0">
-          <h2 className="px-5 pt-4 text-sm font-semibold text-slate-200">{L(lang, 'KPI per canale', 'KPIs by channel')}</h2>
+          <h2 className="px-5 pt-4 text-sm font-semibold text-slate-200">{L(lang, 'KPI per canale', 'KPI por canal')}</h2>
           <table className="mt-3 w-full min-w-[46rem] text-left text-xs">
             <thead>
               <tr className="border-b border-[var(--border)] text-[10px] uppercase tracking-wider text-slate-500">
-                <th className="px-5 py-2 font-semibold">{L(lang, 'Canale', 'Channel')}</th>
-                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Menzioni', 'Mentions')}</th>
-                <th className="px-3 py-2 text-right font-semibold">{L(lang, '% sul totale', '% of total')}</th>
-                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Reach pot.', 'Pot. reach')}</th>
+                <th className="px-5 py-2 font-semibold">{L(lang, 'Canale', 'Canal')}</th>
+                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Menzioni', 'Menciones')}</th>
+                <th className="px-3 py-2 text-right font-semibold">{L(lang, '% sul totale', '% del total')}</th>
+                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Reach pot.', 'Alcance pot.')}</th>
                 <th className="px-3 py-2 text-right font-semibold">Engagement</th>
-                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Eng. medio', 'Avg eng.')}</th>
+                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Eng. medio', 'Eng. prom.')}</th>
                 <th className="px-3 py-2 text-right font-semibold">ER reach</th>
                 <th className="px-3 py-2 text-right font-semibold">NSS</th>
-                <th className="px-3 py-2 text-right font-semibold">Δ% {L(lang, 'menzioni', 'mentions')}</th>
+                <th className="px-3 py-2 text-right font-semibold">Δ% {L(lang, 'menzioni', 'menciones')}</th>
               </tr>
             </thead>
             <tbody>
@@ -152,9 +152,9 @@ export default async function KpiPage({ searchParams }: {
                   <td className="px-5 py-1.5 text-slate-300">
                     {sourceLabel(c.source)}
                     {c.previousMentions === 0 && !k.previousIncomplete && (
-                      <span className="ml-1.5 rounded bg-amber-500/15 px-1 py-0.5 text-[9px] text-amber-300">{L(lang, 'nuova', 'new')}</span>
+                      <span className="ml-1.5 rounded bg-amber-500/15 px-1 py-0.5 text-[9px] text-amber-300">{L(lang, 'nuova', 'nueva')}</span>
                     )}
-                    {c.smallSample && <span className="ml-1.5 text-[9px] text-slate-600">{L(lang, 'campione limitato', 'small sample')}</span>}
+                    {c.smallSample && <span className="ml-1.5 text-[9px] text-slate-600">{L(lang, 'campione limitato', 'muestra limitada')}</span>}
                   </td>
                   <Num v={formatKpi(c.mentions, 'count', lang)} />
                   <Num v={formatKpi(c.share, 'pct', lang)} />
@@ -174,17 +174,17 @@ export default async function KpiPage({ searchParams }: {
       <div className="mb-4 grid gap-4 md:grid-cols-2">
         {/* Picchi */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-2 text-sm font-semibold text-slate-200">{L(lang, 'Giorni di picco', 'Peak days')}</h2>
+          <h2 className="mb-2 text-sm font-semibold text-slate-200">{L(lang, 'Giorni di picco', 'Días pico')}</h2>
           {k.peaks.length === 0 ? (
-            <p className="text-xs text-slate-500">{L(lang, 'Nessuna menzione nel periodo.', 'No mentions in the period.')}</p>
+            <p className="text-xs text-slate-500">{L(lang, 'Nessuna menzione nel periodo.', 'No hay menciones en el periodo.')}</p>
           ) : (
             <ul className="flex flex-col gap-1 text-xs">
               {k.peaks.map((p) => (
                 <li key={p.day} className="flex justify-between gap-3">
                   <span className="text-slate-300">{p.day}</span>
                   <span className="tabular-nums text-slate-400">
-                    {fmtNumber(p.value, lang)} {L(lang, 'menzioni', 'mentions')}
-                    {p.index !== null && <> · {L(lang, 'indice', 'index')} {formatKpi(p.index, 'index', lang)}</>}
+                    {fmtNumber(p.value, lang)} {L(lang, 'menzioni', 'menciones')}
+                    {p.index !== null && <> · {L(lang, 'indice', 'índice')} {formatKpi(p.index, 'index', lang)}</>}
                   </span>
                 </li>
               ))}
@@ -194,16 +194,16 @@ export default async function KpiPage({ searchParams }: {
             {k.anomalies.length
               ? L(lang,
                 `Oltre 2σ dalla media del periodo: ${k.anomalies.map((a) => `${a.day} (z = ${fmtNumber(a.z, lang, 1)})`).join(', ')}.`,
-                `Beyond 2σ of the period mean: ${k.anomalies.map((a) => `${a.day} (z = ${fmtNumber(a.z, lang, 1)})`).join(', ')}.`)
-              : L(lang, 'Nessun giorno oltre 2σ dalla media del periodo.', 'No day beyond 2σ of the period mean.')}
+                `Más de 2σ sobre el promedio del periodo: ${k.anomalies.map((a) => `${a.day} (z = ${fmtNumber(a.z, lang, 1)})`).join(', ')}.`)
+              : L(lang, 'Nessun giorno oltre 2σ dalla media del periodo.', 'Ningún día supera 2σ sobre el promedio del periodo.')}
           </p>
         </section>
 
         {/* Autori */}
         <section className="panel px-5 py-4">
-          <h2 className="mb-2 text-sm font-semibold text-slate-200">{L(lang, 'Autori più attivi', 'Most active authors')}</h2>
+          <h2 className="mb-2 text-sm font-semibold text-slate-200">{L(lang, 'Autori più attivi', 'Autores más activos')}</h2>
           {k.topAuthors.length === 0 ? (
-            <p className="text-xs text-slate-500">{L(lang, 'Le fonti del periodo non riportano l’autore.', 'The period’s sources carry no author.')}</p>
+            <p className="text-xs text-slate-500">{L(lang, 'Le fonti del periodo non riportano l’autore.', 'Las fuentes del periodo no indican el autor.')}</p>
           ) : (
             <ul className="flex flex-col gap-1 text-xs">
               {k.topAuthors.map((a) => (
@@ -222,15 +222,15 @@ export default async function KpiPage({ searchParams }: {
       {/* Competitivo */}
       {k.competitive.length > 0 && (
         <section className="panel mb-4 overflow-x-auto px-0 py-0">
-          <h2 className="px-5 pt-4 text-sm font-semibold text-slate-200">{L(lang, 'Set competitivo', 'Competitive set')}</h2>
+          <h2 className="px-5 pt-4 text-sm font-semibold text-slate-200">{L(lang, 'Set competitivo', 'Set competitivo')}</h2>
           <p className="px-5 text-[11px] text-slate-500">
-            SOV = {L(lang, 'menzioni dell’entità / menzioni del set', 'entity mentions / set mentions')} · SOE = {L(lang, 'engagement dell’entità / engagement del set', 'entity engagement / set engagement')} · SPV = {L(lang, 'positive dell’entità / positive del set', 'entity positives / set positives')}
+            SOV = {L(lang, 'menzioni dell’entità / menzioni del set', 'menciones de la entidad / menciones del set')} · SOE = {L(lang, 'engagement dell’entità / engagement del set', 'engagement de la entidad / engagement del set')} · SPV = {L(lang, 'positive dell’entità / positive del set', 'positivas de la entidad / positivas del set')}
           </p>
           <table className="mt-3 w-full min-w-[40rem] text-left text-xs">
             <thead>
               <tr className="border-b border-[var(--border)] text-[10px] uppercase tracking-wider text-slate-500">
-                <th className="px-5 py-2 font-semibold">{L(lang, 'Entità', 'Entity')}</th>
-                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Menzioni', 'Mentions')}</th>
+                <th className="px-5 py-2 font-semibold">{L(lang, 'Entità', 'Entidad')}</th>
+                <th className="px-3 py-2 text-right font-semibold">{L(lang, 'Menzioni', 'Menciones')}</th>
                 <th className="px-3 py-2 text-right font-semibold">SOV</th>
                 <th className="px-3 py-2 text-right font-semibold">Δ SOV</th>
                 <th className="px-3 py-2 text-right font-semibold">SOE</th>
@@ -263,9 +263,9 @@ function Num({ v }: { v: string }) {
 }
 
 const VERDICT_STYLE: Record<Verdict, { cls: string; it: string; en: string }> = {
-  reliable: { cls: 'bg-emerald-500/15 text-emerald-300', it: 'affidabile', en: 'reliable' },
-  caution: { cls: 'bg-amber-500/15 text-amber-300', it: 'con cautela', en: 'with caution' },
-  unusable: { cls: 'bg-red-500/15 text-red-300', it: 'da non usare', en: 'do not use' },
+  reliable: { cls: 'bg-emerald-500/15 text-emerald-300', it: 'affidabile', en: 'confiable' },
+  caution: { cls: 'bg-amber-500/15 text-amber-300', it: 'con cautela', en: 'con cautela' },
+  unusable: { cls: 'bg-red-500/15 text-red-300', it: 'da non usare', en: 'no usar' },
 };
 
 function KpiRow({ k, lang, verdict, reason }: { k: Kpi; lang: Lang; verdict?: Verdict; reason?: string }) {
@@ -300,9 +300,9 @@ function KpiRow({ k, lang, verdict, reason }: { k: Kpi; lang: Lang; verdict?: Ve
 
 function OverallBanner({ lang, overall, reason }: { lang: Lang; overall: 'suitable' | 'caution' | 'unsuitable'; reason: string }) {
   const style = {
-    suitable: { cls: 'border-emerald-500/30 bg-emerald-500/[0.05] text-emerald-200', Icon: CheckCircle2, it: 'Dati idonei', en: 'Data suitable' },
-    caution: { cls: 'border-amber-500/30 bg-amber-500/[0.05] text-amber-200', Icon: AlertTriangle, it: 'Dati idonei con cautele', en: 'Data suitable with caveats' },
-    unsuitable: { cls: 'border-red-500/30 bg-red-500/[0.05] text-red-200', Icon: ShieldAlert, it: 'Dati non idonei', en: 'Data not suitable' },
+    suitable: { cls: 'border-emerald-500/30 bg-emerald-500/[0.05] text-emerald-200', Icon: CheckCircle2, it: 'Dati idonei', en: 'Datos aptos' },
+    caution: { cls: 'border-amber-500/30 bg-amber-500/[0.05] text-amber-200', Icon: AlertTriangle, it: 'Dati idonei con cautele', en: 'Datos aptos con reservas' },
+    unsuitable: { cls: 'border-red-500/30 bg-red-500/[0.05] text-red-200', Icon: ShieldAlert, it: 'Dati non idonei', en: 'Datos no aptos' },
   }[overall];
   return (
     <div className={`mb-4 flex items-center gap-2 rounded-xl border px-4 py-3 text-sm ${style.cls}`}>
@@ -314,7 +314,7 @@ function OverallBanner({ lang, overall, reason }: { lang: Lang; overall: 'suitab
 }
 
 const CONFIDENCE = {
-  high: { it: 'alta', en: 'high' }, medium: { it: 'media', en: 'medium' }, low: { it: 'bassa', en: 'low' },
+  high: { it: 'alta', en: 'alta' }, medium: { it: 'media', en: 'media' }, low: { it: 'bassa', en: 'baja' },
 };
 
 function FindingCard({ f, lang }: { f: Finding; lang: Lang }) {
@@ -330,10 +330,10 @@ function FindingCard({ f, lang }: { f: Finding; lang: Lang }) {
         {f.observation}
       </p>
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 pl-5">
-        <dt className="text-slate-600">{L(lang, 'Evidenza', 'Evidence')}</dt><dd className="text-slate-300">{f.evidence}</dd>
-        <dt className="text-slate-600">{L(lang, 'Perché conta', 'Why it matters')}</dt><dd className="text-slate-400">{f.why}</dd>
-        <dt className="text-slate-600">{L(lang, 'Confidenza', 'Confidence')}</dt><dd className="text-slate-400">{CONFIDENCE[f.confidence][lang]}</dd>
-        <dt className="text-slate-600">{L(lang, 'Verifica', 'Check')}</dt><dd className="text-sky-200/80">{f.verify}</dd>
+        <dt className="text-slate-600">{L(lang, 'Evidenza', 'Evidencia')}</dt><dd className="text-slate-300">{f.evidence}</dd>
+        <dt className="text-slate-600">{L(lang, 'Perché conta', 'Por qué importa')}</dt><dd className="text-slate-400">{f.why}</dd>
+        <dt className="text-slate-600">{L(lang, 'Confidenza', 'Confianza')}</dt><dd className="text-slate-400">{CONFIDENCE[f.confidence][lang]}</dd>
+        <dt className="text-slate-600">{L(lang, 'Verifica', 'Verificación')}</dt><dd className="text-sky-200/80">{f.verify}</dd>
       </dl>
     </article>
   );

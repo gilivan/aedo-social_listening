@@ -126,7 +126,7 @@ export function sheetRelations(
       if (a.sheet === b.sheet && a.signature === b.signature) {
         out.push({
           kind: 'doppio-caricamento', a: a.sheet, b: b.sheet,
-          note: 'Lo stesso foglio risulta caricato due volte: importandoli entrambi ogni conto viene doppio. Tienine uno.',
+          note: 'La misma hoja aparece cargada dos veces: si importas ambas, cada conteo sale doble. Conserva solo una.',
         });
         continue;
       }
@@ -150,7 +150,7 @@ export function sheetRelations(
             kind: 'stessi-soggetti', a: a.sheet, b: b.sheet, column: ca.name,
             shared: shared.length,
             examples: shared.slice(0, 4),
-            note: `"${ca.name}" contiene gli stessi ${shared.length} valori in entrambi: le due tabelle si possono mettere in relazione.`,
+            note: `"${ca.name}" contiene los mismos ${shared.length} valores en ambas: las dos tablas se pueden relacionar.`,
           });
           break;
         }
@@ -166,12 +166,12 @@ export function sheetRelations(
             kind: 'stesso-periodo', a: a.sheet, b: b.sheet,
             from: ra.from < rb.from ? ra.from : rb.from,
             to: ra.to > rb.to ? ra.to : rb.to,
-            note: 'Stesse colonne e periodo sovrapposto: se sono la stessa misura vista due volte, sommarli raddoppia tutto.',
+            note: 'Mismas columnas y periodo superpuesto: si son la misma métrica vista dos veces, sumarlas duplica todo.',
           });
         } else if (!sovrapposti && a.signature === b.signature) {
           out.push({
             kind: 'periodi-consecutivi', a: a.sheet, b: b.sheet,
-            note: 'Stesse colonne e periodi che non si sovrappongono: è probabile che siano la stessa serie divisa per periodo, da mettere in fila.',
+            note: 'Mismas columnas y periodos que no se superponen: probablemente sean la misma serie dividida por periodo, para poner en secuencia.',
           });
         }
       }
@@ -192,7 +192,7 @@ export function sheetRelations(
           out.push({
             kind: 'scala-diversa', a: a.sheet, b: b.sheet, column: ca.name,
             ratio: Math.round(ratio),
-            note: `"${ca.name}" ha valori ${Math.round(ratio)} volte più grandi in un foglio che nell'altro: quasi sempre è la stessa cosa scritta in unità diverse.`,
+            note: `"${ca.name}" tiene valores ${Math.round(ratio)} veces más grandes en una hoja que en la otra: casi siempre es lo mismo escrito en unidades distintas.`,
           });
           break;
         }

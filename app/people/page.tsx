@@ -5,7 +5,7 @@ import { detectPeople, personCard, peopleRanking, personSeries } from '@/lib/peo
 import { PersonCards, PeopleLeaderboard } from '@/components/people-charts';
 import { SectionTabs } from '@/components/section-tabs';
 
-export const metadata = { title: 'People' };
+export const metadata = { title: 'Personas' };
 export const dynamic = 'force-dynamic';
 
 // ---------------------------------------------------------------------------
@@ -19,18 +19,18 @@ export const dynamic = 'force-dynamic';
 // ---------------------------------------------------------------------------
 
 export default async function PeoplePage() {
-  if (!isAdmin(await getCurrentUser())) return <EmptyState message="Available to admins." />;
+  if (!isAdmin(await getCurrentUser())) return <EmptyState message="Disponible solo para administradores." />;
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message="Select a project first." />;
+  if (!project) return <EmptyState message="Primero selecciona un proyecto." />;
 
   const names = await detectPeople(project.id);
   if (!names.length) {
     return (
       <>
         <SectionTabs group="data" />
-        <PageHeader title="People"
-          subtitle="Personal branding: how each person is growing, publishing and being followed." />
-        <EmptyState message="Nessuna persona rilevata in questo progetto. Compare da sola quando importi fogli che seguono manager o portavoce — Radar li riconosce dalla forma del file." />
+        <PageHeader title="Personas"
+          subtitle="Marca personal: cómo crece, publica y es seguida cada persona." />
+        <EmptyState message="No se detectaron personas en este proyecto. Aparecen solas cuando importas hojas que siguen a directivos o voceros: AEDO los reconoce por la forma del archivo." />
       </>
     );
   }
@@ -50,9 +50,9 @@ export default async function PeoplePage() {
     <>
       <SectionTabs group="data" />
       <PageHeader
-        title="People"
-        subtitle="Personal branding: how each person is growing, publishing and being followed."
-        info="People are recognised from the SHAPE of the imported sheets — a sheet per person, a column per person, or an entity column of names — not from a list you have to maintain. The same person written three ways (Acquaviva, RICCARDO ACQUAVIVA, ACQUAVIVA) is one card, merged on the surname. Averages are averaged and cumulative totals take their latest value: summing an engagement rate across months would produce a plausible, meaningless number."
+        title="Personas"
+        subtitle="Marca personal: cómo crece, publica y es seguida cada persona."
+        info="Las personas se reconocen por la FORMA de las hojas importadas (una hoja por persona, una columna por persona o una columna de entidad con nombres), no por una lista que tengas que mantener. La misma persona escrita de tres formas (Acquaviva, RICCARDO ACQUAVIVA, ACQUAVIVA) es una sola ficha, unificada por el apellido. Los promedios se promedian y los totales acumulados toman su último valor: sumar una tasa de engagement de varios meses produciría un número verosímil, pero sin sentido."
       />
 
       <div className="mb-4">

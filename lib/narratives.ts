@@ -9,8 +9,8 @@ export type Narrative = typeof narratives.$inferSelect;
 const SYSTEM = `You are an information intelligence analyst. You receive social posts (with author) about the same sector.
 Identify the NARRATIVES: groups of messages pushing the same thesis or framing (even across different languages).
 For each narrative return:
-- title: narrative name in English (max 8 words)
-- description: 1-2 sentences in English: what the thesis is and how it is argued
+- title: narrative name in Spanish (max 8 words)
+- description: 1-2 sentences in Spanish: what the thesis is and how it is argued
 - stance: "positive", "negative", "neutral" or "polarizing" toward the sector
 - coordinated: true ONLY if there are signs of coordination (near-identical messages from different accounts, unnatural repetition); otherwise false
 - accounts: the most active authors in the narrative (max 6 handles)

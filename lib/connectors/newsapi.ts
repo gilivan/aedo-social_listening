@@ -13,10 +13,10 @@ type Article = {
 
 export const newsapi: Connector = {
   id: 'newsapi',
-  label: 'NewsAPI (150k outlets)',
+  label: 'NewsAPI (150.000 medios)',
   tier: 'premium',
   enabled: () => Boolean(cfg('NEWSAPI_KEY')),
-  disabledReason: 'Requires a NewsAPI key (newsapi.org): enter it here in Settings',
+  disabledReason: 'Requiere una clave de NewsAPI (newsapi.org): ingrésala aquí, en Ajustes',
   async fetchMentions(q) {
     // Sintassi booleana nativa di NewsAPI: AND / OR / NOT con parentesi
     const parts: string[] = [];

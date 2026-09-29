@@ -22,14 +22,14 @@ export function TopicSentimentBubble({ data }: { data: TopicPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={460}>
       <ScatterChart margin={{ top: 20, right: 30, bottom: 30, left: 10 }}>
-        <XAxis type="number" dataKey="sentiment" name="Sentiment" domain={[-1, 1]}
+        <XAxis type="number" dataKey="sentiment" name="Sentimiento" domain={[-1, 1]}
           tick={{ fill: '#7c8cab', fontSize: 11 }} tickLine={false}
-          label={{ value: '← negative    Sentiment    positive →', position: 'bottom', fill: '#64748b', fontSize: 11 }} />
+          label={{ value: '← negativo    Sentimiento    positivo →', position: 'bottom', fill: '#64748b', fontSize: 11 }} />
         <YAxis type="number" dataKey="growth" name="Peso relativo" unit="%"
           domain={['dataMin', 'dataMax']}
           tick={{ fill: '#7c8cab', fontSize: 11 }} tickLine={false}
-          label={{ value: '← in calo    peso relativo    in crescita →', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }} />
-        <ZAxis type="number" dataKey="volume" range={[120, 2200]} name="Volume" />
+          label={{ value: '← en descenso    peso relativo    en crecimiento →', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }} />
+        <ZAxis type="number" dataKey="volume" range={[120, 2200]} name="Volumen" />
         <ReferenceLine x={0} stroke="#334155" strokeDasharray="4 4" />
         <ReferenceLine y={0} stroke="#334155" strokeDasharray="4 4" />
         <Tooltip contentStyle={TOOLTIP} cursor={{ strokeDasharray: '3 3' }}
@@ -39,7 +39,7 @@ export function TopicSentimentBubble({ data }: { data: TopicPoint[] }) {
             return (
               <div style={TOOLTIP} className="px-3 py-2">
                 <p className="font-semibold text-slate-100">{p.topic}</p>
-                <p>volume {p.volume} · sentiment {p.sentiment.toFixed(2)} · crescita {p.growth}%</p>
+                <p>volumen {p.volume} · sentimiento {p.sentiment.toFixed(2)} · crecimiento {p.growth}%</p>
               </div>
             );
           }} />
@@ -52,7 +52,7 @@ export function TopicSentimentBubble({ data }: { data: TopicPoint[] }) {
 }
 
 // ── 3. Heatmap giorno × ora ───────────────────────────────────────────────
-const DAYS = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+const DAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 // grid è indicizzato con dow Postgres (0=Dom); riordino Lun→Dom
 const ORDER = [1, 2, 3, 4, 5, 6, 0];
 
@@ -80,12 +80,12 @@ export function Heatmap({ grid }: { grid: number[][] }) {
             <div className="flex flex-1 gap-px">
               {grid[dow].map((n, h) => (
                 <div key={h} className="group relative h-6 flex-1 rounded-sm" style={{ backgroundColor: color(n) }}
-                  title={`${DAYS[i]} ${h}:00 — ${n} mention`} />
+                  title={`${DAYS[i]} ${h}:00 — ${n} menciones`} />
               ))}
             </div>
           </div>
         ))}
-        <p className="mt-2 pl-10 text-[10px] text-slate-600">Local time. Color = intensity of conversations.</p>
+        <p className="mt-2 pl-10 text-[10px] text-slate-600">Hora local. Color = intensidad de las conversaciones.</p>
       </div>
     </div>
   );
@@ -103,10 +103,10 @@ export function SentimentWaterfall({ steps }: { steps: WFStep[] }) {
           tick={{ fill: '#7c8cab', fontSize: 11 }} tickLine={false} />
         {/* asse dx: contributo netto del giorno (barre) */}
         <YAxis yAxisId="delta" orientation="right" width={44} tick={{ fill: '#7c8cab', fontSize: 11 }} tickLine={false}
-          label={{ value: 'daily net (pos − neg)', angle: 90, position: 'insideRight', fill: '#64748b', fontSize: 10 }} />
+          label={{ value: 'neto diario (pos − neg)', angle: 90, position: 'insideRight', fill: '#64748b', fontSize: 10 }} />
         {/* asse sx: saldo cumulato (linea) */}
         <YAxis yAxisId="cum" orientation="left" width={44} tick={{ fill: '#38bdf8', fontSize: 11 }} tickLine={false}
-          label={{ value: 'cumulative balance', angle: -90, position: 'insideLeft', fill: '#38bdf8', fontSize: 10 }} />
+          label={{ value: 'saldo acumulado', angle: -90, position: 'insideLeft', fill: '#38bdf8', fontSize: 10 }} />
         <ReferenceLine yAxisId="delta" y={0} stroke="#475569" />
         <Tooltip contentStyle={TOOLTIP} cursor={{ fill: '#ffffff08' }}
           content={({ payload, label }) => {
@@ -115,9 +115,9 @@ export function SentimentWaterfall({ steps }: { steps: WFStep[] }) {
             const d = p.delta > 0 ? `+${p.delta}` : `${p.delta}`;
             return (
               <div style={TOOLTIP} className="px-3 py-2">
-                <p className="font-semibold text-slate-100">{new Date(String(label)).toLocaleDateString('en-US')}</p>
-                <p style={{ color: p.up ? '#34d399' : '#f87171' }}>{d} net that day — {p.up ? 'more positive' : 'more negative'} posts</p>
-                <p className="text-sky-300">running balance {p.cumulative > 0 ? '+' : ''}{p.cumulative}</p>
+                <p className="font-semibold text-slate-100">{new Date(String(label)).toLocaleDateString('es-CO')}</p>
+                <p style={{ color: p.up ? '#34d399' : '#f87171' }}>{d} neto ese día: más publicaciones {p.up ? 'positivas' : 'negativas'}</p>
+                <p className="text-sky-300">saldo acumulado {p.cumulative > 0 ? '+' : ''}{p.cumulative}</p>
               </div>
             );
           }} />
@@ -151,7 +151,7 @@ type NetEdge = { a: string; b: string };
 const netSentColor = (s: number | null) =>
   s === null ? '#64748b' : s > 0.15 ? '#34d399' : s < -0.15 ? '#f87171' : '#94a3b8';
 const netSentWord = (s: number | null) =>
-  s === null ? 'n/a' : s > 0.15 ? 'positive' : s < -0.15 ? 'negative' : 'neutral';
+  s === null ? 'n/d' : s > 0.15 ? 'positivo' : s < -0.15 ? 'negativo' : 'neutral';
 const TIER_LABEL: Record<string, string> = { mega: 'Mega', macro: 'Macro', micro: 'Micro' };
 
 export function InfluencerNetwork({ nodes, edges, communities }: {
@@ -220,9 +220,9 @@ export function InfluencerNetwork({ nodes, edges, communities }: {
             // Nodo cliccabile → i post di quell'autore in Listening.
             <a key={n.id} href={href(n.id)} style={{ cursor: 'pointer' }}>
               <title>{`${n.label}
-Focus: ${n.community}  ·  ${TIER_LABEL[n.tier]} voice
-${n.posts} posts  ·  engagement ${n.engagement.toLocaleString('en-US')}  ·  sentiment ${netSentWord(n.sentiment)}${n.sentiment === null ? '' : ` (${n.sentiment > 0 ? '+' : ''}${n.sentiment})`}
-Click to see their posts`}</title>
+Enfoque: ${n.community}  ·  Voz ${TIER_LABEL[n.tier]}
+${n.posts} publicaciones  ·  engagement ${n.engagement.toLocaleString('es-CO')}  ·  sentimiento ${netSentWord(n.sentiment)}${n.sentiment === null ? '' : ` (${n.sentiment > 0 ? '+' : ''}${n.sentiment})`}
+Haz clic para ver sus publicaciones`}</title>
               {/* Anello esterno = sentiment medio dell'autore; riempimento = tema. */}
               <circle cx={p.x} cy={p.y} r={R(r + 2.5)} fill="none" stroke={sc} strokeWidth={2.5} strokeOpacity={0.9} />
               <circle cx={p.x} cy={p.y} r={r} fill={c} fillOpacity={0.3} stroke={c} strokeWidth={1.5} />
@@ -234,12 +234,12 @@ Click to see their posts`}</title>
 
       {/* Lista classificata: informazione garantita anche se il grafo è sparso. */}
       <div className="mt-4">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Top voices — click to read their posts</p>
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Voces principales: haz clic para leer sus publicaciones</p>
         <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
           {sorted.slice(0, 10).map((n, i) => (
             <a key={n.id} href={href(n.id)}
               className="flex items-center gap-2 rounded-md border border-[var(--border)] bg-white/[0.02] px-2.5 py-1.5 text-xs transition hover:bg-sky-500/10"
-              title={`See ${n.label}'s posts`}>
+              title={`Ver publicaciones de ${n.label}`}>
               <span className="w-4 shrink-0 text-right text-slate-600">{i + 1}</span>
               <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: commColor(n.community) }} />
               <span className="min-w-0 flex-1 truncate font-medium text-slate-200">{n.label}</span>
@@ -248,7 +248,7 @@ Click to see their posts`}</title>
                 {netSentWord(n.sentiment)}
               </span>
               <span className="shrink-0 tabular-nums text-slate-500">{n.posts}p</span>
-              <span className="w-14 shrink-0 text-right tabular-nums text-slate-400">{n.engagement.toLocaleString('en-US')}</span>
+              <span className="w-14 shrink-0 text-right tabular-nums text-slate-400">{n.engagement.toLocaleString('es-CO')}</span>
             </a>
           ))}
         </div>
@@ -340,27 +340,27 @@ export function SankeyFlow({ nodes, links, sourceColors }: {
   const nodeTip = (nd: FlowNode): { title: string; lines: string[] } => {
     if (nd.kind === 'source') {
       const outs = srcOut.get(nd.key); const tot = (outs ?? []).reduce((s, x) => s + x.v, 0);
-      return { title: `${nd.label} · source`, lines: [`${tot} mentions across ${(outs ?? []).length} topics`, `Top topics: ${topList(outs)}`] };
+      return { title: `${nd.label} · fuente`, lines: [`${tot} menciones en ${(outs ?? []).length} temas`, `Temas principales: ${topList(outs)}`] };
     }
     if (nd.kind === 'topic') {
       const inflow = topicIn.get(nd.key) ?? 0;
       const sents = (outSent.get(nd.key) ?? []);
       const tot = sents.reduce((s, x) => s + x.v, 0) || 1;
       const split = ['positive', 'neutral', 'negative'].map((s) => {
-        const v = sents.find((x) => x.k === `x:${s}`)?.v ?? 0; return `${s} ${Math.round((v / tot) * 100)}%`;
+        const v = sents.find((x) => x.k === `x:${s}`)?.v ?? 0; return `${({ positive: 'positivo', neutral: 'neutral', negative: 'negativo' } as Record<string, string>)[s]} ${Math.round((v / tot) * 100)}%`;
       }).join(' · ');
-      return { title: `${nd.label} · topic`, lines: [`${inflow} mentions`, `From: ${topList(inSrc.get(nd.key))}`, `Sentiment: ${split}`] };
+      return { title: `${nd.label} · tema`, lines: [`${inflow} menciones`, `De: ${topList(inSrc.get(nd.key))}`, `Sentimiento: ${split}`] };
     }
     const tops = sentIn.get(nd.key); const tot = (tops ?? []).reduce((s, x) => s + x.v, 0);
-    return { title: `${nd.label} · sentiment`, lines: [`${tot} mentions`, `Driven by: ${topList(tops)}`] };
+    return { title: `${nd.label} · sentimiento`, lines: [`${tot} menciones`, `Impulsado por: ${topList(tops)}`] };
   };
   const linkTip = (l: FlowLink): { title: string; lines: string[] } => {
     if (l.target.startsWith('t:')) {
       const share = Math.round((l.value / (topicIn.get(l.target) ?? l.value)) * 100);
-      return { title: `${labelOf(l.source)} → ${labelOf(l.target)}`, lines: [`${l.value} mentions`, `${share}% of “${labelOf(l.target)}” comes from here`] };
+      return { title: `${labelOf(l.source)} → ${labelOf(l.target)}`, lines: [`${l.value} menciones`, `El ${share}% de “${labelOf(l.target)}” viene de aquí`] };
     }
     const share = Math.round((l.value / (topicOut.get(l.source) ?? l.value)) * 100);
-    return { title: `${labelOf(l.source)} → ${labelOf(l.target)}`, lines: [`${l.value} mentions`, `${share}% of “${labelOf(l.source)}” is ${labelOf(l.target)}`] };
+    return { title: `${labelOf(l.source)} → ${labelOf(l.target)}`, lines: [`${l.value} menciones`, `El ${share}% de “${labelOf(l.source)}” es ${labelOf(l.target)}`] };
   };
 
   const srcOff = new Map<string, number>();
@@ -405,13 +405,13 @@ export function SankeyFlow({ nodes, links, sourceColors }: {
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-1.5">
-        <span className="mr-1 text-[11px] uppercase tracking-wide text-slate-600">Sources:</span>
+        <span className="mr-1 text-[11px] uppercase tracking-wide text-slate-600">Fuentes:</span>
         {sources.map((n) => <Chip key={n.key} node={n} sel={selSrc} />)}
-        <span className="ml-2 mr-1 text-[11px] uppercase tracking-wide text-slate-600">Sentiment:</span>
+        <span className="ml-2 mr-1 text-[11px] uppercase tracking-wide text-slate-600">Sentimiento:</span>
         {sentiments.map((n) => <Chip key={n.key} node={n} sel={selSent} />)}
         {anySel && (
           <button onClick={() => { setSelSrc(new Set()); setSelSent(new Set()); }}
-            className="ml-1 rounded-full px-2.5 py-1 text-xs text-sky-400 hover:text-sky-300">clear ✕</button>
+            className="ml-1 rounded-full px-2.5 py-1 text-xs text-sky-400 hover:text-sky-300">limpiar ✕</button>
         )}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: 600 }}>
@@ -504,14 +504,14 @@ export function ShareOfVoiceStream({ entities, days }: { entities: string[]; day
   return (
     <div>
       <div className="mb-2 flex items-center gap-1.5">
-        {([['volume', 'Volume'], ['share', 'Share (100%)']] as const).map(([k, label]) => (
+        {([['volume', 'Volumen'], ['share', 'Cuota (100%)']] as const).map(([k, label]) => (
           <button key={k} onClick={() => setMode(k)}
             className={`rounded-full border px-3 py-1 text-xs transition ${
               mode === k ? 'border-sky-500 bg-sky-500/15 text-sky-200' : 'border-[var(--border)] text-slate-500 hover:text-slate-300'
             }`}
             title={k === 'volume'
-              ? 'Absolute mentions per day, stacked — shows the real peaks and dips in conversation volume'
-              : 'Each day normalized to 100% — shows how the share splits between entities, ignoring total volume'}>
+              ? 'Menciones absolutas por día, apiladas: muestra los picos y caídas reales del volumen de conversación'
+              : 'Cada día normalizado al 100%: muestra cómo se reparte la cuota entre entidades, sin importar el volumen total'}>
             {label}
           </button>
         ))}
@@ -538,7 +538,7 @@ export function ShareOfVoiceStream({ entities, days }: { entities: string[]; day
                 : Number(v);
               const share = tot ? Math.round((n / tot) * 100) : 0;
               return [
-                mode === 'share' ? `${share}%  ·  ${n} mentions` : `${n} mentions  ·  ${share}% of the day`,
+                mode === 'share' ? `${share}%  ·  ${n} menciones` : `${n} menciones  ·  ${share}% del día`,
                 String(name),
               ];
             }} />
@@ -559,9 +559,9 @@ type CNode = { term: string; freq: number; sentiment: number };
 type CEdge = { a: string; b: string; weight: number };
 
 const CONSTELLATION_SENTS = [
-  { key: 'positive', label: 'Positive', color: '#34d399' },
+  { key: 'positive', label: 'Positivo', color: '#34d399' },
   { key: 'neutral', label: 'Neutral', color: '#94a3b8' },
-  { key: 'negative', label: 'Negative', color: '#f87171' },
+  { key: 'negative', label: 'Negativo', color: '#f87171' },
 ] as const;
 
 export function SemanticConstellation({ nodes, edges }: { nodes: CNode[]; edges: CEdge[] }) {
@@ -595,7 +595,7 @@ export function SemanticConstellation({ nodes, edges }: { nodes: CNode[]; edges:
   return (
     <div>
       <div className="mb-2 flex flex-wrap items-center gap-1.5">
-        <span className="text-[11px] uppercase tracking-wide text-slate-600">Sentiment:</span>
+        <span className="text-[11px] uppercase tracking-wide text-slate-600">Sentimiento:</span>
         {CONSTELLATION_SENTS.map((s) => {
           const on = sel.has(s.key);
           return (
@@ -606,7 +606,7 @@ export function SemanticConstellation({ nodes, edges }: { nodes: CNode[]; edges:
             </button>
           );
         })}
-        <span className="text-[11px] text-slate-500">— line thickness = how often two terms appear together; hover a line for details</span>
+        <span className="text-[11px] text-slate-500">— grosor de línea = frecuencia con que dos términos aparecen juntos; pasa el cursor por una línea para ver detalles</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: 620 }}>
         <rect x="0" y="0" width={W} height={H} rx="14" fill="#0a0f1f" />
@@ -619,7 +619,7 @@ export function SemanticConstellation({ nodes, edges }: { nodes: CNode[]; edges:
           const w = 1.5 + (e.weight / maxW) * 7;
           return (
             <g key={i} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} style={{ cursor: 'pointer' }}>
-              <title>{`${e.a}  ↔  ${e.b}\nappear together in ${e.weight} mention${e.weight === 1 ? '' : 's'}\n(thicker line = they co-occur more often)`}</title>
+              <title>{`${e.a}  ↔  ${e.b}\naparecen juntos en ${e.weight} ${e.weight === 1 ? 'mención' : 'menciones'}\n(línea más gruesa = coinciden con más frecuencia)`}</title>
               {/* fascia invisibile larga: aggancia il mouse anche sulle linee sottili */}
               <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="transparent" strokeWidth={Math.max(14, w)} />
               <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} strokeLinecap="round"
@@ -635,7 +635,7 @@ export function SemanticConstellation({ nodes, edges }: { nodes: CNode[]; edges:
           const vis = sel.has(bucket(n.sentiment));
           return (
             <g key={n.term} opacity={vis ? 1 : 0.1}>
-              <title>{`${n.term} · ${n.freq} mentions · sentiment ${n.sentiment} (${bucket(n.sentiment)})`}</title>
+              <title>{`${n.term} · ${n.freq} menciones · sentimiento ${n.sentiment} (${({ positive: 'positivo', neutral: 'neutral', negative: 'negativo' } as Record<string, string>)[bucket(n.sentiment)]})`}</title>
               <circle cx={p.x} cy={p.y} r={r} fill={c} fillOpacity={0.2} stroke={c} strokeWidth={1.5} />
               <text x={p.x} y={p.y + r + 12} textAnchor="middle" fontSize={Math.max(10, Math.min(15, r * 0.6))}
                 fill="#e2e8f0" fontWeight={n.freq > maxFreq * 0.5 ? 700 : 400}>{n.term}</text>
@@ -670,12 +670,12 @@ export function AuthorPyramid({ tiers }: { tiers: AuthorTier[] }) {
         const c = TIER_COLOR[t.key] ?? '#64748b';
         return (
           <g key={t.key}>
-            <title>{`${t.label} · ${t.authors} authors · ${t.sharePct}% of reach`}</title>
+            <title>{`${t.label} · ${t.authors} autores · ${t.sharePct}% del alcance`}</title>
             <path d={`M${cx - tw / 2},${y0} L${cx + tw / 2},${y0} L${cx + bw / 2},${y1} L${cx - bw / 2},${y1} Z`}
               fill={c} fillOpacity={0.28} stroke={c} strokeWidth={1.5} />
             <text x={cx} y={(y0 + y1) / 2 - 8} textAnchor="middle" fontSize="15" fontWeight={700} fill="#e2e8f0">{t.label}</text>
             <text x={cx} y={(y0 + y1) / 2 + 12} textAnchor="middle" fontSize="12" fill="#94a3b8">
-              {t.authors.toLocaleString('en-US')} author{t.authors === 1 ? '' : 's'} · <tspan fill={c} fontWeight={700}>{t.sharePct}%</tspan> of reach
+              {t.authors.toLocaleString('es-CO')} {t.authors === 1 ? 'autor' : 'autores'} · <tspan fill={c} fontWeight={700}>{t.sharePct}%</tspan> del alcance
             </text>
           </g>
         );
@@ -691,10 +691,13 @@ const QUAD_COLOR: Record<string, string> = {
 };
 
 const QUAD_LABEL: Record<string, string> = {
-  'Rising stars': 'big and still growing',
-  'Emerging': 'small but surging',
-  'Steady': 'big but flat',
-  'Declining': 'fading',
+  'Rising stars': 'grande y todavía creciendo',
+  'Emerging': 'pequeño pero en auge',
+  'Steady': 'grande pero estable',
+  'Declining': 'en declive',
+};
+const QUAD_NAME: Record<string, string> = {
+  'Rising stars': 'Estrellas en ascenso', 'Emerging': 'Emergentes', 'Steady': 'Estables', 'Declining': 'En declive',
 };
 
 export function MomentumQuadrant({ points }: { points: QuadrantPoint[] }) {
@@ -703,14 +706,14 @@ export function MomentumQuadrant({ points }: { points: QuadrantPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={480}>
       <ScatterChart margin={{ top: 20, right: 30, bottom: 30, left: 10 }}>
-        <XAxis type="number" dataKey="volume" name="Volume" domain={[0, 'dataMax']}
+        <XAxis type="number" dataKey="volume" name="Volumen" domain={[0, 'dataMax']}
           tick={{ fill: '#7c8cab', fontSize: 11 }} tickLine={false}
-          label={{ value: '← smaller    Volume (mentions, 14d)    bigger →', position: 'bottom', fill: '#64748b', fontSize: 11 }} />
-        <YAxis type="number" dataKey="acceleration" name="Acceleration" unit="%"
+          label={{ value: '← menor    Volumen (menciones, 14 d)    mayor →', position: 'bottom', fill: '#64748b', fontSize: 11 }} />
+        <YAxis type="number" dataKey="acceleration" name="Aceleración" unit="%"
           domain={['dataMin', 'dataMax']}
           tick={{ fill: '#7c8cab', fontSize: 11 }} tickLine={false}
-          label={{ value: '← declining    Acceleration    accelerating →', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }} />
-        <ZAxis type="number" dataKey="volume" range={[120, 2000]} name="Volume" />
+          label={{ value: '← desacelerando    Aceleración    acelerando →', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }} />
+        <ZAxis type="number" dataKey="volume" range={[120, 2000]} name="Volumen" />
         <ReferenceLine x={medianVol} stroke="#334155" strokeDasharray="4 4" />
         <ReferenceLine y={0} stroke="#334155" strokeDasharray="4 4" />
         <Tooltip contentStyle={TOOLTIP} cursor={{ strokeDasharray: '3 3' }}
@@ -722,8 +725,8 @@ export function MomentumQuadrant({ points }: { points: QuadrantPoint[] }) {
             return (
               <div style={TOOLTIP} className="px-3 py-2">
                 <p className="font-semibold text-slate-100">{p.topic}</p>
-                <p className="text-slate-300">{p.volume} mentions · momentum {accel}</p>
-                <p className="mt-0.5 text-[11px]"><span style={{ color: c }}>{p.quadrant}</span> <span className="text-slate-500">· {QUAD_LABEL[p.quadrant]}</span></p>
+                <p className="text-slate-300">{p.volume} menciones · momentum {accel}</p>
+                <p className="mt-0.5 text-[11px]"><span style={{ color: c }}>{QUAD_NAME[p.quadrant] ?? p.quadrant}</span> <span className="text-slate-500">· {QUAD_LABEL[p.quadrant]}</span></p>
               </div>
             );
           }} />
@@ -742,7 +745,7 @@ export function MomentumQuadrant({ points }: { points: QuadrantPoint[] }) {
 type HealthComponent = { key: string; label: string; value: number; weight: number };
 const healthColor = (v: number) => v >= 80 ? '#34d399' : v >= 65 ? '#38bdf8' : v >= 50 ? '#fbbf24' : '#f87171';
 
-export function BrandHealthGauge({ score, grade, label = 'Health Index' }: { score: number; grade: string; label?: string }) {
+export function BrandHealthGauge({ score, grade, label = 'Índice de salud' }: { score: number; grade: string; label?: string }) {
   const R = 80, C = 100, sw = 16;
   const start = 135, sweep = 270; // arco 270°
   const rad = (deg: number) => (deg * Math.PI) / 180;
@@ -785,7 +788,7 @@ export function RiskGauge({ risk, level }: { risk: number; level: string }) {
       <path d={arc(Math.max(0.001, risk / 100))} fill="none" stroke={col} strokeWidth={sw} strokeLinecap="round" />
       <text x={C} y={C - 4} textAnchor="middle" fontSize="46" fontWeight={800} fill="#f1f5f9">{risk}</text>
       <text x={C} y={C + 22} textAnchor="middle" fontSize="13" fill={col} fontWeight={700} letterSpacing="1">{level.toUpperCase()}</text>
-      <text x={C} y={C + 40} textAnchor="middle" fontSize="10" fill="#64748b">Risk index</text>
+      <text x={C} y={C + 40} textAnchor="middle" fontSize="10" fill="#64748b">Índice de riesgo</text>
     </svg>
   );
 }
@@ -800,7 +803,7 @@ export function HealthBars({ components }: { components: HealthComponent[] }) {
             <div className="h-full rounded-full" style={{ width: `${c.value}%`, backgroundColor: healthColor(c.value) }} />
           </div>
           <span className="w-10 shrink-0 text-right text-xs tabular-nums text-slate-400">{c.value}</span>
-          <span className="w-12 shrink-0 text-right text-[10px] text-slate-600">{Math.round(c.weight * 100)}% wt</span>
+          <span className="w-12 shrink-0 text-right text-[10px] text-slate-600">{Math.round(c.weight * 100)}% peso</span>
         </div>
       ))}
     </div>
@@ -846,7 +849,7 @@ export function Sparkline({ values }: { values: number[] }) {
 // ── 2b. Emotion Radar ─────────────────────────────────────────────────────
 type EmotionSlice = { emotion: string; value: number; share: number };
 const EMOTION_LABEL: Record<string, string> = {
-  joy: 'Joy', trust: 'Trust', fear: 'Fear', anger: 'Anger', sadness: 'Sadness', surprise: 'Surprise',
+  joy: 'Alegría', trust: 'Confianza', fear: 'Miedo', anger: 'Ira', sadness: 'Tristeza', surprise: 'Sorpresa',
 };
 
 export function EmotionRadar({ data }: { data: EmotionSlice[] }) {
@@ -864,7 +867,7 @@ export function EmotionRadar({ data }: { data: EmotionSlice[] }) {
             return (
               <div style={TOOLTIP} className="px-3 py-2">
                 <p className="font-semibold text-slate-100">{p.label}</p>
-                <p>{p.value} mentions · {p.share}%</p>
+                <p>{p.value} menciones · {p.share}%</p>
               </div>
             );
           }} />
@@ -887,7 +890,7 @@ export function GeoBubbleMap({ points }: { points: GeoPoint[] }) {
   // legenda per-lingua, non spalmato sui confini.
   const maxShare = Math.max(1, ...points.map((p) => p.share));
   const fmtShare = (s: number) => s < 0.1 ? '<0.1%' : `${s}%`;
-  const sentLabel = (s: number | null) => s === null ? 'n/a' : s > 0.15 ? `positive (${s})` : s < -0.15 ? `negative (${s})` : `neutral (${s})`;
+  const sentLabel = (s: number | null) => s === null ? 'n/d' : s > 0.15 ? `positivo (${s})` : s < -0.15 ? `negativo (${s})` : `neutral (${s})`;
 
   // Ogni paese → la lingua con più volume che lo "rappresenta" (dove è parlata).
   const claim = new Map<string, GeoPoint>();
@@ -915,7 +918,7 @@ export function GeoBubbleMap({ points }: { points: GeoPoint[] }) {
         const op = 0.25 + Math.sqrt(p.share / maxShare) * 0.65;
         return (
           <path key={c.id} d={c.d} fill="#38bdf8" fillOpacity={op} stroke="#38bdf8" strokeOpacity={0.45} strokeWidth={0.5}>
-            <title>{`${p.flag} ${p.country} — spoken in ${c.name}\n${p.volume} mentions · ${fmtShare(p.share)} of the conversation · avg sentiment ${sentLabel(p.sentiment)}`}</title>
+            <title>{`${p.flag} ${p.country} — hablado en ${c.name}\n${p.volume} menciones · ${fmtShare(p.share)} de la conversación · sentimiento promedio ${sentLabel(p.sentiment)}`}</title>
           </path>
         );
       })}
@@ -970,7 +973,7 @@ export function ConversationForecastChart({ history, projected }: {
         <YAxis width={36} tick={{ fill: '#7c8cab', fontSize: 11 }} tickLine={false} allowDecimals={false} />
         {splitDay && (
           <ReferenceLine x={splitDay} stroke="#475569" strokeDasharray="3 3"
-            label={{ value: 'today', position: 'insideTopRight', fill: '#64748b', fontSize: 10 }} />
+            label={{ value: 'hoy', position: 'insideTopRight', fill: '#64748b', fontSize: 10 }} />
         )}
         <Tooltip contentStyle={TOOLTIP} cursor={{ stroke: '#334155' }}
           content={({ payload, label }) => {
@@ -979,10 +982,10 @@ export function ConversationForecastChart({ history, projected }: {
             const isProjected = p.actual === null;
             return (
               <div style={TOOLTIP} className="px-3 py-2">
-                <p className="font-semibold text-slate-100">{new Date(String(label)).toLocaleDateString('en-US')}</p>
+                <p className="font-semibold text-slate-100">{new Date(String(label)).toLocaleDateString('es-CO')}</p>
                 {isProjected
-                  ? <p className="text-violet-300">projected ~{p.projected} <span className="text-slate-500">(range {p.low}–{(p.low ?? 0) + (p.high ?? 0)})</span></p>
-                  : <p className="text-sky-300">{p.actual} mentions</p>}
+                  ? <p className="text-violet-300">proyectado ~{p.projected} <span className="text-slate-500">(rango {p.low}–{(p.low ?? 0) + (p.high ?? 0)})</span></p>
+                  : <p className="text-sky-300">{p.actual} menciones</p>}
               </div>
             );
           }} />

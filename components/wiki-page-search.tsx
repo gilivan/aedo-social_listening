@@ -23,7 +23,7 @@ export function WikiPageSearch() {
     try {
       const res = await fetch(`/api/wikipedia/lookup-page?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'search failed');
+      if (!res.ok) throw new Error(data.error || 'la búsqueda falló');
       setResults(data.pages ?? []);
     } catch (e) {
       setError((e as Error).message);
@@ -46,12 +46,12 @@ export function WikiPageSearch() {
         <input
           value={picked ? picked.title : query}
           onChange={(e) => { setQuery(e.target.value); setPicked(null); scheduleSearch(e.target.value); }}
-          placeholder="Search Wikipedia page (e.g. Anthropic)"
+          placeholder="Buscar página de Wikipedia (p. ej. Anthropic)"
           autoComplete="off"
           className="w-full rounded-lg border border-[var(--border)] bg-[var(--panel-2)] py-1.5 pl-8 pr-2.5 text-sm text-slate-100 outline-none focus:border-sky-500/50"
         />
       </div>
-      {loading && <p className="text-[11px] text-slate-600">Searching…</p>}
+      {loading && <p className="text-[11px] text-slate-600">Buscando…</p>}
       {error && <p className="text-[11px] text-red-400">{error}</p>}
       {!picked && results.length > 0 && (
         <div className="flex flex-col overflow-hidden rounded-lg border border-[var(--border)]">
@@ -70,8 +70,8 @@ export function WikiPageSearch() {
       )}
       {picked && (
         <p className="flex items-center gap-1.5 text-[11px] text-emerald-400">
-          <Check className="size-3.5" /> {picked.title} selected
-          <button type="button" onClick={() => { setPicked(null); setQuery(''); }} className="ml-1 text-slate-600 underline hover:text-slate-400">change</button>
+          <Check className="size-3.5" /> {picked.title} seleccionada
+          <button type="button" onClick={() => { setPicked(null); setQuery(''); }} className="ml-1 text-slate-600 underline hover:text-slate-400">cambiar</button>
         </p>
       )}
     </div>

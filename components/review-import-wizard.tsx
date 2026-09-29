@@ -7,12 +7,12 @@ import { UploadCloud, FileSpreadsheet, Check, Loader2, ArrowRight } from 'lucide
 type Preview = { columns: string[]; sample: Record<string, unknown>[]; total: number };
 
 const FIELDS: { key: string; label: string; hint: string; required?: boolean }[] = [
-  { key: 'rating', label: 'Rating', hint: '1-5 (or 1-10 / 1-100 — anything gets rounded to 1-5)', required: true },
-  { key: 'content', label: 'Review text', hint: 'the review itself', required: true },
-  { key: 'title', label: 'Title', hint: 'optional headline' },
-  { key: 'author', label: 'Author', hint: 'who wrote it' },
-  { key: 'date', label: 'Date', hint: 'when it was written' },
-  { key: 'url', label: 'Link', hint: 'URL to the original, if any' },
+  { key: 'rating', label: 'Calificación', hint: '1-5 (o 1-10 / 1-100 — todo se redondea a 1-5)', required: true },
+  { key: 'content', label: 'Texto de la reseña', hint: 'la reseña en sí', required: true },
+  { key: 'title', label: 'Título', hint: 'titular opcional' },
+  { key: 'author', label: 'Autor', hint: 'quién la escribió' },
+  { key: 'date', label: 'Fecha', hint: 'cuándo se escribió' },
+  { key: 'url', label: 'Enlace', hint: 'URL del original, si existe' },
 ];
 const GUESS: Record<string, RegExp> = {
   rating: /(rating|stars|score|vote|nps)/i,
@@ -53,7 +53,7 @@ export function ReviewImportWizard() {
       const fd = new FormData(); fd.append('file', f);
       const res = await fetch('/api/import/preview', { method: 'POST', body: fd });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || 'Could not read the file'); return; }
+      if (!res.ok) { setError(data.error || 'No se pudo leer el archivo'); return; }
       setPreview(data);
       setMap(autoMap(data.columns));
     } catch (e) { setError((e as Error).message); }
@@ -61,7 +61,7 @@ export function ReviewImportWizard() {
   };
 
   const runImport = async () => {
-    if (!file || !map.rating || !map.content) { setError('Pick a file and map both Rating and Review text.'); return; }
+    if (!file || !map.rating || !map.content) { setError('Elige un archivo y asigna Calificación y Texto de la reseña.'); return; }
     setBusy('import'); setError(''); setResult(null);
     try {
       const fd = new FormData();
@@ -70,7 +70,7 @@ export function ReviewImportWizard() {
       fd.append('map', JSON.stringify(map));
       const res = await fetch('/api/reviews/import', { method: 'POST', body: fd });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || 'Import failed'); return; }
+      if (!res.ok) { setError(data.error || 'La importación falló'); return; }
       setResult(data);
       router.refresh();
     } catch (e) { setError((e as Error).message); }
@@ -79,14 +79,14 @@ export function ReviewImportWizard() {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs font-semibold text-slate-300">Import a file (NPS export, survey results, anything with a rating)</p>
+      <p className="text-xs font-semibold text-slate-300">Importa un archivo (exportación NPS, resultados de encuestas, cualquier cosa con calificación)</p>
       <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-[var(--border)] bg-white/[0.02] px-6 py-5 text-center hover:border-sky-500/50">
         <UploadCloud className="size-5 text-slate-500" />
-        <span className="text-xs text-slate-300">{file ? file.name : 'Drop or choose an .xlsx or .csv file'}</span>
+        <span className="text-xs text-slate-300">{file ? file.name : 'Arrastra o elige un archivo .xlsx o .csv'}</span>
         <input type="file" accept=".xlsx,.csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); }} />
       </label>
-      {busy === 'preview' && <p className="flex items-center gap-1.5 text-xs text-slate-400"><Loader2 className="size-3.5 animate-spin" /> Reading the file…</p>}
-      {preview && <p className="flex items-center gap-1.5 text-xs text-slate-500"><FileSpreadsheet className="size-3.5" />{preview.total.toLocaleString('en-US')} rows · {preview.columns.length} columns detected.</p>}
+      {busy === 'preview' && <p className="flex items-center gap-1.5 text-xs text-slate-400"><Loader2 className="size-3.5 animate-spin" /> Leyendo el archivo…</p>}
+      {preview && <p className="flex items-center gap-1.5 text-xs text-slate-500"><FileSpreadsheet className="size-3.5" />{preview.total.toLocaleString('es-CO')} filas · {preview.columns.length} columnas detectadas.</p>}
 
       {preview && (
         <div className="rounded-lg border border-[var(--border)] px-4 py-3">
@@ -96,13 +96,13 @@ export function ReviewImportWizard() {
                 <span className="text-xs text-slate-300">{f.label}{f.required && <span className="text-sky-400"> *</span>} <span className="text-slate-600">· {f.hint}</span></span>
                 <select value={map[f.key] ?? ''} onChange={(e) => setMap((m) => ({ ...m, [f.key]: e.target.value }))}
                   className={`rounded-lg border bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 outline-none ${f.required && !map[f.key] ? 'border-sky-500/50' : 'border-[var(--border)]'}`}>
-                  <option value="">— none —</option>
+                  <option value="">— ninguna —</option>
                   {preview.columns.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </label>
             ))}
             <label className="flex flex-col gap-1">
-              <span className="text-xs text-slate-300">Source label <span className="text-slate-600">· shown as the source name</span></span>
+              <span className="text-xs text-slate-300">Etiqueta de fuente <span className="text-slate-600">· se muestra como nombre de la fuente</span></span>
               <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder={file?.name}
                 className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 outline-none" />
             </label>
@@ -110,7 +110,7 @@ export function ReviewImportWizard() {
           <button onClick={runImport} disabled={!!busy || !map.rating || !map.content}
             className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-sky-400 disabled:opacity-50">
             {busy === 'import' ? <Loader2 className="size-3.5 animate-spin" /> : <ArrowRight className="size-3.5" />}
-            {busy === 'import' ? 'Importing…' : `Import ${preview.total.toLocaleString('en-US')} rows`}
+            {busy === 'import' ? 'Importando…' : `Importar ${preview.total.toLocaleString('es-CO')} filas`}
           </button>
         </div>
       )}
@@ -118,8 +118,8 @@ export function ReviewImportWizard() {
       {error && <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm text-red-300">{error}</p>}
       {result && (
         <p className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/[0.05] px-4 py-2.5 text-sm text-emerald-300">
-          <Check className="size-4" /> Imported {result.inserted.toLocaleString('en-US')} reviews
-          {result.skipped ? ` · ${result.skipped} skipped (no rating or empty text)` : ''}.
+          <Check className="size-4" /> Se importaron {result.inserted.toLocaleString('es-CO')} reseñas
+          {result.skipped ? ` · ${result.skipped} omitidas (sin calificación o texto vacío)` : ''}.
         </p>
       )}
     </div>

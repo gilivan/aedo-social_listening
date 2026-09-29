@@ -1,7 +1,7 @@
 import { LoginForm } from '@/components/login-form';
 
 // Copre l'intero viewport: l'app resta visibile sotto, sfocata e illeggibile.
-export const metadata = { title: 'Accesso' };
+export const metadata = { title: 'Iniciar sesión' };
 
 export default function LoginPage() {
   return (

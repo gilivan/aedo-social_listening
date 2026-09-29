@@ -8,7 +8,7 @@ import { callClaude, claudeAvailable, MODELS } from '@/lib/claude';
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
-const SYSTEM = `You are Radar's media intelligence analyst. Answer the user's question in English, based ONLY on the provided data (aggregates + relevant mentions).
+const SYSTEM = `You are AEDO's media intelligence analyst. Answer the user's question in Spanish (Latin American), based ONLY on the provided data (aggregates + relevant mentions).
 Rules:
 - Cite concrete numbers and, when useful, quote 2-3 mentions as evidence (source + short quote).
 - If the data isn't enough to answer, say so clearly and suggest what to monitor.
@@ -16,11 +16,11 @@ Rules:
 
 export async function POST(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
-  if (!await claudeAvailable()) return NextResponse.json({ error: 'Claude API key not configured' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
+  if (!await claudeAvailable()) return NextResponse.json({ error: 'La clave de API de Claude no está configurada' }, { status: 400 });
 
   const { question, history } = await req.json() as { question: string; history?: { q: string; a: string }[] };
-  if (!question?.trim()) return NextResponse.json({ error: 'empty question' }, { status: 400 });
+  if (!question?.trim()) return NextResponse.json({ error: 'la pregunta está vacía' }, { status: 400 });
 
   const db = await getDb();
   const d14 = new Date(Date.now() - 14 * 86400_000);
@@ -76,6 +76,6 @@ export async function POST(req: Request) {
     `${historyText ? historyText + '\n\n' : ''}DATA:\n${JSON.stringify(context).slice(0, 14000)}\n\nQUESTION: ${question}`,
     1000, true,
   );
-  if (!answer) return NextResponse.json({ error: 'spend cap reached or API error' }, { status: 429 });
+  if (!answer) return NextResponse.json({ error: 'se alcanzó el tope de gasto o hubo un error de la API' }, { status: 429 });
   return NextResponse.json({ answer });
 }

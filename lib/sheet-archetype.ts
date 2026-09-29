@@ -136,13 +136,13 @@ export function classifySheet(
       return {
         archetype: 'person-posts', people: true,
         reason: sheetIsPerson
-          ? `Il foglio si chiama "${sheetName}": i contenuti sono di una persona.`
-          : `La colonna "${authorCol?.name}" contiene sempre le stesse poche persone.`,
+          ? `La hoja se llama "${sheetName}": los contenidos son de una persona.`
+          : `La columna "${authorCol?.name}" siempre contiene las mismas pocas personas.`,
       };
     }
     return {
       archetype: 'platform-posts', people: false,
-      reason: 'Righe con un testo e le metriche native di un canale.',
+      reason: 'Filas con un texto y las métricas nativas de un canal.',
     };
   }
 
@@ -155,7 +155,7 @@ export function classifySheet(
   if (dims.some((d) => BREAKDOWN_DIM.test(d)) || has(BREAKDOWN_DIM)) {
     return {
       archetype: 'audience-breakdown', people: false,
-      reason: 'Percentuali ripartite per azienda, ruolo o luogo: è la composizione di un pubblico.',
+      reason: 'Porcentajes repartidos por empresa, cargo o ubicación: es la composición de una audiencia.',
     };
   }
   if (audienceMetrics >= Math.max(1, metrics.length * 0.5)) {
@@ -165,14 +165,14 @@ export function classifySheet(
       archetype: 'audience-series',
       people: peopleCols >= Math.max(2, metrics.length * 0.4),
       reason: peopleCols >= 2
-        ? 'Una colonna di follower per ogni persona seguita.'
-        : 'Serie di follower o iscritti nel tempo.',
+        ? 'Una columna de seguidores por cada persona monitoreada.'
+        : 'Serie de seguidores o suscriptores en el tiempo.',
     };
   }
   if (publishMetrics >= Math.max(1, metrics.length * 0.5)) {
     return {
       archetype: 'publishing-series', people: false,
-      reason: 'Conteggi di contenuti pubblicati, canale per canale.',
+      reason: 'Conteos de contenidos publicados, canal por canal.',
     };
   }
 
@@ -184,21 +184,21 @@ export function classifySheet(
     return {
       archetype: 'performance-series', people: entityIsPerson,
       reason: entityIsPerson
-        ? 'Aggregati periodici di una persona: impression, interazioni, medie.'
-        : 'Aggregati periodici: impression, interazioni, medie.',
+        ? 'Agregados periódicos de una persona: impresiones, interacciones, promedios.'
+        : 'Agregados periódicos: impresiones, interacciones, promedios.',
     };
   }
   void valuesOf;
-  return { archetype: 'unknown', people: false, reason: 'Forma non riconosciuta.' };
+  return { archetype: 'unknown', people: false, reason: 'Forma no reconocida.' };
 }
 
 /** Etichette leggibili, usate nell'interfaccia. */
 export const ARCHETYPE_LABEL: Record<Archetype, string> = {
-  'platform-posts': 'Contenuti di canale',
-  'person-posts': 'Contenuti di una persona',
-  'audience-series': 'Pubblico nel tempo',
-  'publishing-series': 'Pubblicazioni nel tempo',
-  'performance-series': 'Performance periodiche',
-  'audience-breakdown': 'Composizione del pubblico',
-  unknown: 'Da classificare',
+  'platform-posts': 'Contenidos de canal',
+  'person-posts': 'Contenidos de una persona',
+  'audience-series': 'Audiencia en el tiempo',
+  'publishing-series': 'Publicaciones en el tiempo',
+  'performance-series': 'Rendimiento periódico',
+  'audience-breakdown': 'Composición de la audiencia',
+  unknown: 'Por clasificar',
 };

@@ -23,21 +23,21 @@ export const AI_DISCLOSURE_SHORT =
   // 2024/1689 è il numero dell'atto (anno di adozione), non la data
   // dell'obbligo: l'art. 50 è applicabile dal 2 agosto 2026. Le due date
   // convivono nella riga apposta, perché insieme sono meno ambigue.
-  'Realizzato con il supporto dell’intelligenza artificiale — Reg. (UE) 2024/1689 (AI Act), '
-  + 'art. 50, applicabile dal 2 agosto 2026';
+  'Elaborado con el apoyo de inteligencia artificial — Reg. (UE) 2024/1689 (AI Act), '
+  + 'art. 50, aplicable desde el 2 de agosto de 2026';
 
 /** Nota estesa: pagina delle note, foglio "Note", metadati. */
 export const AI_DISCLOSURE_LONG =
-  'Realizzato con il supporto dell’intelligenza artificiale. Questo documento contiene testi '
-  + 'generati automaticamente da sistemi di IA generativa (sintesi, commenti, Point of View, brief, '
-  + 'classificazioni di sentiment e temi). I valori numerici e le classifiche derivano da '
-  + 'interrogazioni dirette sull’archivio del progetto, non dal modello. '
-  + 'Informativa resa ai sensi dell’art. 50 del Regolamento (UE) 2024/1689 (AI Act), '
-  + 'applicabile dal 2 agosto 2026.';
+  'Elaborado con el apoyo de inteligencia artificial. Este documento contiene textos '
+  + 'generados automáticamente por sistemas de IA generativa (resúmenes, comentarios, Punto de vista, brief, '
+  + 'clasificaciones de sentimiento y temas). Los valores numéricos y los rankings provienen de '
+  + 'consultas directas al archivo del proyecto, no del modelo. '
+  + 'Aviso emitido conforme al art. 50 del Reglamento (UE) 2024/1689 (AI Act), '
+  + 'aplicable desde el 2 de agosto de 2026.';
 
 /** Marcatura leggibile da una macchina: metadati del file. */
 export const AI_DISCLOSURE_META = {
-  subject: 'Contenuto generato con il supporto dell’intelligenza artificiale (AI-generated content)',
-  keywords: 'AI-generated, intelligenza artificiale, EU AI Act, Regolamento (UE) 2024/1689 art. 50, synthetic text',
+  subject: 'Contenido generado con el apoyo de inteligencia artificial (AI-generated content)',
+  keywords: 'AI-generated, inteligencia artificial, EU AI Act, Reglamento (UE) 2024/1689 art. 50, synthetic text',
   description: AI_DISCLOSURE_LONG,
 } as const;

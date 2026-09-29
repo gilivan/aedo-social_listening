@@ -29,13 +29,13 @@ export function TokenGenerator({ hasToken, lang }: { hasToken: boolean; lang: 'i
     return (
       <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/[0.05] px-4 py-3 text-xs">
         <p className="mb-1.5 flex items-center gap-1.5 font-semibold text-emerald-300">
-          <Check className="size-3.5" /> {L('Nuovo token — copialo adesso: non verrà più mostrato.', 'New token — copy it now: it will not be shown again.')}
+          <Check className="size-3.5" /> {L('Nuovo token — copialo adesso: non verrà più mostrato.', 'Nuevo token: cópialo ahora, no se volverá a mostrar.')}
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <code className="break-all rounded bg-black/30 px-2 py-1 text-[11px] text-slate-200">{token}</code>
           <CopyButton text={token} />
         </div>
-        <p className="mt-2 text-[11px] text-slate-400">{L('Le istruzioni qui sotto usano il segnaposto IL_TUO_TOKEN: sostituiscilo con questo.', 'The instructions below use the placeholder YOUR_TOKEN: replace it with this one.')}</p>
+        <p className="mt-2 text-[11px] text-slate-400">{L('Le istruzioni qui sotto usano il segnaposto IL_TUO_TOKEN: sostituiscilo con questo.', 'Las instrucciones de abajo usan el marcador YOUR_TOKEN: reemplázalo por este.')}</p>
       </div>
     );
   }
@@ -44,23 +44,23 @@ export function TokenGenerator({ hasToken, lang }: { hasToken: boolean; lang: 'i
     <div className="flex flex-wrap items-center gap-2">
       {hasToken && !confirm && (
         <button onClick={() => setConfirm(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-slate-300 hover:bg-white/5">
-          <KeyRound className="size-3.5" /> {L('Genera un nuovo token', 'Generate a new token')}
+          <KeyRound className="size-3.5" /> {L('Genera un nuovo token', 'Generar un nuevo token')}
         </button>
       )}
       {hasToken && confirm && (
         <span className="flex flex-wrap items-center gap-2 text-xs text-amber-200">
           <AlertTriangle className="size-3.5" />
-          {L('Il token attuale smetterà di funzionare: andranno aggiornati i client già collegati.', 'The current token will stop working: connected clients will need updating.')}
+          {L('Il token attuale smetterà di funzionare: andranno aggiornati i client già collegati.', 'El token actual dejará de funcionar: habrá que actualizar los clientes ya conectados.')}
           <button onClick={run} disabled={busy} className="rounded-lg bg-amber-500/90 px-2.5 py-1 font-medium text-slate-950 hover:bg-amber-400 disabled:opacity-50">
-            {busy ? <Loader2 className="size-3.5 animate-spin" /> : L('Genera comunque', 'Generate anyway')}
+            {busy ? <Loader2 className="size-3.5 animate-spin" /> : L('Genera comunque', 'Generar de todos modos')}
           </button>
-          <button onClick={() => setConfirm(false)} className="text-slate-400 hover:text-slate-200">{L('Annulla', 'Cancel')}</button>
+          <button onClick={() => setConfirm(false)} className="text-slate-400 hover:text-slate-200">{L('Annulla', 'Cancelar')}</button>
         </span>
       )}
       {!hasToken && (
         <button onClick={run} disabled={busy} className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400 disabled:opacity-50">
           {busy ? <Loader2 className="size-3.5 animate-spin" /> : <KeyRound className="size-3.5" />}
-          {L('Accendi l’MCP: genera il token', 'Turn MCP on: generate the token')}
+          {L('Accendi l’MCP: genera il token', 'Activa el MCP: genera el token')}
         </button>
       )}
       {error && <span className="text-xs text-red-300">{error}</span>}
@@ -89,12 +89,12 @@ export function McpSelfTest({ lang }: { lang: 'it' | 'en' }) {
     <div className="flex flex-wrap items-center gap-3 text-xs">
       <button onClick={run} disabled={busy} className="inline-flex items-center gap-1.5 rounded-lg border border-sky-500/40 px-3 py-1.5 text-sky-200 hover:bg-sky-500/10 disabled:opacity-50">
         {busy ? <Loader2 className="size-3.5 animate-spin" /> : <PlayCircle className="size-3.5" />}
-        {L('Prova l’endpoint', 'Test the endpoint')}
+        {L('Prova l’endpoint', 'Probar el endpoint')}
       </button>
       {result?.ok && (
         <span className="text-emerald-300">
           {L(`Risponde in ${result.ms} ms: ${result.tools} strumenti, ${result.prompts} prompt, ${result.projects} progetti visibili.`,
-            `Answers in ${result.ms} ms: ${result.tools} tools, ${result.prompts} prompts, ${result.projects} projects visible.`)}
+            `Responde en ${result.ms} ms: ${result.tools} herramientas, ${result.prompts} prompts, ${result.projects} proyectos visibles.`)}
         </span>
       )}
       {result?.error && <span className="text-red-300">{result.error}</span>}

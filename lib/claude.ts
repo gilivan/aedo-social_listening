@@ -135,12 +135,12 @@ export type AiResult = { text: string | null; failure?: AiFailure };
 export async function callClaudeDetailed(model: string, purpose: string, system: string, user: string, maxTokens: number, localize = false, timeoutMs = 50_000): Promise<AiResult> {
   // Public demo: never spend on the API, regardless of any configured key.
   if (process.env.DEMO_MODE === '1') {
-    return { text: null, failure: { why: 'demo', message: 'Questa è la demo pubblica: l’AI è spenta.' } };
+    return { text: null, failure: { why: 'demo', message: 'Esta es la demo pública: la IA está apagada.' } };
   }
   const provider = await aiProvider();
   const key = await providerKey(provider);
   if (!key) {
-    return { text: null, failure: { why: 'no-key', message: 'Nessuna chiave configurata (Impostazioni → Budget).' } };
+    return { text: null, failure: { why: 'no-key', message: 'No hay ninguna clave configurada (Ajustes → Presupuesto).' } };
   }
   // Contenuti rivolti all'utente: scrivi nella lingua scelta per i contenuti
   // (default inglese). Non si applica alle analisi dati (localize resta false).
@@ -158,7 +158,7 @@ export async function callClaudeDetailed(model: string, purpose: string, system:
       text: null,
       failure: {
         why: 'budget',
-        message: `Tetto di spesa raggiunto: $${spend.toFixed(2)} su $${budget}. Si riparte azzerando il contatore in Impostazioni → Budget.`,
+        message: `Se alcanzó el tope de gasto: $${spend.toFixed(2)} de $${budget}. Para continuar, reinicia el contador en Ajustes → Presupuesto.`,
       },
     };
   }
@@ -200,14 +200,14 @@ export async function callClaudeDetailed(model: string, purpose: string, system:
           // Un 401 non è "un errore del fornitore": è la chiave. Dirlo con
           // queste parole risparmia mezz'ora di ricerche nel posto sbagliato.
           message: /\b401\b|authentication_error|invalid.*api.?key|unauthorized/i.test(msg)
-            ? 'La chiave AI è stata rifiutata dal fornitore: non è più valida. Sostituiscila in Impostazioni → Budget.'
+            ? 'El proveedor de IA rechazó la clave: ya no es válida. Reemplázala en Ajustes → Presupuesto.'
             : /\b429\b|rate.?limit/i.test(msg)
-              ? 'Il fornitore AI ha respinto la richiesta per troppo traffico: riprova fra qualche minuto.'
+              ? 'El proveedor de IA rechazó la solicitud por exceso de tráfico: vuelve a intentarlo en unos minutos.'
               : /\b(400)\b|too many tokens|context.*length|too large/i.test(msg)
-                ? 'La richiesta era troppo grande per il modello: riprova con meno fogli per volta.'
+                ? 'La solicitud era demasiado grande para el modelo: vuelve a intentarlo con menos hojas a la vez.'
                 : /timeout|timed out|aborted/i.test(msg)
-                  ? `La richiesta ha superato il tempo massimo (${Math.round(timeoutMs / 1000)}s). Di solito succede quando il materiale da leggere è troppo.`
-                  : `Il fornitore AI ha rifiutato la richiesta: ${msg.slice(0, 200)}`,
+                  ? `La solicitud superó el tiempo máximo (${Math.round(timeoutMs / 1000)} s). Suele pasar cuando hay demasiado material por leer.`
+                  : `El proveedor de IA rechazó la solicitud: ${msg.slice(0, 200)}`,
         },
       };
     }
@@ -219,7 +219,7 @@ export async function callClaudeDetailed(model: string, purpose: string, system:
   }
 
   if (!text) {
-    return { text: null, failure: { why: 'empty', message: 'Il modello ha risposto senza testo.' } };
+    return { text: null, failure: { why: 'empty', message: 'El modelo respondió sin texto.' } };
   }
 
   const price = priceFor(provider, actualModel);
@@ -275,8 +275,8 @@ For EACH item, return an object with:
 - sentiment_score: number from -1 (very negative) to 1 (very positive)
 - emotion: the single dominant emotion, one of "joy", "trust", "fear", "anger", "sadness", "surprise" (pick the closest even if faint)
 - relevance: 1-5, how relevant and important the item is for someone monitoring the topic (5 = central and weighty, 3 = on-topic but ordinary, 1 = marginal or off-topic)
-- relevance_reason: at most 12 words in English explaining the relevance judgment
-- topics: at most 3 topics in English, short (1-3 words, lowercase)
+- relevance_reason: at most 12 words in Spanish explaining the relevance judgment
+- topics: at most 3 topics in Spanish, short (1-3 words, lowercase)
 - entities: at most 5 named entities (brands, companies, people, products)
 Respond ONLY with the JSON array, no other text.`;
 
@@ -357,7 +357,7 @@ For EACH item, return:
 - relevance: 0-100, pertinence to the monitored topic
 - virality: 0-100, spread potential
 - risk: "low", "medium" or "high" — reputational/disinformation risk for someone operating in the sector
-- note: one sentence in English (max 15 words) justifying the judgment
+- note: one sentence in Spanish (max 15 words) justifying the judgment
 Respond ONLY with the JSON array.`;
 
 export async function scoreTopContent(projectId: number, topic: string): Promise<number> {
@@ -410,7 +410,7 @@ export async function scoreTopContent(projectId: number, topic: string): Promise
 
 const STORIES_SYSTEM = `You are a media analyst. You receive news headlines (with id) about the same sector.
 Group the ones covering the SAME story/event (even across different languages).
-Respond ONLY with a JSON array of objects: { "title": "story title in English", "summary": "1-2 sentence summary in English", "ids": [id, ...] }.
+Respond ONLY with a JSON array of objects: { "title": "story title in Spanish", "summary": "1-2 sentence summary in Spanish", "ids": [id, ...] }.
 Include only stories with at least 2 articles. Ignore articles that cannot be grouped.`;
 
 export async function clusterNewsStories(projectId: number): Promise<number> {
@@ -451,7 +451,7 @@ export async function clusterNewsStories(projectId: number): Promise<number> {
 // 4. Daily brief (Sonnet)
 // ---------------------------------------------------------------------------
 
-const BRIEF_SYSTEM = `You are a senior media intelligence analyst. Write a DAILY executive briefing in English, in Markdown, for a decision-maker monitoring a sector.
+const BRIEF_SYSTEM = `You are a senior media intelligence analyst. Write a DAILY executive briefing in Spanish, in Markdown, for a decision-maker monitoring a sector.
 Required structure:
 ## At a glance (3 essential bullets)
 ## What happened (the main stories, with context)
@@ -465,9 +465,9 @@ export async function generateDailyBrief(
   briefData: { window: string; total: number } & Record<string, unknown>,
 ): Promise<boolean> {
   const db = await getDb();
-  // Data del brief in ora locale (Europe/Rome), non UTC: vicino a mezzanotte
+  // Data del brief in ora locale (America/Bogota), non UTC: vicino a mezzanotte
   // l'UTC può essere "ieri" e datare male il brief. en-CA → formato YYYY-MM-DD.
-  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' });
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   // Il brief di oggi c'è già? Non rigenerarlo (nessun costo AI): un "Refresh now"
   // ripetuto nella stessa giornata non rispende il brief.
   const [existing] = await db.select({ id: briefs.id }).from(briefs)

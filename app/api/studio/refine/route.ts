@@ -13,11 +13,11 @@ const FORMAT_LABEL: Record<string, string> = {
 
 export async function POST(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
-  if (!await claudeAvailable()) return NextResponse.json({ error: 'Claude API key not configured' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
+  if (!await claudeAvailable()) return NextResponse.json({ error: 'La clave de API de Claude no está configurada' }, { status: 400 });
 
   const { text, instruction, format } = await req.json() as { text: string; instruction: string; format: string };
-  if (!text?.trim() || !instruction?.trim()) return NextResponse.json({ error: 'missing data' }, { status: 400 });
+  if (!text?.trim() || !instruction?.trim()) return NextResponse.json({ error: 'faltan datos' }, { status: 400 });
 
   const revised = await callClaude(
     MODELS.haiku, 'studio_refine',
@@ -26,6 +26,6 @@ ${project.brandVoice ? `Brand tone of voice: ${project.brandVoice}\n` : ''}Respo
     `Current text:\n${text}\n\nInstruction: ${instruction}`,
     900, true,
   );
-  if (!revised) return NextResponse.json({ error: 'spend cap reached or API error' }, { status: 429 });
+  if (!revised) return NextResponse.json({ error: 'se alcanzó el tope de gasto o hubo un error de la API' }, { status: 429 });
   return NextResponse.json({ text: revised.trim() });
 }

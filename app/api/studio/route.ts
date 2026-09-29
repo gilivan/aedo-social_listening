@@ -11,9 +11,9 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
 async function ctx() {
-  if (!isAdmin(await getCurrentUser())) return { error: 'Solo gli amministratori' as const };
+  if (!isAdmin(await getCurrentUser())) return { error: 'Solo para administradores' as const };
   const project = await getCurrentProject();
-  if (!project) return { error: 'Nessun progetto selezionato' as const };
+  if (!project) return { error: 'No hay ningún proyecto seleccionado' as const };
   return { project };
 }
 
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   if ('error' in c) return NextResponse.json({ error: c.error }, { status: 400 });
   const spec = (await req.json().catch(() => null)) as StudioSpec | null;
   if (!spec?.x || !spec?.y) {
-    return NextResponse.json({ error: 'Scegli almeno un campo per l’asse X e uno per l’asse Y' }, { status: 400 });
+    return NextResponse.json({ error: 'Elige al menos un campo para el eje X y uno para el eje Y' }, { status: 400 });
   }
   try {
     const result = await runStudio(c.project.id, spec);
@@ -55,7 +55,7 @@ export async function PUT(req: Request) {
   const c = await ctx();
   if ('error' in c) return NextResponse.json({ error: c.error }, { status: 400 });
   const body = await req.json().catch(() => ({}));
-  const title = String(body.title ?? '').trim() || 'Grafico senza titolo';
+  const title = String(body.title ?? '').trim() || 'Gráfico sin título';
   const db = await getDb();
 
   if (body.id) {
@@ -74,7 +74,7 @@ export async function DELETE(req: Request) {
   const c = await ctx();
   if ('error' in c) return NextResponse.json({ error: c.error }, { status: 400 });
   const id = Number(new URL(req.url).searchParams.get('id'));
-  if (!id) return NextResponse.json({ error: 'Grafico mancante' }, { status: 400 });
+  if (!id) return NextResponse.json({ error: 'Falta el gráfico' }, { status: 400 });
   const db = await getDb();
   await db.delete(studioCharts)
     .where(and(eq(studioCharts.id, id), eq(studioCharts.projectId, c.project.id)));

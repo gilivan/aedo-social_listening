@@ -12,12 +12,12 @@ export const dynamic = 'force-dynamic';
 
 export async function POST() {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
   const { pov, reason } = await buildPointOfView(project.id, 90);
   if (!pov) {
-    const msg = reason === 'thin_data' ? 'not enough data yet for a point of view'
-      : reason === 'no_ai' ? 'AI key missing or spend cap reached'
-        : 'the model took too long or did not return a usable argument — try again in a moment';
+    const msg = reason === 'thin_data' ? 'todavía no hay suficientes datos para un punto de vista'
+      : reason === 'no_ai' ? 'falta la clave de IA o se alcanzó el tope de gasto'
+        : 'el modelo tardó demasiado o no devolvió un argumento utilizable — inténtalo de nuevo en un momento';
     return NextResponse.json({ error: msg }, { status: 400 });
   }
   return NextResponse.json({ pov });

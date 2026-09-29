@@ -20,7 +20,7 @@ const RESULT_STYLE: Record<'W' | 'D' | 'L', string> = {
   D: 'bg-slate-500/20 text-slate-300',
   L: 'bg-red-500/20 text-red-300',
 };
-const RESULT_LABEL: Record<'W' | 'D' | 'L', string> = { W: 'Win', D: 'Draw', L: 'Loss' };
+const RESULT_LABEL: Record<'W' | 'D' | 'L', string> = { W: 'Victoria', D: 'Empate', L: 'Derrota' };
 
 export function ResultBadge({ result }: { result: 'W' | 'D' | 'L' }) {
   return (
@@ -66,7 +66,7 @@ function Legend({ items }: { items: { color: string; label: string }[] }) {
   );
 }
 
-const shortDate = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('en-US', { day: '2-digit', month: 'short', timeZone: 'UTC' });
+const shortDate = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', timeZone: 'UTC' });
 
 /**
  * La stagione su un solo asse: punti in classifica, umore dei tifosi e titolo
@@ -76,16 +76,16 @@ const shortDate = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('
  * forma sono le partite, colorati per risultato.
  */
 export function SeasonTimeline({ data, hasStock }: { data: SeasonPoint[]; hasStock: boolean }) {
-  if (data.length < 2) return <p className="py-6 text-center text-xs text-slate-600">Not enough history yet — this fills in as matches are played.</p>;
+  if (data.length < 2) return <p className="py-6 text-center text-xs text-slate-600">Aún no hay suficiente historial — se completa a medida que se juegan partidos.</p>;
   const hasSentiment = data.some((d) => d.sentiment !== null);
   const byDate = new Map(data.map((d) => [d.date, d]));
 
   return (
     <div className="flex flex-col gap-2">
       <Legend items={[
-        { color: C.form, label: 'points (league form)' },
-        ...(hasSentiment ? [{ color: C.sentiment, label: 'fan sentiment (7-day avg)' }] : []),
-        ...(hasStock ? [{ color: C.stock, label: 'share price (indexed)' }] : []),
+        { color: C.form, label: 'puntos (forma en la liga)' },
+        ...(hasSentiment ? [{ color: C.sentiment, label: 'sentimiento de hinchas (prom. 7 días)' }] : []),
+        ...(hasStock ? [{ color: C.stock, label: 'precio de la acción (indexado)' }] : []),
       ]} />
       <ResponsiveContainer width="100%" height={260}>
         <ComposedChart data={data} margin={{ top: 8, right: 8, bottom: 4, left: -24 }}>
@@ -112,9 +112,9 @@ export function SeasonTimeline({ data, hasStock }: { data: SeasonPoint[]; hasSto
                       <span className="font-bold">{p.match.result}</span> {p.match.label}
                     </p>
                   )}
-                  {p.form !== null && <p style={{ color: C.form }}>{p.form} points</p>}
-                  {p.sentiment !== null && <p style={{ color: C.sentiment }}>sentiment {p.sentiment > 0 ? '+' : ''}{p.sentiment}</p>}
-                  {p.stockIndex !== null && <p style={{ color: C.stock }}>share {p.stockIndex} (100 = start)</p>}
+                  {p.form !== null && <p style={{ color: C.form }}>{p.form} puntos</p>}
+                  {p.sentiment !== null && <p style={{ color: C.sentiment }}>sentimiento {p.sentiment > 0 ? '+' : ''}{p.sentiment}</p>}
+                  {p.stockIndex !== null && <p style={{ color: C.stock }}>acción {p.stockIndex} (100 = inicio)</p>}
                 </div>
               );
             }} />
@@ -152,19 +152,19 @@ export function SeasonTimeline({ data, hasStock }: { data: SeasonPoint[]; hasSto
 export function AnatomyCurve({ data }: { data: AnatomyPoint[] }) {
   const hasWin = data.some((d) => d.win !== null);
   const hasLoss = data.some((d) => d.loss !== null);
-  if (!hasWin && !hasLoss) return <p className="py-6 text-center text-xs text-slate-600">Needs analyzed mentions around match days to draw the curve.</p>;
+  if (!hasWin && !hasLoss) return <p className="py-6 text-center text-xs text-slate-600">Se necesitan menciones analizadas alrededor de los días de partido para trazar la curva.</p>;
 
   return (
     <div className="flex flex-col gap-2">
       <Legend items={[
-        ...(hasWin ? [{ color: C.win, label: 'after a win' }] : []),
-        ...(hasLoss ? [{ color: C.loss, label: 'after a loss' }] : []),
+        ...(hasWin ? [{ color: C.win, label: 'tras una victoria' }] : []),
+        ...(hasLoss ? [{ color: C.loss, label: 'tras una derrota' }] : []),
       ]} />
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data} margin={{ top: 8, right: 12, bottom: 4, left: 0 }}>
           <CartesianGrid stroke={C.grid} vertical={false} />
           <XAxis dataKey="offset" tick={{ fill: C.axis, fontSize: 11 }} tickLine={false}
-            tickFormatter={(o: number) => (o === 0 ? 'match' : o > 0 ? `+${o}` : String(o))} />
+            tickFormatter={(o: number) => (o === 0 ? 'partido' : o > 0 ? `+${o}` : String(o))} />
           <YAxis tick={{ fill: C.axis, fontSize: 11 }} tickLine={false} width={46}
             tickFormatter={(v: number) => (v > 0 ? `+${v}` : String(v))} />
           <ReferenceLine y={0} stroke="#475569" strokeDasharray="3 3" />
@@ -174,12 +174,12 @@ export function AnatomyCurve({ data }: { data: AnatomyPoint[] }) {
             content={({ payload }) => {
               const p = payload?.[0]?.payload as AnatomyPoint | undefined;
               if (!p) return null;
-              const day = p.offset === 0 ? 'match day' : p.offset > 0 ? `${p.offset} day${p.offset === 1 ? '' : 's'} after` : `${-p.offset} day${p.offset === -1 ? '' : 's'} before`;
+              const day = p.offset === 0 ? 'día de partido' : p.offset > 0 ? `${p.offset} día${p.offset === 1 ? '' : 's'} después` : `${-p.offset} día${p.offset === -1 ? '' : 's'} antes`;
               return (
                 <div style={TOOLTIP} className="px-3 py-2">
                   <p className="mb-1 font-semibold text-slate-100">{day}</p>
-                  {p.win !== null && <p style={{ color: C.win }}>win: {p.win > 0 ? '+' : ''}{p.win} <span className="text-slate-500">({p.nWin} match{p.nWin === 1 ? '' : 'es'})</span></p>}
-                  {p.loss !== null && <p style={{ color: C.loss }}>loss: {p.loss > 0 ? '+' : ''}{p.loss} <span className="text-slate-500">({p.nLoss} match{p.nLoss === 1 ? '' : 'es'})</span></p>}
+                  {p.win !== null && <p style={{ color: C.win }}>victoria: {p.win > 0 ? '+' : ''}{p.win} <span className="text-slate-500">({p.nWin} partido{p.nWin === 1 ? '' : 's'})</span></p>}
+                  {p.loss !== null && <p style={{ color: C.loss }}>derrota: {p.loss > 0 ? '+' : ''}{p.loss} <span className="text-slate-500">({p.nLoss} partido{p.nLoss === 1 ? '' : 's'})</span></p>}
                 </div>
               );
             }} />
@@ -197,7 +197,7 @@ export function AnatomyCurve({ data }: { data: AnatomyPoint[] }) {
  * da sinistra a destra, il campo muove davvero la conversazione.
  */
 export function MarginScatter({ data }: { data: ScatterPoint[] }) {
-  if (data.length < 3) return <p className="py-6 text-center text-xs text-slate-600">At least 3 analyzed matches are needed to plot this.</p>;
+  if (data.length < 3) return <p className="py-6 text-center text-xs text-slate-600">Se necesitan al menos 3 partidos analizados para graficar esto.</p>;
   const maxAbs = Math.max(2, ...data.map((d) => Math.abs(d.goalDiff)));
 
   return (
@@ -207,7 +207,7 @@ export function MarginScatter({ data }: { data: ScatterPoint[] }) {
         <XAxis type="number" dataKey="goalDiff" domain={[-maxAbs - 0.5, maxAbs + 0.5]}
           tick={{ fill: C.axis, fontSize: 11 }} tickLine={false} allowDecimals={false}
           tickFormatter={(v: number) => (v > 0 ? `+${v}` : String(v))}
-          label={{ value: 'goal difference', position: 'insideBottom', offset: -12, fill: C.axis, fontSize: 11 }} />
+          label={{ value: 'diferencia de gol', position: 'insideBottom', offset: -12, fill: C.axis, fontSize: 11 }} />
         <YAxis type="number" dataKey="sentimentShift" tick={{ fill: C.axis, fontSize: 11 }} tickLine={false} width={46}
           tickFormatter={(v: number) => (v > 0 ? `+${v}` : String(v))} />
         <ZAxis range={[70, 70]} />
@@ -223,7 +223,7 @@ export function MarginScatter({ data }: { data: ScatterPoint[] }) {
                 <p className="font-semibold text-slate-100">{p.label}</p>
                 <p className="text-slate-500">{shortDate(p.date)}</p>
                 <p style={{ color: RESULT_COLOR[p.result] }}>
-                  sentiment {p.sentimentShift > 0 ? '+' : ''}{p.sentimentShift}
+                  sentimiento {p.sentimentShift > 0 ? '+' : ''}{p.sentimentShift}
                 </p>
               </div>
             );
@@ -244,23 +244,23 @@ export function CorrelationTile({ correlation }: { correlation: { r: number; n: 
   if (!correlation) {
     return (
       <div className="rounded-lg bg-white/[0.03] px-4 py-3">
-        <p className="text-[11px] uppercase tracking-wide text-slate-600">pitch → mood link</p>
-        <p className="mt-1 text-sm text-slate-500">not enough matches yet</p>
+        <p className="text-[11px] uppercase tracking-wide text-slate-600">cancha → ánimo</p>
+        <p className="mt-1 text-sm text-slate-500">aún no hay suficientes partidos</p>
       </div>
     );
   }
   const { r, n } = correlation;
   const abs = Math.abs(r);
-  const strength = abs >= 0.6 ? 'strong' : abs >= 0.3 ? 'moderate' : 'weak';
-  const dir = r > 0 ? 'positive' : 'negative';
+  const strength = abs >= 0.6 ? 'fuerte' : abs >= 0.3 ? 'moderada' : 'débil';
+  const dir = r > 0 ? 'positiva' : 'negativa';
   const color = abs < 0.3 ? 'text-slate-400' : r > 0 ? 'text-emerald-300' : 'text-red-300';
   return (
     <div className="rounded-lg bg-white/[0.03] px-4 py-3">
-      <p className="text-[11px] uppercase tracking-wide text-slate-600">pitch → mood link</p>
+      <p className="text-[11px] uppercase tracking-wide text-slate-600">cancha → ánimo</p>
       <p className={`mt-0.5 text-xl font-semibold tabular-nums ${color}`}>{r > 0 ? '+' : ''}{r.toFixed(2)}</p>
       <p className="text-[11px] text-slate-500">
-        {strength} {dir} · {n} match{n === 1 ? '' : 'es'}
-        {n < 8 && <span className="text-amber-500/80"> · too few to trust</span>}
+        {strength} {dir} · {n} partido{n === 1 ? '' : 's'}
+        {n < 8 && <span className="text-amber-500/80"> · muy pocos para confiar</span>}
       </p>
     </div>
   );

@@ -8,10 +8,10 @@ export const dynamic = 'force-dynamic';
 
 export async function POST() {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'nessun progetto' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
   try {
     await hydrateConnectorCredentials();
-    if (!factCheckEnabled()) return NextResponse.json({ error: 'manca la chiave Google Fact Check — inseriscila qui sotto' }, { status: 400 });
+    if (!factCheckEnabled()) return NextResponse.json({ error: 'falta la clave de Google Fact Check — ingrésala aquí abajo' }, { status: 400 });
     const r = await ingestFactChecks(project.id);
     return NextResponse.json(r);
   } catch (e) {

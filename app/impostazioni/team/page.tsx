@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/ui';
 import { getT } from '@/lib/i18n';
 import { TeamManager } from '@/components/team-manager';
 
-export const metadata = { title: 'Team' };
+export const metadata = { title: 'Equipo' };
 
 export default async function TeamPage() {
   const t = await getT();
@@ -28,8 +28,8 @@ export default async function TeamPage() {
   return (
     <>
       <PageHeader
-        title={t('page.team.title', 'Team')}
-        subtitle="Manage access. Members with AI on “hold” collect data but don’t consume API until you enable them (requires budget)."
+        title={t('page.team.title', 'Equipo')}
+        subtitle="Gestiona los accesos. Los miembros con la IA “en pausa” recopilan datos, pero no consumen API hasta que los habilites (requiere presupuesto)."
       />
       <TeamManager users={rows.map((r) => ({ ...r, projectCount: countByOwner.get(r.id) ?? 0 }))} />
     </>

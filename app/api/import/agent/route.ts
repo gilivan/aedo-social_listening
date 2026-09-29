@@ -12,12 +12,12 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
 async function guard(projectId: number) {
-  if (!isAdmin(await getCurrentUser())) return 'Solo gli amministratori';
-  if (!projectId) return 'Progetto mancante';
+  if (!isAdmin(await getCurrentUser())) return 'Solo para administradores';
+  if (!projectId) return 'Falta el proyecto';
   const db = await getDb();
   const [p] = await db.select({ id: projects.id, mode: projects.mode }).from(projects).where(eq(projects.id, projectId));
-  if (!p) return 'Progetto non trovato';
-  if (p.mode !== 'upload') return 'Questo progetto non è di tipo import';
+  if (!p) return 'Proyecto no encontrado';
+  if (p.mode !== 'upload') return 'Este proyecto no es de tipo importación';
   return null;
 }
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   try {
     const dossier = await buildDossier(projectId, true);
     if (!dossier.sheets.length) {
-      return NextResponse.json({ error: 'Non c’è ancora nessun foglio da leggere.' }, { status: 400 });
+      return NextResponse.json({ error: 'Todavía no hay ninguna hoja para leer.' }, { status: 400 });
     }
     // Quello che si è CALCOLATO viaggia comunque, anche se il modello non
     // risponde: le relazioni fra le tabelle sono aritmetica, non un parere, e

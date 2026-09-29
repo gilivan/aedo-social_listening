@@ -34,7 +34,7 @@ const ROLE_DOT: Record<ConceptRole, string> = {
 };
 
 const EXAMPLE_IT = "Voglio monitorare l'azienda Acme in relazione alle proteste dei lavoratori (es. sciopero, presidio) e in relazione ai competitor Alfa, Beta e Gamma";
-const EXAMPLE_EN = 'I want to monitor the company Acme in relation to worker protests (e.g. strike, picket) and in relation to its competitors Alfa, Beta and Gamma';
+const EXAMPLE_EN = 'Quiero monitorear la empresa Acme en relación con las protestas de trabajadores (p. ej. huelga, plantón) y en relación con sus competidores Alfa, Beta y Gamma';
 
 export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable, lang, initialBrief }: {
   projectId: number;
@@ -78,7 +78,7 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
     setPlan(r.plan);
     setDirty(true);
     setWarnings([
-      ...(r.aiFailure ? [L(`AI non disponibile (${r.aiFailure.message}): questa è una lettura a regole, controllala.`, `AI not available (${r.aiFailure.message}): this is a rule-based reading, check it.`)] : []),
+      ...(r.aiFailure ? [L(`AI non disponibile (${r.aiFailure.message}): questa è una lettura a regole, controllala.`, `IA no disponible (${r.aiFailure.message}): esta es una lectura basada en reglas, revísala.`)] : []),
       ...r.warnings.filter((w) => !r.aiFailure || !w.startsWith('L’AI non ha risposto')),
     ]);
   };
@@ -103,8 +103,8 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
     setDirty(false);
     setWarnings(r.warnings);
     setNotice(L(
-      'Piano salvato: dalla prossima raccolta Radar segue queste query. Le menzioni dell’ultimo mese si stanno rietichettando.',
-      'Plan saved: from the next collection Radar follows these queries. Last month’s mentions are being re-tagged.',
+      'Piano salvato: dalla prossima raccolta AEDO segue queste query. Le menzioni dell’ultimo mese si stanno rietichettando.',
+      'Plan guardado: desde la próxima recolección AEDO sigue estas consultas. Las menciones del último mes se están reetiquetando.',
     ));
   };
 
@@ -121,7 +121,7 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
   }));
   const addConcept = (role: ConceptRole) => change((p) => {
     const taken = new Set(p.concepts.map((c) => c.id));
-    const label = L(`Nuovo ${ROLE_LABEL[role].it.toLowerCase()}`, `New ${ROLE_LABEL[role].en.toLowerCase()}`);
+    const label = L(`Nuovo ${ROLE_LABEL[role].it.toLowerCase()}`, `Nuevo ${ROLE_LABEL[role].en.toLowerCase()}`);
     return { ...p, concepts: [...p.concepts, { id: slugId(`${role}-${label}`, taken), label, role, terms: [] }] };
   });
 
@@ -140,7 +140,7 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
   const addQuery = () => change((p) => {
     const taken = new Set(p.queries.map((q) => q.id));
     const subject = p.concepts.find((c) => c.role === 'subject') ?? p.concepts[0];
-    const name = L('Nuova query', 'New query');
+    const name = L('Nuova query', 'Nueva consulta');
     return {
       ...p,
       queries: [...p.queries, {
@@ -163,18 +163,18 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
   if (probe && plan) {
     for (const t of probe.terms.filter((x) => x.hits === 0)) {
       const c = plan.concepts.find((x) => x.id === t.conceptId);
-      advice.push({ tone: 'warn', text: L(`“${t.term}” (${c?.label}) non trova niente in una settimana: scritto male, troppo specifico, o in un’altra lingua?`, `“${t.term}” (${c?.label}) finds nothing in a week: misspelled, too specific, or another language?`) });
+      advice.push({ tone: 'warn', text: L(`“${t.term}” (${c?.label}) non trova niente in una settimana: scritto male, troppo specifico, o in un’altra lingua?`, `“${t.term}” (${c?.label}) no encuentra nada en una semana: ¿mal escrito, demasiado específico o en otro idioma?`) });
     }
     for (const q of probe.queries) {
       const def = plan.queries.find((x) => x.id === q.queryId);
       if (!def) continue;
       // Una query di un solo concetto non ha una combinazione da allargare:
       // lì il problema sono i termini, o semplicemente il silenzio.
-      if (q.hits === 0 && def.all.length > 1) advice.push({ tone: 'warn', text: L(`“${def.name}” non trova niente in una settimana: la combinazione è stretta. Aggiungi sinonimi al contesto, o accetta che sia una query “sentinella” che si accende solo quando succede qualcosa.`, `“${def.name}” finds nothing in a week: the combination is narrow. Add synonyms to the context, or keep it as a “sentinel” query that only lights up when something happens.`) });
-      if (q.hits === 0 && def.all.length === 1) advice.push({ tone: 'warn', text: L(`“${def.name}” non trova niente in una settimana: controlla come si scrive il nome, o tienila come “sentinella” per quando se ne parlerà.`, `“${def.name}” finds nothing in a week: check how the name is written, or keep it as a “sentinel” for when it gets talked about.`) });
-      if (q.dominant) advice.push({ tone: 'warn', text: L(`In “${def.name}” il termine “${q.dominant.term}” porta da solo il ${q.dominant.share}% dei risultati: controlla che non sia troppo generico o ambiguo.`, `In “${def.name}” the term “${q.dominant.term}” alone brings ${q.dominant.share}% of results: check it is not too generic or ambiguous.`) });
+      if (q.hits === 0 && def.all.length > 1) advice.push({ tone: 'warn', text: L(`“${def.name}” non trova niente in una settimana: la combinazione è stretta. Aggiungi sinonimi al contesto, o accetta che sia una query “sentinella” che si accende solo quando succede qualcosa.`, `“${def.name}” no encuentra nada en una semana: la combinación es muy estrecha. Agrega sinónimos al contexto o mantenla como consulta “centinela” que solo se activa cuando pasa algo.`) });
+      if (q.hits === 0 && def.all.length === 1) advice.push({ tone: 'warn', text: L(`“${def.name}” non trova niente in una settimana: controlla come si scrive il nome, o tienila come “sentinella” per quando se ne parlerà.`, `“${def.name}” no encuentra nada en una semana: revisa cómo se escribe el nombre o mantenla como “centinela” para cuando se hable de ello.`) });
+      if (q.dominant) advice.push({ tone: 'warn', text: L(`In “${def.name}” il termine “${q.dominant.term}” porta da solo il ${q.dominant.share}% dei risultati: controlla che non sia troppo generico o ambiguo.`, `En “${def.name}” el término “${q.dominant.term}” por sí solo trae el ${q.dominant.share}% de los resultados: revisa que no sea demasiado genérico o ambiguo.`) });
     }
-    if (!advice.length) advice.push({ tone: 'ok', text: L('Tutti i termini e tutte le query trovano risultati. Controlla i titoli di esempio: sono quello che ti aspetti?', 'Every term and query finds results. Check the sample headlines: are they what you expect?') });
+    if (!advice.length) advice.push({ tone: 'ok', text: L('Tutti i termini e tutte le query trovano risultati. Controlla i titoli di esempio: sono quello che ti aspetti?', 'Todos los términos y consultas encuentran resultados. Revisa los titulares de ejemplo: ¿son lo que esperas?') });
   }
 
   return (
@@ -183,11 +183,11 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
       <section className="panel px-5 py-4">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-200">
           <span className="flex size-5 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold text-slate-950">1</span>
-          {L('Che cosa vuoi monitorare?', 'What do you want to monitor?')}
+          {L('Che cosa vuoi monitorare?', '¿Qué quieres monitorear?')}
         </h2>
         <p className="mb-2 mt-1 text-[11px] text-slate-500">
-          {L('Scrivilo come lo diresti a un collega: il soggetto, i fatti o i temi a cui legarlo, i competitor. Radar ne ricava i mattoncini e le query.',
-            'Write it as you would tell a colleague: the subject, the facts or themes to relate it to, the competitors. Radar turns it into building blocks and queries.')}
+          {L('Scrivilo come lo diresti a un collega: il soggetto, i fatti o i temi a cui legarlo, i competitor. AEDO ne ricava i mattoncini e le query.',
+            'Escríbelo como se lo dirías a un colega: el sujeto, los hechos o temas con los que relacionarlo, los competidores. AEDO lo convierte en bloques y consultas.')}
         </p>
         <textarea value={brief} onChange={(e) => { setBrief(e.target.value); if (plan) setDirty(true); }} rows={3}
           placeholder={L(EXAMPLE_IT, EXAMPLE_EN)}
@@ -196,20 +196,20 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
           <button onClick={build} disabled={busy !== '' || brief.trim().length < 8}
             className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400 disabled:opacity-50">
             {busy === 'build' ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
-            {plan ? L('Ricostruisci dalla richiesta', 'Rebuild from the request') : L('Costruisci le query', 'Build the queries')}
+            {plan ? L('Ricostruisci dalla richiesta', 'Reconstruir desde la solicitud') : L('Costruisci le query', 'Construir las consultas')}
           </button>
           {!plan && (
             <button onClick={startEmpty} className="text-xs text-slate-400 hover:text-slate-200">
-              {L('oppure parti da zero, a mano', 'or start from scratch, by hand')}
+              {L('oppure parti da zero, a mano', 'o empieza desde cero, a mano')}
             </button>
           )}
           {!aiAvailable && (
             <span className="text-[11px] text-amber-300/80">
-              {L('AI non configurata: la richiesta verrà letta con regole semplici.', 'AI not configured: the request will be read with simple rules.')}
+              {L('AI non configurata: la richiesta verrà letta con regole semplici.', 'IA no configurada: la solicitud se leerá con reglas simples.')}
             </span>
           )}
           {plan && dirty && isSaved && (
-            <span className="text-[11px] text-slate-500">{L('Ricostruire sostituisce il piano attuale solo quando salvi.', 'Rebuilding replaces the current plan only when you save.')}</span>
+            <span className="text-[11px] text-slate-500">{L('Ricostruire sostituisce il piano attuale solo quando salvi.', 'Reconstruir reemplaza el plan actual solo cuando guardas.')}</span>
           )}
         </div>
       </section>
@@ -227,7 +227,7 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
           {plan.origin === 'legacy' && !dirty && (
             <p className="rounded-lg border border-[var(--border)] px-4 py-2 text-[11px] text-slate-400">
               {L('Questa è la query attuale del progetto, trasformata in mattoncini. La raccolta non cambia finché non salvi.',
-                'This is the project’s current query, turned into building blocks. Collection does not change until you save.')}
+                'Esta es la consulta actual del proyecto, convertida en bloques. La recolección no cambia hasta que guardes.')}
             </p>
           )}
 
@@ -235,10 +235,10 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
           <section className="panel px-5 py-4">
             <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-200">
               <span className="flex size-5 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold text-slate-950">2</span>
-              {L('I mattoncini', 'The building blocks')}
+              {L('I mattoncini', 'Los bloques')}
               <span className="text-[11px] font-normal text-slate-500">
                 {L('— ogni concetto è un OR dei suoi termini; se lo correggi, cambiano tutte le query che lo usano.',
-                  '— each concept is an OR of its terms; edit it and every query using it changes.')}
+                  '— cada concepto es un OR de sus términos; si lo editas, cambian todas las consultas que lo usan.')}
               </span>
             </h2>
             <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -263,7 +263,7 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
           <section className="panel px-5 py-4">
             <h2 className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-200">
               <span className="flex size-5 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold text-slate-950">3</span>
-              {L(`Le query (${enabledCount} attive su ${LIMITS.enabledQueries})`, `The queries (${enabledCount} active of ${LIMITS.enabledQueries})`)}
+              {L(`Le query (${enabledCount} attive su ${LIMITS.enabledQueries})`, `Las consultas (${enabledCount} activas de ${LIMITS.enabledQueries})`)}
             </h2>
             <div className="mt-3 flex flex-col gap-3">
               {plan.queries.map((q) => {
@@ -278,22 +278,22 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
                         <input type="checkbox" checked={q.enabled} className="accent-sky-500"
                           disabled={!q.enabled && enabledCount >= LIMITS.enabledQueries}
                           onChange={(e) => updateQuery(q.id, { enabled: e.target.checked })} />
-                        {q.enabled ? L('attiva', 'active') : L('spenta', 'off')}
+                        {q.enabled ? L('attiva', 'activa') : L('spenta', 'apagada')}
                       </label>
                       <input value={q.name} onChange={(e) => updateQuery(q.id, { name: e.target.value })}
                         className="min-w-0 flex-1 rounded border border-transparent bg-transparent px-1 text-sm font-medium text-slate-100 hover:border-[var(--border)] focus:border-sky-500/50 focus:outline-none" />
                       {st && (
-                        <span className="text-[11px] text-slate-400" title={L('menzioni già in archivio con questa query', 'mentions already archived by this query')}>
-                          {L('in archivio:', 'archived:')} <b className="text-slate-200">{st.last7}</b> {L('in 7 gg', 'in 7d')} · {st.last30} {L('in 30 gg', 'in 30d')}
+                        <span className="text-[11px] text-slate-400" title={L('menzioni già in archivio con questa query', 'menciones ya archivadas con esta consulta')}>
+                          {L('in archivio:', 'en archivo:')} <b className="text-slate-200">{st.last7}</b> {L('in 7 gg', 'en 7 d')} · {st.last30} {L('in 30 gg', 'en 30 d')}
                         </span>
                       )}
                       <button onClick={() => change((p) => ({ ...p, queries: p.queries.filter((x) => x.id !== q.id) }))}
-                        className="rounded p-1 text-slate-600 hover:text-red-300" title={L('Elimina la query', 'Delete query')}>
+                        className="rounded p-1 text-slate-600 hover:text-red-300" title={L('Elimina la query', 'Eliminar la consulta')}>
                         <Trash2 className="size-3.5" />
                       </button>
                     </div>
                     <p className="mt-1 text-[11px] text-slate-400">{describeQuery(plan, q, lang)}</p>
-                    {invalid && <p className="mt-1 text-[11px] text-amber-300">{L('Serve almeno un concetto richiesto (non “da escludere”).', 'Needs at least one required concept (not “exclude”).')}</p>}
+                    {invalid && <p className="mt-1 text-[11px] text-amber-300">{L('Serve almeno un concetto richiesto (non “da escludere”).', 'Necesita al menos un concepto requerido (no “excluir”).')}</p>}
 
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {plan.concepts.map((c) => {
@@ -306,7 +306,7 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
                             className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition ${on
                               ? (c.role === 'noise' ? 'border-red-500/50 bg-red-500/15 text-red-200' : 'border-sky-500/50 bg-sky-500/15 text-sky-100')
                               : 'border-[var(--border)] text-slate-500 hover:text-slate-300'}`}
-                            title={c.role === 'noise' ? L('escludi', 'exclude') : L('richiedi', 'require')}>
+                            title={c.role === 'noise' ? L('escludi', 'excluir') : L('richiedi', 'requerir')}>
                             <span className={`size-1.5 rounded-full ${ROLE_DOT[c.role]}`} />
                             {c.role === 'noise' ? '−' : ''}{c.label}
                           </button>
@@ -325,10 +325,10 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
                       <div className="mt-2 text-[11px]">
                         <p className={pr.hits === 0 ? 'text-amber-300' : 'text-slate-300'}>
                           {pr.hits < 0
-                            ? L('Prova non riuscita per questa query.', 'Test failed for this query.')
-                            : L(`Google News, ultimi ${probe!.days} giorni: ${pr.hits}${pr.capped ? '+' : ''} notizie`, `Google News, last ${probe!.days} days: ${pr.hits}${pr.capped ? '+' : ''} stories`)}
-                          {probe!.simulated && <span className="text-slate-500"> {L('(demo: risultati simulati)', '(demo: simulated results)')}</span>}
-                          {pr.dominant && <span className="text-amber-300"> · {L(`“${pr.dominant.term}” pesa il ${pr.dominant.share}%`, `“${pr.dominant.term}” weighs ${pr.dominant.share}%`)}</span>}
+                            ? L('Prova non riuscita per questa query.', 'La prueba falló para esta consulta.')
+                            : L(`Google News, ultimi ${probe!.days} giorni: ${pr.hits}${pr.capped ? '+' : ''} notizie`, `Google News, últimos ${probe!.days} días: ${pr.hits}${pr.capped ? '+' : ''} noticias`)}
+                          {probe!.simulated && <span className="text-slate-500"> {L('(demo: risultati simulati)', '(demo: resultados simulados)')}</span>}
+                          {pr.dominant && <span className="text-amber-300"> · {L(`“${pr.dominant.term}” pesa il ${pr.dominant.share}%`, `“${pr.dominant.term}” pesa el ${pr.dominant.share}%`)}</span>}
                         </p>
                         <ul className="mt-1 flex flex-col gap-0.5">
                           {pr.samples.map((s) => (
@@ -345,7 +345,7 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
             </div>
             <button onClick={addQuery} disabled={plan.queries.length >= LIMITS.queries || !plan.concepts.length}
               className="mt-3 inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px] text-slate-400 hover:bg-white/5 disabled:opacity-40">
-              <Plus className="size-3" /> {L('Aggiungi una query', 'Add a query')}
+              <Plus className="size-3" /> {L('Aggiungi una query', 'Agregar una consulta')}
             </button>
           </section>
 
@@ -365,18 +365,18 @@ export function QueryStudio({ projectId, initialPlan, saved, stats, aiAvailable,
               <button onClick={runProbe} disabled={busy !== '' || !plan.queries.length}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-sky-500/40 px-3 py-1.5 text-xs text-sky-200 hover:bg-sky-500/10 disabled:opacity-50">
                 {busy === 'probe' ? <Loader2 className="size-3.5 animate-spin" /> : <FlaskConical className="size-3.5" />}
-                {L('Prova sul campo', 'Test on real news')}
+                {L('Prova sul campo', 'Probar con noticias reales')}
               </button>
               <button onClick={save} disabled={busy !== '' || !dirty || !enabledCount || invalidQueries.length > 0}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-emerald-400 disabled:opacity-50">
                 {busy === 'save' ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
-                {isSaved ? L('Salva le modifiche', 'Save changes') : L('Salva e attiva', 'Save and activate')}
+                {isSaved ? L('Salva le modifiche', 'Guardar cambios') : L('Salva e attiva', 'Guardar y activar')}
               </button>
               <span className="text-[11px] text-slate-500">
                 {dirty
-                  ? L('Modifiche non salvate.', 'Unsaved changes.')
-                  : isSaved ? L('La raccolta segue questo piano.', 'Collection follows this plan.') : ''}
-                {!probe && dirty && L(' Consiglio: prova prima di salvare.', ' Tip: test before saving.')}
+                  ? L('Modifiche non salvate.', 'Cambios sin guardar.')
+                  : isSaved ? L('La raccolta segue questo piano.', 'La recolección sigue este plan.') : ''}
+                {!probe && dirty && L(' Consiglio: prova prima di salvare.', ' Consejo: prueba antes de guardar.')}
               </span>
             </div>
           </section>
@@ -411,7 +411,7 @@ function ConceptCard({ concept, lang, hits, onChange, onRemove }: {
           className="rounded border border-[var(--border)] bg-[var(--panel-2)] px-1 py-0.5 text-[11px] text-slate-300">
           {(['subject', 'context', 'competitor', 'noise'] as ConceptRole[]).map((r) => <option key={r} value={r}>{ROLE_LABEL[r][lang]}</option>)}
         </select>
-        <button onClick={onRemove} className="rounded p-0.5 text-slate-600 hover:text-red-300" title={L('Elimina', 'Delete')}>
+        <button onClick={onRemove} className="rounded p-0.5 text-slate-600 hover:text-red-300" title={L('Elimina', 'Eliminar')}>
           <Trash2 className="size-3.5" />
         </button>
       </div>
@@ -438,10 +438,10 @@ function ConceptCard({ concept, lang, hits, onChange, onRemove }: {
         <input value={draft} onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } }}
           onBlur={add}
-          placeholder={L('+ termine, invio', '+ term, enter')}
+          placeholder={L('+ termine, invio', '+ término, Enter')}
           className="w-28 rounded-md border border-dashed border-[var(--border)] bg-transparent px-1.5 py-0.5 text-[11px] outline-none focus:border-sky-500/50" />
       </div>
-      {!concept.terms.length && <p className="mt-1 px-1 text-[10px] text-amber-300">{L('Senza termini questo concetto non conta.', 'With no terms this concept does not count.')}</p>}
+      {!concept.terms.length && <p className="mt-1 px-1 text-[10px] text-amber-300">{L('Senza termini questo concetto non conta.', 'Sin términos este concepto no cuenta.')}</p>}
     </div>
   );
 }

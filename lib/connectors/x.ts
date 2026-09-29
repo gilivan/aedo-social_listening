@@ -17,7 +17,7 @@ export const xTwitter: Connector = {
   label: 'X (Twitter)',
   tier: 'premium',
   enabled: () => Boolean(cfg('X_BEARER_TOKEN')),
-  disabledReason: 'Requires an X Bearer Token (Basic API, $200/mo): enter it here in Settings',
+  disabledReason: 'Requiere un Bearer Token de X (API Basic, USD 200/mes): ingrésalo aquí, en Ajustes',
   async fetchMentions(q) {
     const token = cfg('X_BEARER_TOKEN')!;
     const bool = booleanQuery({ ...q, anyTerms: q.anyTerms.slice(0, 5) });

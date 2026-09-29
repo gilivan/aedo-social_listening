@@ -9,10 +9,10 @@ test('la fase più avanzata vince', () => {
   assert.equal(phaseRank([]), 0);
 });
 
-test('le fasi si leggono in italiano', () => {
+test('las fases se leen en español', () => {
   assert.equal(phaseLabel(['PHASE2', 'PHASE3']), 'fase 2 / fase 3');
-  assert.equal(phaseLabel(['NA']), 'senza fase');
-  assert.equal(phaseLabel(['EARLY_PHASE1']), 'fase 1 precoce');
+  assert.equal(phaseLabel(['NA']), 'sin fase');
+  assert.equal(phaseLabel(['EARLY_PHASE1']), 'fase 1 temprana');
 });
 
 test('un trattamento generico non identifica uno studio nelle notizie', () => {

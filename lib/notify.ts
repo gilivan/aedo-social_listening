@@ -63,7 +63,7 @@ const appUrl = () => process.env.APP_URL ?? '';
 export async function notifyAlerts(projectName: string, items: { message: string; severity: string }[]) {
   if (items.length === 0) return;
   const lines = items.map((a) => `${a.severity === 'alta' ? '🔴' : '🟠'} ${a.message}`).join('\n');
-  const text = `<b>⚠️ ${projectName}</b>\n${lines}${appUrl() ? `\n\n<a href="${appUrl()}/alerts">Apri gli alert →</a>` : ''}`;
+  const text = `<b>⚠️ ${projectName}</b>\n${lines}${appUrl() ? `\n\n<a href="${appUrl()}/alerts">Abrir alertas →</a>` : ''}`;
   const loud = items.some((a) => a.severity === 'alta');
   await (loud ? sendWithSound(text) : sendTelegram(text));
 }
@@ -72,8 +72,8 @@ export async function notifyAlerts(projectName: string, items: { message: string
 export async function notifyDailyDigest(projectName: string, stats: {
   mentions24h: number; sentiment: string; topTrend?: string;
 }) {
-  const trend = stats.topTrend ? ` · trend: <i>${stats.topTrend}</i>` : '';
+  const trend = stats.topTrend ? ` · tendencia: <i>${stats.topTrend}</i>` : '';
   await sendTelegram(
-    `☀️ <b>${projectName}</b> — brief di oggi pronto\n${stats.mentions24h} mention nelle ultime 24h · sentiment ${stats.sentiment}${trend}${appUrl() ? `\n<a href="${appUrl()}/brief">Leggi il brief →</a>` : ''}`,
+    `☀️ <b>${projectName}</b> — brief de hoy listo\n${stats.mentions24h} menciones en las últimas 24 h · sentimiento ${stats.sentiment}${trend}${appUrl() ? `\n<a href="${appUrl()}/brief">Leer el brief →</a>` : ''}`,
   );
 }

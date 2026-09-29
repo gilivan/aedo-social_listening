@@ -25,16 +25,16 @@ export default async function GraphPage({ searchParams }: {
   if (!project) {
     return (
       <div className="space-y-4">
-        <PageHeader title="Studio Graph" subtitle="Costruisci il grafico che ti serve" />
-        <EmptyState message="Scegli un progetto dalla barra laterale per vedere i suoi campi." />
+        <PageHeader title="Studio Graph" subtitle="Construye el gráfico que necesitas" />
+        <EmptyState message="Elige un proyecto en la barra lateral para ver sus campos." />
       </div>
     );
   }
   if (!isAdmin(await getCurrentUser())) {
     return (
       <div className="space-y-4">
-        <PageHeader title="Studio Graph" subtitle="Costruisci il grafico che ti serve" />
-        <EmptyState message="Studio Graph è riservato agli amministratori. I grafici salvati restano poi visibili a tutti dentro il report personalizzato." />
+        <PageHeader title="Studio Graph" subtitle="Construye el gráfico que necesitas" />
+        <EmptyState message="Studio Graph está reservado para administradores. Luego, los gráficos guardados quedan visibles para todos dentro del reporte personalizado." />
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default async function GraphPage({ searchParams }: {
     <div className="space-y-4">
       <PageHeader
         title="Studio Graph"
-        subtitle="Scegli i tre assi, la forma e il colore. I campi sono quelli del tuo progetto."
+        subtitle="Elige los tres ejes, la forma y el color. Los campos son los de tu proyecto."
       />
       <StudioGraph preset={sp.preset === 'map' ? 'map' : undefined} initial={saved[0]
         ? { id: saved[0].id, title: saved[0].title, spec: saved[0].spec as never }

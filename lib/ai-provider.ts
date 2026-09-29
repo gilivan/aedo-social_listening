@@ -174,8 +174,8 @@ export async function callOpenAICompat(
   if (!endpoint) {
     throw new Error(
       def.endpointEnv
-        ? `${def.label}: missing ${def.endpointEnv} (the resource URL, e.g. https://my-resource.openai.azure.com)`
-        : `${provider} has no HTTP endpoint`,
+        ? `${def.label}: falta ${def.endpointEnv} (la URL del recurso, p. ej. https://my-resource.openai.azure.com)`
+        : `${provider} no tiene un endpoint HTTP`,
     );
   }
   const body: Record<string, unknown> = {

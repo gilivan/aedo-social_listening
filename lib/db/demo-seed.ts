@@ -408,7 +408,7 @@ Overall tone is mildly positive, led by developer communities on Reddit and Blue
   for (let d = 100; d >= 0; d--) {
     const day = new Date(now - d * 86400_000);
     if (day.getDay() === 0 || day.getDay() === 6) continue; // niente borsa nel weekend
-    const dateKey = day.toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' });
+    const dateKey = day.toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
     const drift = (rnd() - 0.5) * 0.04;
     price = Math.max(1.5, price * (1 + drift));
     priceRows.push({ ticker: 'JUVE.MI', date: dateKey, close: Math.round(price * 1000) / 1000, changePct: Math.round(drift * 10000) / 100 });

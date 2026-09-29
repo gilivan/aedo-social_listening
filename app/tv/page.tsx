@@ -12,7 +12,7 @@ export const metadata = { title: 'War Room' };
 
 export default async function TvPage() {
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message="No project configured." />;
+  if (!project) return <EmptyState message="No hay ningún proyecto configurado." />;
 
   // Tutte query SQL: la War Room si ricarica da sola ogni 5 minuti e non deve
   // mai costare una chiamata AI per restare accesa.

@@ -290,7 +290,10 @@ const IT: Record<string, string> = {
   'landing.seeFeatures': 'Scopri le funzioni',
 };
 
-export const DICT: Record<Locale, Record<string, string>> = { en: {}, it: IT };
+// AEDO: la interfaz es solo en español. Los textos por defecto (fallback de t())
+// están escritos en español; el diccionario italiano no se aplica.
+void IT;
+export const DICT: Record<Locale, Record<string, string>> = { en: {}, it: {} };
 
 /** Versione sincrona per i componenti client, che ricevono già il locale. */
 export function tFor(locale: Locale) {
@@ -300,5 +303,5 @@ export function tFor(locale: Locale) {
 
 /** Formattazione date coerente con la lingua scelta. */
 export function localeTag(locale: Locale): string {
-  return locale === 'it' ? 'it-IT' : 'en-US';
+  return locale === 'it' ? 'it-IT' : 'es-CO';
 }

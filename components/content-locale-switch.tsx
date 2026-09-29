@@ -16,7 +16,14 @@ import { LOCALES, type Locale } from '@/lib/i18n-dict';
  * (es. Point of View), invece di limitarsi a impostare una preferenza per
  * la prossima generazione manuale.
  */
-export function ContentLocaleSwitch({ current, label, translateEndpoint }: {
+// AEDO: interfaz y contenidos solo en español; el selector de idioma no se muestra.
+// Se conserva el componente original (ContentLocaleSwitchOriginal) por si se reactiva.
+export function ContentLocaleSwitch(_props: Parameters<typeof ContentLocaleSwitchOriginal>[0]) {
+  void _props;
+  return null;
+}
+
+export function ContentLocaleSwitchOriginal({ current, label, translateEndpoint }: {
   current: Locale; label?: string; translateEndpoint?: string;
 }) {
   const router = useRouter();
@@ -39,11 +46,11 @@ export function ContentLocaleSwitch({ current, label, translateEndpoint }: {
           const res = await fetch(translateEndpoint, { method: 'POST', headers, body });
           if (!res.ok) {
             const d = await res.json().catch(() => null);
-            throw new Error(d?.error ?? `translation failed (${res.status})`);
+            throw new Error(d?.error ?? `falló la traducción (${res.status})`);
           }
         } catch (e) {
           const m = (e as Error).message;
-          setError(/fetch|network/i.test(m) ? 'network error — retry' : m);
+          setError(/fetch|network/i.test(m) ? 'error de red; reintenta' : m);
           return;                       // niente refresh: l'errore resta visibile
         }
       }
@@ -55,19 +62,19 @@ export function ContentLocaleSwitch({ current, label, translateEndpoint }: {
     <span className="inline-flex flex-col items-start gap-1">
     <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-white/[0.03] px-2.5 py-1"
       title={translateEndpoint
-        ? 'The language this content is written in. Click a flag to translate what is already generated on this page — it does not redo the analysis.'
-        : 'The language the AI writes in — briefs, Point of View, answers, narratives. Independent from the interface language: you can read Radar in one language and generate deliverables in another. Applies to text generated from now on.'}>
+        ? 'El idioma en que está escrito este contenido. Haz clic en una bandera para traducir lo que ya se generó en esta página; no rehace el análisis.'
+        : 'El idioma en que escribe la IA: briefs, Punto de vista, respuestas, narrativas. Es independiente del idioma de la interfaz: puedes usar AEDO en un idioma y generar entregables en otro. Aplica a los textos generados de ahora en adelante.'}>
       {pending
         ? <Loader2 className="size-3 animate-spin text-violet-400" />
         : <PenLine className="size-3 text-violet-400" />}
-      <span className="text-[11px] text-slate-500">{label ?? 'AI writes in'}</span>
+      <span className="text-[11px] text-slate-500">{label ?? 'La IA escribe en'}</span>
       {LOCALES.map((l) => (
         <button
           key={l.code}
           onClick={() => change(l.code)}
           disabled={pending}
-          aria-label={`Generate content in ${l.label}`}
-          title={l.code === current ? `${l.label} — active` : `Generate in ${l.label}`}
+          aria-label={`Generar contenido en ${l.label}`}
+          title={l.code === current ? `${l.label} (activo)` : `Generar en ${l.label}`}
           className={`rounded px-0.5 text-sm leading-none transition ${
             l.code === current ? 'opacity-100' : 'opacity-40 grayscale hover:opacity-80 hover:grayscale-0'
           }`}

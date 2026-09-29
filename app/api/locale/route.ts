@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(req: Request) {
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!user) return NextResponse.json({ error: 'no autorizado' }, { status: 401 });
 
   const { locale } = (await req.json().catch(() => ({}))) as { locale?: string };
   const value = locale === 'it' ? 'it' : 'en';

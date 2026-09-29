@@ -15,11 +15,11 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
 
   const id = Number(new URL(req.url).searchParams.get('id'));
   const edition = id ? await getEdition(id, project.id) : null;
-  if (!edition) return NextResponse.json({ error: 'edizione non trovata' }, { status: 404 });
+  if (!edition) return NextResponse.json({ error: 'edición no encontrada' }, { status: 404 });
 
   const spec = CADENCE.get(edition.cadence);
   const days = spec?.days ?? 30;
@@ -30,13 +30,13 @@ export async function GET(req: Request) {
   const data = { ...fresh, pov: { facts: fresh.pov.facts, pov: edition.pov } };
   const buffer = await buildReportPdf({
     project, data, days, pages: edition.pages,
-    subtitle: `Report ${spec?.label.toLowerCase() ?? edition.cadence} — ${edition.periodStart} / ${edition.periodEnd}`,
+    subtitle: `Informe ${spec?.label.toLowerCase() ?? edition.cadence} — ${edition.periodStart} / ${edition.periodEnd}`,
   });
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="radar-${slugify(project.name)}-${edition.cadence}-${edition.periodEnd}.pdf"`,
+      'Content-Disposition': `attachment; filename="aedo-${slugify(project.name)}-${edition.cadence}-${edition.periodEnd}.pdf"`,
     },
   });
 }

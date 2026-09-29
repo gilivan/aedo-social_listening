@@ -45,18 +45,18 @@ export const PALETTES: Record<PaletteId, {
   label: string; use: string; colors: string[];
 }> = {
   categorical: {
-    label: 'Identità',
-    use: 'Serie diverse fra loro: canali, persone, temi. Il colore dice CHI, non quanto.',
+    label: 'Identidad',
+    use: 'Series distintas entre sí: canales, personas, temas. El color dice QUIÉN, no cuánto.',
     colors: ENTITY_COLORS,
   },
   sequential: {
-    label: 'Intensità',
-    use: 'Una sola grandezza che cresce: classifiche, volumi. Dal chiaro allo scuro.',
+    label: 'Intensidad',
+    use: 'Una sola magnitud que crece: rankings, volúmenes. De claro a oscuro.',
     colors: ['#c6e0f9', '#a3cbf4', '#7fb5ef', '#5c9fea', '#3987e5', '#2e6bb0'],
   },
   diverging: {
-    label: 'Polarità',
-    use: 'Qualcosa che ha due versi opposti attorno a uno zero: sentiment, variazioni.',
+    label: 'Polaridad',
+    use: 'Algo con dos sentidos opuestos alrededor de un cero: sentimiento, variaciones.',
     colors: ['#d24b3f', '#e0836f', '#94a3b8', '#5bb98c', '#199e70'],
   },
 };

@@ -94,17 +94,17 @@ async function resolveProject(id?: number) {
 
 /** Gli strumenti del server, con titolo e descrizione: li legge anche la pagina MCP. */
 export const MCP_TOOLS: { name: string; title: string; description: string }[] = [
-  { name: 'radar_projects', title: 'List Radar projects', description: 'Lists the projects with their id, kind (listening / upload / talkwalker), query keywords and languages. Start here: every other tool takes a project_id.' },
-  { name: 'radar_overview', title: 'Project overview', description: 'The dashboard in numbers: mentions over the last 7 days, average sentiment, active sources, daily volume by source over 14 days, sentiment split, top topics and the latest daily brief.' },
-  { name: 'radar_mentions', title: 'Search mentions', description: 'Searches the mentions of a project with the same filters as the Listening page: free text, source, sentiment, language, article vs post, minimum AI relevance, time window. Returns 40 per page, compacted.' },
-  { name: 'radar_trends', title: 'Emerging topics', description: 'Topics whose speed in the last 24 hours is anomalous against the previous days, with the AI explanation when the daily run produced one. Computed by SQL, no cost.' },
-  { name: 'radar_narratives', title: 'Narratives', description: 'Clusters of messages pushing the same thesis, with stance, the accounts carrying them and a coordination flag. Detected by the daily run; reading them costs nothing.' },
-  { name: 'radar_briefs', title: 'Daily briefs', description: 'The AI daily briefs already generated for the project, most recent first. Reading them is free — they were paid for when they were written.' },
-  { name: 'radar_kpis', title: 'Standard KPIs', description: 'Industry-standard KPIs with their formula and a comparison with the previous period of equal length: mentions, unique authors, potential reach, engagement (likes + comments + shares), engagement rate on reach, amplification and conversation rates, % positive/negative, Net Sentiment Score, author concentration, peak index. Also KPIs by channel, peak days and days beyond 2σ, and the competitive set (SOV, SOE, Share of Positive Voice). Missing values are null with the reason in "note". Pure SQL, free.' },
-  { name: 'radar_reliability', title: 'Data reliability (critical analysis L1)', description: 'Challenges the KPIs before anyone reports them: normal fluctuation, weight of the top 3 items, a single author driving volume, duplicated texts, collection gaps, sources that were not there in the comparison period, incomplete comparisons, sentiment coverage. Returns an overall verdict, findings (observation, evidence, why, confidence, check), a reliable/caution/unusable verdict per KPI and the sentences the report must NOT write. Pure SQL, free. Call it before interpreting.' },
-  { name: 'radar_fact_checks', title: 'Fact checks', description: 'Claims on the project topic already checked by fact-checkers (Google Fact Check Tools / ClaimReview), with normalised verdict, the fact-checkers’ own ratings and links, and how much each claim still circulates in the project mentions (last 7 days vs the 7 before, sources, sample mention ids). Signals: debunked-growing, debunked-circulating, debunked-quiet, contested, confirmed, open.' },
-  { name: 'radar_trials', title: 'Clinical trials', description: 'Clinical trials from ClinicalTrials.gov for the terms the project follows: status, phase, sponsor, completions due within 12 months, and for each treatment how much the news talks about it versus how mature the evidence is (hype = news ahead of the evidence, untold = evidence nobody covers).' },
-  { name: 'radar_crosscheck', title: 'Cross-checks', description: 'News, fact checks, evidence and audio voices on the same topics: debunked claims still circulating, this week’s hot topics that no fact-checker has checked, treatments where news runs ahead of evidence, shows that return to the topic every week, and which of these sources are active.' },
+  { name: 'radar_projects', title: 'Listar proyectos de AEDO', description: 'Lista los proyectos con su id, tipo (listening / upload / talkwalker), palabras clave de la consulta e idiomas. Empieza aquí: todas las demás herramientas requieren un project_id.' },
+  { name: 'radar_overview', title: 'Resumen del proyecto', description: 'El tablero en cifras: menciones de los últimos 7 días, sentimiento promedio, fuentes activas, volumen diario por fuente en 14 días, distribución del sentimiento, temas principales y el último brief diario.' },
+  { name: 'radar_mentions', title: 'Buscar menciones', description: 'Busca las menciones de un proyecto con los mismos filtros de la página Escucha: texto libre, fuente, sentimiento, idioma, artículo o publicación, relevancia mínima según la IA y ventana de tiempo. Devuelve 40 por página, en formato compacto.' },
+  { name: 'radar_trends', title: 'Temas emergentes', description: 'Temas cuya velocidad en las últimas 24 horas es anómala frente a los días anteriores, con la explicación de la IA cuando la ejecución diaria la generó. Calculado con SQL, sin costo.' },
+  { name: 'radar_narratives', title: 'Narrativas', description: 'Grupos de mensajes que impulsan la misma tesis, con su postura, las cuentas que los difunden y una señal de coordinación. Los detecta la ejecución diaria; leerlos no cuesta nada.' },
+  { name: 'radar_briefs', title: 'Briefs diarios', description: 'Los briefs diarios de IA ya generados para el proyecto, del más reciente al más antiguo. Leerlos es gratis: se pagaron cuando se escribieron.' },
+  { name: 'radar_kpis', title: 'KPI estándar', description: 'KPI estándar del sector con su fórmula y una comparación con el periodo anterior de igual duración: menciones, autores únicos, alcance potencial, engagement (likes + comentarios + compartidos), tasa de engagement sobre alcance, tasas de amplificación y conversación, % positivo/negativo, Net Sentiment Score, concentración de autores e índice de pico. También KPI por canal, días pico y días por encima de 2σ, y el set competitivo (SOV, SOE, Share of Positive Voice). Los valores faltantes son null con el motivo en "note". Solo SQL, gratis.' },
+  { name: 'radar_reliability', title: 'Confiabilidad de los datos (análisis crítico N1)', description: 'Cuestiona los KPI antes de que alguien los reporte: fluctuación normal, peso de los 3 elementos principales, un solo autor que impulsa el volumen, textos duplicados, vacíos en la recolección, fuentes que no existían en el periodo de comparación, comparaciones incompletas y cobertura del sentimiento. Devuelve un veredicto general, hallazgos (observación, evidencia, porqué, confianza, verificación), un veredicto confiable/precaución/inutilizable por KPI y las frases que el informe NO debe escribir. Solo SQL, gratis. Llámala antes de interpretar.' },
+  { name: 'radar_fact_checks', title: 'Verificaciones', description: 'Afirmaciones sobre el tema del proyecto ya verificadas por fact-checkers (Google Fact Check Tools / ClaimReview), con veredicto normalizado, las calificaciones y enlaces de los propios verificadores, y cuánto sigue circulando cada afirmación en las menciones del proyecto (últimos 7 días frente a los 7 anteriores, fuentes, ids de menciones de muestra). Señales: debunked-growing, debunked-circulating, debunked-quiet, contested, confirmed, open.' },
+  { name: 'radar_trials', title: 'Ensayos clínicos', description: 'Ensayos clínicos de ClinicalTrials.gov para los términos que sigue el proyecto: estado, fase, patrocinador, finalizaciones previstas en los próximos 12 meses y, para cada tratamiento, cuánto se habla de él en las noticias frente a qué tan madura es la evidencia (hype = noticias por delante de la evidencia, untold = evidencia que nadie cubre).' },
+  { name: 'radar_crosscheck', title: 'Cruces de fuentes', description: 'Noticias, verificaciones, evidencia y voces de audio sobre los mismos temas: afirmaciones desmentidas que siguen circulando, temas calientes de la semana que ningún fact-checker ha verificado, tratamientos donde las noticias van por delante de la evidencia, programas que vuelven al tema cada semana y cuáles de estas fuentes están activas.' },
 ];
 
 const info = (name: string) => {
@@ -114,11 +114,11 @@ const info = (name: string) => {
 
 export function createRadarMcpServer(): McpServer {
   const server = new McpServer(
-    { name: 'radar', version: '1.0.0' },
+    { name: 'aedo', version: '1.0.0' },
     {
       instructions:
-        'Radar: media intelligence and social listening. Projects come in three kinds — ' +
-        '"listening" (Radar collects from the web), "upload" (data imported from files) and ' +
+        'AEDO: media intelligence and social listening. Projects come in three kinds — ' +
+        '"listening" (AEDO collects from the web), "upload" (data imported from files) and ' +
         '"talkwalker" (mentions read from the corporate Talkwalker API). Every tool here is ' +
         'read-only and free: it returns what the pipeline already computed, and never spends ' +
         'AI budget or Talkwalker credits. Start from radar_projects to get the project ids.',
@@ -385,7 +385,7 @@ export function createRadarMcpServer(): McpServer {
   // La libreria di prompt, come prompt del protocollo: i client MCP li
   // mostrano nel loro menù e chiedono gli argomenti.
   for (const def of MCP_PROMPTS) {
-    const shape: Record<string, z.ZodTypeAny> = { project: z.string().optional().describe('Project name or id') };
+    const shape: Record<string, z.ZodTypeAny> = { project: z.string().optional().describe('Nombre o id del proyecto') };
     for (const a of def.args) {
       shape[a.name] = a.required ? z.string().describe(a.description) : z.string().optional().describe(a.description);
     }

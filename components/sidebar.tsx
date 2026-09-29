@@ -60,19 +60,19 @@ export function Sidebar({ projects, currentId, lastIngest, alertCount = 0, peopl
         <UserCircle2 className="size-5 shrink-0 text-slate-500" />
         <div className="min-w-0">
           <p className="truncate text-xs font-medium text-slate-300">{user.name}</p>
-          <p className="text-[10px] uppercase tracking-wide text-slate-600">{user.role === 'admin' ? t('nav.admin', 'Admin') : t('nav.member', 'Member')}</p>
+          <p className="text-[10px] uppercase tracking-wide text-slate-600">{user.role === 'admin' ? t('nav.admin', 'Admin') : t('nav.member', 'Miembro')}</p>
         </div>
       </div>
       <div className="flex items-center gap-1">
         <Link href="/impostazioni/account" onClick={() => setOpen(false)}
           className="flex flex-1 items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:bg-white/5 hover:text-slate-200">
-          <UserCog className="size-4" /> {t('nav.account', 'Settings')}
+          <UserCog className="size-4" /> {t('nav.account', 'Ajustes')}
         </Link>
         <LocaleSwitch current={locale} compact />
       </div>
       <button onClick={logout}
         className="flex w-full items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:bg-white/5 hover:text-red-300">
-        <LogOut className="size-4" /> {t('nav.logout', 'Log out')}
+        <LogOut className="size-4" /> {t('nav.logout', 'Cerrar sesión')}
       </button>
     </div>
   );
@@ -83,7 +83,7 @@ export function Sidebar({ projects, currentId, lastIngest, alertCount = 0, peopl
 
       {/* Header mobile/tablet (sotto lg) */}
       <header className="sticky top-0 z-40 flex items-center gap-3 border-b border-[var(--border)] bg-[#0c1226]/95 px-4 py-2.5 backdrop-blur lg:hidden">
-        <button onClick={() => setOpen(true)} aria-label="Open menu"
+        <button onClick={() => setOpen(true)} aria-label="Abrir menú"
           className="rounded-lg p-1.5 text-slate-300 hover:bg-white/10">
           <Menu className="size-5" />
         </button>
@@ -101,7 +101,7 @@ export function Sidebar({ projects, currentId, lastIngest, alertCount = 0, peopl
           <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col gap-4 overflow-y-auto bg-[#0c1226] px-3 py-4 shadow-2xl">
             <div className="flex items-center gap-2 px-2">
               <Brand />
-              <button onClick={() => setOpen(false)} aria-label="Close menu"
+              <button onClick={() => setOpen(false)} aria-label="Cerrar menú"
                 className="ml-auto rounded-lg p-1.5 text-slate-400 hover:bg-white/10">
                 <X className="size-5" />
               </button>
@@ -214,7 +214,7 @@ function NavLinks({ pathname, alertCount = 0, peopleCount = 0, t, onNavigate }: 
                 numero, un progetto che ne contiene quindici sembra non averne
                 nessuna — e la pagina non la cerca più nessuno. */}
             {href === '/measures' && peopleCount > 0 && (
-              <span title={`${peopleCount} persone in questo progetto`}
+              <span title={`${peopleCount} personas en este proyecto`}
                 className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-white/10 px-1.5 text-[11px] font-semibold text-slate-300">
                 {peopleCount}
               </span>
@@ -237,8 +237,8 @@ function FooterBlock({ lastIngest }: { lastIngest: string | null }) {
       <RefreshButton />
       <p className="px-1 text-[11px] leading-4 text-slate-500">
         {lastIngest
-          ? `Last update: ${new Date(lastIngest).toLocaleString('en-US', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}`
-          : 'No data collected yet'}
+          ? `Última actualización: ${new Date(lastIngest).toLocaleString('es-CO', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}`
+          : 'Aún no se han recolectado datos'}
       </p>
     </div>
   );

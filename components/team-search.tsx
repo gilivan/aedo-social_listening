@@ -40,7 +40,7 @@ export function TeamSearch({ competitions }: { competitions: { code: string; lab
       const res = await fetch(`/api/sport/lookup-team?competition=${encodeURIComponent(comp)}&q=${encodeURIComponent(q)}`);
       const data = await res.json();
       if (seq !== requestSeq.current) return; // risposta di una ricerca superata, ignorala
-      if (!res.ok) throw new Error(data.error || 'search failed');
+      if (!res.ok) throw new Error(data.error || 'la búsqueda falló');
       setResults(data.teams ?? []);
       setKeyMissing(Boolean(data.keyMissing));
       setSearched(true);
@@ -90,17 +90,17 @@ export function TeamSearch({ competitions }: { competitions: { code: string; lab
               setSearched(false);
               scheduleSearch(e.target.value, competition);
             }}
-            placeholder="Search team (e.g. Juventus)"
+            placeholder="Buscar equipo (p. ej. Juventus)"
             autoComplete="off"
             className="w-full rounded-lg border border-[var(--border)] bg-[var(--panel-2)] py-1.5 pl-8 pr-2.5 text-sm text-slate-100 outline-none focus:border-sky-500/50"
           />
         </div>
-        {loading && <p className="text-[11px] text-slate-600">Searching…</p>}
+        {loading && <p className="text-[11px] text-slate-600">Buscando…</p>}
         {error && <p className="text-[11px] text-red-400">{error}</p>}
         {!loading && !error && searched && !picked && results.length === 0 && (
           keyMissing
-            ? <p className="text-[11px] text-amber-400">No football-data.org API key saved yet — add it under “Enter API keys” below, then search again.</p>
-            : <p className="text-[11px] text-slate-600">No team found in this competition — check spelling or try another league.</p>
+            ? <p className="text-[11px] text-amber-400">Aún no hay una clave API de football-data.org guardada — agrégala en “Ingresar claves API” más abajo y vuelve a buscar.</p>
+            : <p className="text-[11px] text-slate-600">No se encontró ningún equipo en esta competición — revisa la ortografía o prueba otra liga.</p>
         )}
         {!picked && results.length > 0 && (
           <div className="flex flex-col overflow-hidden rounded-lg border border-[var(--border)]">
@@ -120,8 +120,8 @@ export function TeamSearch({ competitions }: { competitions: { code: string; lab
         )}
         {picked && (
           <p className="flex items-center gap-1.5 text-[11px] text-emerald-400">
-            <Check className="size-3.5" /> {picked.name} selected (ID {picked.id})
-            <button type="button" onClick={() => { setPicked(null); setQuery(''); setSearched(false); }} className="ml-1 text-slate-600 underline hover:text-slate-400">change</button>
+            <Check className="size-3.5" /> {picked.name} seleccionado (ID {picked.id})
+            <button type="button" onClick={() => { setPicked(null); setQuery(''); setSearched(false); }} className="ml-1 text-slate-600 underline hover:text-slate-400">cambiar</button>
           </p>
         )}
       </div>

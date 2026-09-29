@@ -9,10 +9,9 @@ const LANG_LABEL: Record<string, string> = {
 };
 
 /** Lingua di lettura preferita: cookie condiviso col futuro selettore di lingua. */
+// AEDO: la lengua de lectura es siempre el español.
 function readTarget(): string {
-  if (typeof document === 'undefined') return 'it';
-  const m = document.cookie.match(/(?:^|;\s*)sr_locale=([a-z]{2})/);
-  return m?.[1] ?? 'it';
+  return 'es';
 }
 
 type Tr = { title: string | null; content: string };
@@ -72,14 +71,14 @@ export function MentionBody({ id, lang, url, title, content, allowTranslate }: {
       )}
       {showBtn && (
         <button onClick={toggle} disabled={state === 'loading'}
-          title={state === 'error' ? 'Translation unavailable (needs the AI key / budget)' : `Translate this post to ${label}`}
+          title={state === 'error' ? 'Traducción no disponible (requiere la clave / presupuesto de IA)' : `Traducir esta publicación a ${label}`}
           className={`mt-1.5 flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium transition ${
             on ? 'bg-violet-500/20 text-violet-200'
               : state === 'error' ? 'text-red-400'
               : 'text-slate-500 hover:bg-violet-500/15 hover:text-violet-300'
           }`}>
           {state === 'loading' ? <Loader2 className="size-3 animate-spin" /> : <Languages className="size-3" />}
-          {on ? 'show original' : state === 'error' ? 'retry translation' : `translate · ${label}`}
+          {on ? 'ver original' : state === 'error' ? 'reintentar traducción' : `traducir · ${label}`}
         </button>
       )}
     </>

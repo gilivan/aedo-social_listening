@@ -24,17 +24,17 @@ type Edition = {
 };
 
 const CADENCES: { key: string; label: string; note: string }[] = [
-  { key: 'daily', label: 'Giornaliero', note: 'tesi riusata' },
-  { key: 'weekly', label: 'Settimanale', note: 'tesi riusata' },
-  { key: 'biweekly', label: 'Quindicinale', note: 'tesi riusata' },
-  { key: 'monthly', label: 'Mensile', note: 'tesi nuova' },
-  { key: 'quarterly', label: 'Trimestrale', note: 'tesi nuova' },
-  { key: 'semiannual', label: 'Semestrale', note: 'tesi nuova' },
-  { key: 'annual', label: 'Annuale', note: 'tesi nuova' },
+  { key: 'daily', label: 'Diario', note: 'tesis reutilizada' },
+  { key: 'weekly', label: 'Semanal', note: 'tesis reutilizada' },
+  { key: 'biweekly', label: 'Quincenal', note: 'tesis reutilizada' },
+  { key: 'monthly', label: 'Mensual', note: 'tesis nueva' },
+  { key: 'quarterly', label: 'Trimestral', note: 'tesis nueva' },
+  { key: 'semiannual', label: 'Semestral', note: 'tesis nueva' },
+  { key: 'annual', label: 'Anual', note: 'tesis nueva' },
 ];
 const LABEL = new Map(CADENCES.map((c) => [c.key, c.label]));
 
-const day = (s: string) => new Date(s).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
+const day = (s: string) => new Date(s).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export function PeriodicReports() {
   const [editions, setEditions] = useState<Edition[]>([]);
@@ -48,7 +48,7 @@ export function PeriodicReports() {
     ]);
     const d = await r1.json();
     if (r1.ok) setEditions(d.editions ?? []);
-    else setMsg({ kind: 'warn', text: d.error ?? 'Errore di caricamento' });
+    else setMsg({ kind: 'warn', text: d.error ?? 'Error de carga' });
     if (r2.ok) setActive((await r2.json()).cadences ?? []);
   }, []);
 
@@ -61,7 +61,7 @@ export function PeriodicReports() {
       method: 'PUT', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ cadences: next }),
     });
-    if (!res.ok) { setMsg({ kind: 'warn', text: 'Cadenza non salvata' }); load(); }
+    if (!res.ok) { setMsg({ kind: 'warn', text: 'La frecuencia no se guardó' }); load(); }
   };
 
   const generate = async (cadence: string) => {
@@ -72,13 +72,13 @@ export function PeriodicReports() {
         body: JSON.stringify({ cadence }),
       });
       const d = await res.json();
-      if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'Generazione fallita' }); return; }
+      if (!res.ok) { setMsg({ kind: 'warn', text: d.error ?? 'La generación falló' }); return; }
       const p = d.provenance as Provenance;
       setMsg({
         kind: 'ok',
         text: p.povGeneratedAt
-          ? `Edizione ${LABEL.get(cadence)?.toLowerCase()} pronta: ${d.pages} pagine, tesi ${p.povReused ? 'riusata' : 'generata ora'} su ${p.povWindowDays} giorni.`
-          : `Edizione ${LABEL.get(cadence)?.toLowerCase()} pronta: ${d.pages} pagine, ma nessuna tesi era disponibile — genera un Point of View e rigenera l'edizione.`,
+          ? `Edición ${LABEL.get(cadence)?.toLowerCase()} lista: ${d.pages} páginas, tesis ${p.povReused ? 'reutilizada' : 'generada ahora'} sobre ${p.povWindowDays} días.`
+          : `Edición ${LABEL.get(cadence)?.toLowerCase()} lista: ${d.pages} páginas, pero no había ninguna tesis disponible. Genera un Punto de vista y vuelve a generar la edición.`,
       });
       load();
     } catch (e) {
@@ -95,36 +95,36 @@ export function PeriodicReports() {
     <div className="flex flex-col gap-4">
       <section className="panel px-5 py-4">
         <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-200">
-          <CalendarClock className="size-4 text-sky-400" /> Genera un&rsquo;edizione
+          <CalendarClock className="size-4 text-sky-400" /> Genera una edición
         </h2>
         <p className="mb-3 text-[11px] text-slate-600">
-          Unisce i numeri del periodo, il brief e la tesi. Le cadenze brevi riusano il Point of View corrente
-          invece di riscriverlo — dal mensile in su ne viene generato uno nuovo sulla finestra giusta.
-          In entrambi i casi il documento dichiara sempre da dove viene la tesi.
+          Une las cifras del periodo, el brief y la tesis. Las frecuencias cortas reutilizan el Punto de vista actual
+          en lugar de reescribirlo; de la mensual en adelante se genera uno nuevo sobre la ventana adecuada.
+          En ambos casos el documento siempre indica de dónde viene la tesis.
         </p>
         <div className="flex flex-wrap gap-2">
           {CADENCES.map((c) => (
             <div key={c.key}
               className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${active.includes(c.key)
                 ? 'border-sky-500/40 bg-sky-500/[0.07]' : 'border-[var(--border)]'}`}>
-              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-300" title="Esce da solo a questa cadenza">
+              <label className="flex cursor-pointer items-center gap-1.5 text-xs text-slate-300" title="Se publica automáticamente con esta frecuencia">
                 <input type="checkbox" checked={active.includes(c.key)} onChange={() => toggle(c.key)}
                   className="size-3.5 accent-sky-500" />
                 {c.label}
               </label>
               <span className="text-[10px] text-slate-600">{c.note}</span>
               <button onClick={() => generate(c.key)} disabled={!!busy}
-                title="Genera un'edizione adesso"
+                title="Generar una edición ahora"
                 className="inline-flex items-center gap-1 rounded border border-[var(--border)] px-1.5 py-0.5 text-[10px] text-slate-400 hover:bg-white/5 disabled:opacity-40">
                 {busy === c.key ? <Loader2 className="size-3 animate-spin" /> : <Sparkles className="size-3" />}
-                ora
+                ahora
               </button>
             </div>
           ))}
         </div>
         <p className="mt-2 text-[11px] text-slate-600">
-          La spunta accende la cadenza: l&rsquo;edizione esce da sola ogni mattina, quando il periodo è trascorso.
-          &ldquo;Ora&rdquo; ne produce una subito senza toccare la programmazione.
+          La casilla activa la frecuencia: la edición se publica sola cada mañana, cuando termina el periodo.
+          &ldquo;Ahora&rdquo; produce una de inmediato sin modificar la programación.
         </p>
       </section>
 
@@ -139,7 +139,7 @@ export function PeriodicReports() {
 
       {editions.length === 0 ? (
         <p className="panel px-5 py-8 text-center text-xs text-slate-600">
-          Nessuna edizione ancora. Generane una scegliendo una cadenza qui sopra.
+          Aún no hay ediciones. Genera una eligiendo una frecuencia aquí arriba.
         </p>
       ) : (
         <div className="flex flex-col gap-2">
@@ -153,11 +153,11 @@ export function PeriodicReports() {
                 <p className="mt-0.5 flex items-start gap-1.5 text-[11px] text-slate-500">
                   <Info className="mt-0.5 size-3 shrink-0" />
                   {e.provenance?.povGeneratedAt
-                    ? `Tesi ${e.provenance.povReused ? 'riusata' : 'generata per questa edizione'}, scritta il `
-                      + `${new Date(e.provenance.povGeneratedAt).toLocaleDateString('it-IT')} su ${e.provenance.povWindowDays} giorni `
-                      + `e ${(e.provenance.povMentions ?? 0).toLocaleString('it-IT')} menzioni · `
-                      + `${e.provenance.periodMentions.toLocaleString('it-IT')} menzioni nel periodo`
-                    : 'Nessuna tesi disponibile al momento della generazione'}
+                    ? `Tesis ${e.provenance.povReused ? 'reutilizada' : 'generada para esta edición'}, escrita el `
+                      + `${new Date(e.provenance.povGeneratedAt).toLocaleDateString('es-CO')} sobre ${e.provenance.povWindowDays} días `
+                      + `y ${(e.provenance.povMentions ?? 0).toLocaleString('es-CO')} menciones · `
+                      + `${e.provenance.periodMentions.toLocaleString('es-CO')} menciones en el periodo`
+                    : 'No había ninguna tesis disponible al momento de la generación'}
                 </p>
               </div>
               <div className="flex items-center gap-2">

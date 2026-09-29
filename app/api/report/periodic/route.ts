@@ -12,9 +12,9 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
 async function ctx() {
-  if (!isAdmin(await getCurrentUser())) return { error: 'Solo gli amministratori possono generare report' as const };
+  if (!isAdmin(await getCurrentUser())) return { error: 'Solo los administradores pueden generar informes' as const };
   const project = await getCurrentProject();
-  if (!project) return { error: 'Nessun progetto selezionato' as const };
+  if (!project) return { error: 'No hay ningún proyecto seleccionado' as const };
   return { project };
 }
 
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   const c = await ctx();
   if ('error' in c) return NextResponse.json({ error: c.error }, { status: 400 });
   const body = await req.json().catch(() => ({}));
-  if (!isCadence(body.cadence)) return NextResponse.json({ error: 'Cadenza non valida' }, { status: 400 });
+  if (!isCadence(body.cadence)) return NextResponse.json({ error: 'Frecuencia no válida' }, { status: 400 });
 
   try {
     const built = await buildPeriodicReport(c.project, body.cadence);
@@ -45,7 +45,7 @@ export async function DELETE(req: Request) {
   const c = await ctx();
   if ('error' in c) return NextResponse.json({ error: c.error }, { status: 400 });
   const id = Number(new URL(req.url).searchParams.get('id'));
-  if (!id) return NextResponse.json({ error: 'Edizione mancante' }, { status: 400 });
+  if (!id) return NextResponse.json({ error: 'Falta la edición' }, { status: 400 });
   await deleteEdition(id, c.project.id);
   return NextResponse.json({ ok: true });
 }

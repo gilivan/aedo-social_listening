@@ -15,11 +15,11 @@ const VALID = new Set(TRANSLATE_LANGS.map(([code]) => code));
 // (riusa translateMentions): ogni contenuto si paga una volta sola.
 export async function POST(req: Request) {
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  if (!user) return NextResponse.json({ error: 'no autorizado' }, { status: 401 });
 
   const { id, lang } = (await req.json().catch(() => ({}))) as { id?: number; lang?: string };
   if (!id || !lang || !VALID.has(lang)) {
-    return NextResponse.json({ error: 'bad request' }, { status: 400 });
+    return NextResponse.json({ error: 'solicitud no válida' }, { status: 400 });
   }
   if (!await claudeAvailable()) {
     return NextResponse.json({ error: 'ai_off' }, { status: 503 });
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     language: mentions.language, translations: mentions.translations,
   }).from(mentions).where(eq(mentions.id, id)).limit(1);
 
-  if (!row) return NextResponse.json({ error: 'not found' }, { status: 404 });
+  if (!row) return NextResponse.json({ error: 'no encontrado' }, { status: 404 });
   if (row.language === lang) {
     return NextResponse.json({ title: row.title, content: row.content, already: true });
   }

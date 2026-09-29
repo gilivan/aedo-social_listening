@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { linkedin } from '@/lib/connectors/linkedin';
 import { facebook } from '@/lib/connectors/facebook';
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 /**
  * Fonti che portano i TUOI post, non ciò che altri dicono di te: la pagina

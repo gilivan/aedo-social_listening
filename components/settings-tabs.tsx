@@ -5,11 +5,11 @@ import { usePathname } from 'next/navigation';
 import { UserCog, Users, Database, Wallet, Scale } from 'lucide-react';
 
 const TABS = [
-  { href: '/impostazioni/account', label: 'My account', icon: UserCog, adminOnly: false },
-  { href: '/impostazioni/team', label: 'Team', icon: Users, adminOnly: true },
-  { href: '/impostazioni/fonti', label: 'Sources', icon: Database, adminOnly: false },
-  { href: '/impostazioni/budget', label: 'Budget', icon: Wallet, adminOnly: false },
-  { href: '/impostazioni/credits', label: 'Credits & Legal', icon: Scale, adminOnly: false },
+  { href: '/impostazioni/account', label: 'Mi cuenta', icon: UserCog, adminOnly: false },
+  { href: '/impostazioni/team', label: 'Equipo', icon: Users, adminOnly: true },
+  { href: '/impostazioni/fonti', label: 'Fuentes', icon: Database, adminOnly: false },
+  { href: '/impostazioni/budget', label: 'Presupuesto', icon: Wallet, adminOnly: false },
+  { href: '/impostazioni/credits', label: 'Créditos y legal', icon: Scale, adminOnly: false },
 ] as const;
 
 export function SettingsTabs({ isAdmin }: { isAdmin: boolean }) {

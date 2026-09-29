@@ -34,7 +34,7 @@ export function InfluencerButton({ author, source }: { author: string; source: s
   return (
     <>
       <button onClick={generate} disabled={busy}
-        title="AI profile + outreach draft"
+        title="Perfil con IA + borrador de contacto"
         className="shrink-0 rounded-md p-1 text-slate-500 transition hover:bg-sky-500/15 hover:text-sky-300 disabled:opacity-60">
         {busy ? <Loader2 className="size-3.5 animate-spin" /> : <UserSearch className="size-3.5" />}
       </button>

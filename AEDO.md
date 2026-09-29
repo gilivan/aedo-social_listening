@@ -15,11 +15,16 @@ Claves de IA y fuentes: `.env.local` o Ajustes → Sources (cifradas).
 ## Notas de la base
 - Next.js 16 + React 19 + Drizzle; Postgres (Neon) o PGlite.
 - Conectores en `lib/connectors/` (interfaz `Connector` en `types.ts`); reseñas en `lib/reviews/`.
-- Interfaz en inglés/italiano (`lib/i18n-dict.ts`); comentarios de código en italiano.
+- Interfaz 100 % en español y marca AEDO (commit "Interfaz en español"). Decisión técnica:
+  la app siempre usa el locale interno `'en'`, cuyos textos ahora están en español; las ramas
+  `'it'` quedan como código muerto (facilita traer mejoras de upstream). Selector de idioma oculto.
+- Contenidos de IA siempre en español (`lib/content-locale.ts`); zona horaria America/Bogota.
+- Los créditos a Radar Intelligence / Massimo Scognamiglio se conservan en Ajustes → Créditos (exigido por la AGPL).
+- Comentarios de código siguen en italiano.
 - Licencia AGPL-3.0: uso interno sin problema; si se expone a terceros por red, hay que publicar el código modificado.
 
 ## Hoja de ruta
-1. Traducción de la interfaz al español (locale `es`).
+1. ~~Interfaz en español y marca AEDO~~ ✅
 2. Cuentas propias vía APIs oficiales (Meta, YouTube) o Metricool.
 3. Conectores de menciones externas: X (twscrape), Instagram (Instaloader), TikTok (TikTok-Api),
    reseñas de Google Maps (gosom), noticias (GDELT ya incluido).

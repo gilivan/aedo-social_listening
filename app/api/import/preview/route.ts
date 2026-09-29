@@ -7,14 +7,14 @@ export const runtime = 'nodejs';
 export const maxDuration = 120;
 
 export async function POST(req: Request) {
-  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Admins only' }, { status: 403 });
+  if (!isAdmin(await getCurrentUser())) return NextResponse.json({ error: 'Solo para administradores' }, { status: 403 });
   const form = await req.formData();
   const file = form.get('file');
-  if (!(file instanceof File)) return NextResponse.json({ error: 'No file' }, { status: 400 });
-  if (!/\.(xlsx|csv)$/i.test(file.name)) return NextResponse.json({ error: 'Upload an .xlsx or .csv file' }, { status: 400 });
+  if (!(file instanceof File)) return NextResponse.json({ error: 'No hay archivo' }, { status: 400 });
+  if (!/\.(xlsx|csv)$/i.test(file.name)) return NextResponse.json({ error: 'Sube un archivo .xlsx o .csv' }, { status: 400 });
   const buf = Buffer.from(await file.arrayBuffer());
   const { columns, rows, total } = await parseSheet(buf, file.name);
-  if (columns.length === 0) return NextResponse.json({ error: 'The file has no readable columns' }, { status: 400 });
+  if (columns.length === 0) return NextResponse.json({ error: 'El archivo no tiene columnas legibles' }, { status: 400 });
 
   // Il profilo guarda i VALORI, non solo le intestazioni: è ciò che permette
   // di riconoscere una colonna "col_3" piena di date, o un file con le

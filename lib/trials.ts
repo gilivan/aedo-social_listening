@@ -18,7 +18,7 @@ import { clinicalTrials, mentions, projects, type TrialNews } from '@/lib/db/sch
 // ---------------------------------------------------------------------------
 
 const API = 'https://clinicaltrials.gov/api/v2/studies';
-const UA = 'Radar/1.0 (media intelligence)';
+const UA = 'AEDO/1.0 (media intelligence)';
 
 type Study = {
   protocolSection?: {
@@ -201,9 +201,9 @@ export function phaseRank(phases: string[]): number {
   return best;
 }
 
-export function phaseLabel(phases: string[], lang: 'it' | 'en' = 'it'): string {
-  if (!phases.length || phases.every((p) => p === 'NA')) return lang === 'it' ? 'senza fase' : 'no phase';
-  return phases.map((p) => (p === 'EARLY_PHASE1' ? (lang === 'it' ? 'fase 1 precoce' : 'early phase 1') : p.replace('PHASE', lang === 'it' ? 'fase ' : 'phase '))).join(' / ');
+export function phaseLabel(phases: string[], lang: 'it' | 'en' = 'en'): string {
+  if (!phases.length || phases.every((p) => p === 'NA')) return lang === 'it' ? 'senza fase' : 'sin fase';
+  return phases.map((p) => (p === 'EARLY_PHASE1' ? (lang === 'it' ? 'fase 1 precoce' : 'fase 1 temprana') : p.replace('PHASE', lang === 'it' ? 'fase ' : 'fase '))).join(' / ');
 }
 
 export const STATUS_LABEL: Record<string, string> = {

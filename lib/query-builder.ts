@@ -76,9 +76,9 @@ export async function buildPlan(brief: string, project: ProjectLike): Promise<Bu
   if (process.env.DEMO_MODE === '1') {
     const { DEMO_PLAN } = await import('@/lib/db/demo-extra');
     if (/aurora/i.test(text)) {
-      return { plan: { ...DEMO_PLAN, brief: text }, warnings: ['Public demo: this AI proposal was generated in advance for the example request.'] };
+      return { plan: { ...DEMO_PLAN, brief: text }, warnings: ['Demo pública: esta propuesta de la IA se generó de antemano para la solicitud de ejemplo.'] };
     }
-    return { plan: planFromRules(text), warnings: ['Public demo: AI is off, so this is the rule-based reading. Try the Aurora Mobility example to see the AI proposal.'] };
+    return { plan: planFromRules(text), warnings: ['Demo pública: la IA está apagada, así que esta es la lectura basada en reglas. Prueba el ejemplo de Aurora Mobility para ver la propuesta de la IA.'] };
   }
   const langs = project.languages.length ? project.languages.join(', ') : 'it, en';
   const user = `Project: ${project.name}
@@ -90,15 +90,15 @@ Request: ${text}`;
   if (parsed && typeof parsed === 'object') {
     const { plan, warnings } = validatePlan({ ...(parsed as object), brief: text, origin: 'ai' });
     if (plan.queries.length) return { plan, warnings };
-    warnings.push('La proposta dell’AI non conteneva query utilizzabili: uso una lettura a regole.');
+    warnings.push('La propuesta de la IA no contenía consultas utilizables: se usa una lectura basada en reglas.');
     const fallback = planFromRules(text);
     return { plan: fallback, warnings };
   }
   const fallback = planFromRules(text);
   return {
     plan: fallback,
-    warnings: ['L’AI non ha risposto: questa è una prima lettura a regole, da rifinire a mano.'],
-    aiFailure: failure ?? { why: 'empty', message: 'Risposta non leggibile.' },
+    warnings: ['La IA no respondió: esta es una primera lectura basada en reglas, para ajustar a mano.'],
+    aiFailure: failure ?? { why: 'empty', message: 'Respuesta ilegible.' },
   };
 }
 
@@ -257,7 +257,7 @@ export async function projectPlan(projectId: number): Promise<{ plan: QueryPlan;
  */
 export async function savePlan(projectId: number, input: unknown): Promise<{ plan: QueryPlan; warnings: string[] }> {
   const { plan, warnings } = validatePlan(input);
-  if (!plan.queries.some((q) => q.enabled)) throw new Error('Serve almeno una query attiva.');
+  if (!plan.queries.some((q) => q.enabled)) throw new Error('Se necesita al menos una consulta activa.');
   const db = await getDb();
   const legacy = legacyFields(plan);
   const [current] = await db.select({ mode: projects.mode }).from(projects).where(eq(projects.id, projectId));

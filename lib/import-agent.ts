@@ -222,7 +222,7 @@ export type AgentReading = {
 };
 
 const SYSTEM = `Sei un analista di dati che riceve la SCHEDA TECNICA di un file appena caricato in
-un'applicazione di media intelligence (Radar). Non vedi le righe: vedi i fogli, le colonne, il tipo
+un'applicazione di media intelligence (AEDO). Non vedi le righe: vedi i fogli, le colonne, il tipo
 di ogni colonna, quanto è piena, quanti valori distinti ha e tre valori di esempio.
 
 Leggi la scheda come la leggerebbe un analista esperto, cioè guardando i NUMERI e non i nomi:
@@ -511,7 +511,7 @@ export async function readFile(
   d: Dossier,
 ): Promise<{ reading: AgentReading } | { failure: AiFailure }> {
   if (!d.sheets.length) {
-    return { failure: { why: 'empty', message: 'Non c’è ancora nessun foglio da leggere.' } };
+    return { failure: { why: 'empty', message: 'Todavía no hay ninguna hoja para leer.' } };
   }
   const payload = brief(d);
   const { text, failure } = await callClaudeDetailed(
@@ -519,13 +519,13 @@ export async function readFile(
   );
   if (!text) {
     return {
-      failure: failure ?? { why: 'empty', message: 'Il modello non ha risposto.' },
+      failure: failure ?? { why: 'empty', message: 'El modelo no respondió.' },
     };
   }
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
   if (start < 0) {
-    return { failure: { why: 'empty', message: 'Il modello non ha risposto in un formato leggibile. Riprova.' } };
+    return { failure: { why: 'empty', message: 'El modelo no respondió en un formato legible. Inténtalo de nuevo.' } };
   }
   try {
     return { reading: validateReading(JSON.parse(text.slice(start, end + 1)), d) };
@@ -538,8 +538,8 @@ export async function readFile(
     return {
       failure: {
         why: 'empty',
-        message: 'Il modello ha risposto più del previsto e la risposta è arrivata tagliata. '
-          + 'Riprova: se succede ancora, importa i fogli in due volte.',
+        message: 'El modelo respondió más de lo previsto y la respuesta llegó cortada. '
+          + 'Inténtalo de nuevo: si vuelve a pasar, importa las hojas en dos tandas.',
       },
     };
   }
@@ -553,12 +553,12 @@ export type ApplyResult = { changed: number; note: string };
 export async function applyAction(
   projectId: number, action: AgentAction,
 ): Promise<ApplyResult> {
-  if (action.do === 'nothing') return { changed: 0, note: 'Niente da cambiare.' };
+  if (action.do === 'nothing') return { changed: 0, note: 'Nada que cambiar.' };
 
   const db = await getDb();
   const d = await buildDossier(projectId);
   const targets = d.sheets.filter((s) => action.sheets.includes(s.sheet));
-  if (!targets.length) return { changed: 0, note: 'Nessun foglio corrispondente.' };
+  if (!targets.length) return { changed: 0, note: 'Ninguna hoja coincide.' };
 
   const { updateKind, updateMapping, updateMetricMap, deleteFile } =
     await import('@/lib/import-store');
@@ -621,11 +621,11 @@ export async function applyAction(
   }
 
   const what: Record<string, string> = {
-    kind: `Letti come ${action.do === 'kind' && action.kind === 'metrics' ? 'misure' : 'contenuti'}`,
-    entityFromSheet: 'Il nome del foglio diventa un campo su ogni riga',
-    dateColumn: 'Colonna della data assegnata',
-    contentColumn: 'Colonna del testo assegnata',
-    skip: 'Fogli tolti dal progetto',
+    kind: `Leídas como ${action.do === 'kind' && action.kind === 'metrics' ? 'métricas' : 'contenidos'}`,
+    entityFromSheet: 'El nombre de la hoja se vuelve un campo en cada fila',
+    dateColumn: 'Columna de fecha asignada',
+    contentColumn: 'Columna de texto asignada',
+    skip: 'Hojas quitadas del proyecto',
   };
-  return { changed, note: `${what[action.do] ?? 'Fatto'}: ${changed} fogli.` };
+  return { changed, note: `${what[action.do] ?? 'Listo'}: ${changed} hojas.` };
 }

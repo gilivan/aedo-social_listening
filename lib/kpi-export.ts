@@ -17,25 +17,25 @@ export type Grid = { headers: string[]; rows: string[][] };
 export function verdictLabel(v: Verdict | undefined, lang: Lang): string {
   if (!v) return '';
   return {
-    reliable: L(lang, 'affidabile', 'reliable'),
-    caution: L(lang, 'con cautela', 'with caution'),
-    unusable: L(lang, 'da non usare', 'do not use'),
+    reliable: L(lang, 'affidabile', 'confiable'),
+    caution: L(lang, 'con cautela', 'con cautela'),
+    unusable: L(lang, 'da non usare', 'no usar'),
   }[v];
 }
 
 export function overallLabel(r: Reliability, lang: Lang): string {
   return {
-    suitable: L(lang, 'Dati idonei', 'Data suitable'),
-    caution: L(lang, 'Dati idonei con cautele', 'Data suitable with caveats'),
-    unsuitable: L(lang, 'Dati non idonei', 'Data not suitable'),
+    suitable: L(lang, 'Dati idonei', 'Datos aptos'),
+    caution: L(lang, 'Dati idonei con cautele', 'Datos aptos con reservas'),
+    unsuitable: L(lang, 'Dati non idonei', 'Datos no aptos'),
   }[r.overall];
 }
 
 export function periodLine(k: StandardKpis): string {
   const d = (x: Date) => x.toISOString().slice(0, 10);
   return L(k.lang,
-    `Periodo ${d(k.current.from)} → ${d(k.current.to)}, confronto ${d(k.previous.from)} → ${d(k.previous.to)} (Europe/Rome). Reach potenziale, sentiment automatico. n.d. = dato non disponibile.`,
-    `Period ${d(k.current.from)} → ${d(k.current.to)}, compared with ${d(k.previous.from)} → ${d(k.previous.to)} (Europe/Rome). Potential reach, automatic sentiment. n/a = not available.`);
+    `Periodo ${d(k.current.from)} → ${d(k.current.to)}, confronto ${d(k.previous.from)} → ${d(k.previous.to)} (America/Bogota). Reach potenziale, sentiment automatico. n.d. = dato non disponibile.`,
+    `Periodo ${d(k.current.from)} → ${d(k.current.to)}, comparado con ${d(k.previous.from)} → ${d(k.previous.to)} (America/Bogota). Alcance potencial, sentimiento automático. n/d = dato no disponible.`);
 }
 
 /** KPI | Valore | Prec. | Δ | Δ% | Affidabilità | Formula e note. */
@@ -43,10 +43,10 @@ export function kpiGrid(k: StandardKpis, r: Reliability, opts: { formulas?: bool
   const { lang } = k;
   const verdicts = new Map(r.verdicts.map((v) => [v.id, v]));
   const headers = [
-    'KPI', L(lang, 'Valore', 'Value'), L(lang, 'Periodo prec.', 'Previous'), 'Δ', 'Δ%',
-    L(lang, 'Affidabilità', 'Reliability'),
+    'KPI', L(lang, 'Valore', 'Valor'), L(lang, 'Periodo prec.', 'Periodo ant.'), 'Δ', 'Δ%',
+    L(lang, 'Affidabilità', 'Confiabilidad'),
   ];
-  if (opts.formulas) headers.push(L(lang, 'Formula e note', 'Formula and notes'));
+  if (opts.formulas) headers.push(L(lang, 'Formula e note', 'Fórmula y notas'));
   const rows = k.kpis.map((x) => {
     const v = verdicts.get(x.id);
     const row = [
@@ -67,12 +67,12 @@ export function channelGrid(k: StandardKpis): Grid {
   const { lang } = k;
   return {
     headers: [
-      L(lang, 'Canale', 'Channel'), L(lang, 'Menzioni', 'Mentions'), L(lang, '% sul totale', '% of total'),
-      L(lang, 'Reach pot.', 'Pot. reach'), 'Engagement', L(lang, 'Eng. medio', 'Avg eng.'), 'ER reach', 'NSS',
-      L(lang, 'Δ% menzioni', 'Δ% mentions'),
+      L(lang, 'Canale', 'Canal'), L(lang, 'Menzioni', 'Menciones'), L(lang, '% sul totale', '% del total'),
+      L(lang, 'Reach pot.', 'Alcance pot.'), 'Engagement', L(lang, 'Eng. medio', 'Eng. prom.'), 'ER reach', 'NSS',
+      L(lang, 'Δ% menzioni', 'Δ% menciones'),
     ],
     rows: k.channels.map((c) => [
-      sourceLabel(c.source) + (c.previousMentions === 0 && !k.previousIncomplete ? L(lang, ' (nuova)', ' (new)') : ''),
+      sourceLabel(c.source) + (c.previousMentions === 0 && !k.previousIncomplete ? L(lang, ' (nuova)', ' (nueva)') : ''),
       formatKpi(c.mentions, 'count', lang),
       formatKpi(c.share, 'pct', lang),
       formatKpi(c.reach, 'count', lang),
@@ -88,7 +88,7 @@ export function channelGrid(k: StandardKpis): Grid {
 export function competitiveGrid(k: StandardKpis): Grid {
   const { lang } = k;
   return {
-    headers: [L(lang, 'Entità', 'Entity'), L(lang, 'Menzioni', 'Mentions'), 'SOV', 'Δ SOV', 'SOE', 'SPV', 'NSS'],
+    headers: [L(lang, 'Entità', 'Entidad'), L(lang, 'Menzioni', 'Menciones'), 'SOV', 'Δ SOV', 'SOE', 'SPV', 'NSS'],
     rows: k.competitive.map((c) => [
       (c.isOwnBrand ? '★ ' : '') + c.name,
       formatKpi(c.mentions, 'count', lang),
@@ -106,19 +106,19 @@ export function peaksLine(k: StandardKpis): string {
   if (!k.peaks.length) return '';
   const peaks = k.peaks.map((p) => `${p.day} (${fmtNumber(p.value, lang)}${p.index !== null ? `, ${formatKpi(p.index, 'index', lang)}` : ''})`).join(', ');
   const anom = k.anomalies.length
-    ? L(lang, ` Oltre 2σ: ${k.anomalies.map((a) => a.day).join(', ')}.`, ` Beyond 2σ: ${k.anomalies.map((a) => a.day).join(', ')}.`)
-    : L(lang, ' Nessun giorno oltre 2σ.', ' No day beyond 2σ.');
-  return L(lang, `Giorni di picco: ${peaks}.`, `Peak days: ${peaks}.`) + anom;
+    ? L(lang, ` Oltre 2σ: ${k.anomalies.map((a) => a.day).join(', ')}.`, ` Más allá de 2σ: ${k.anomalies.map((a) => a.day).join(', ')}.`)
+    : L(lang, ' Nessun giorno oltre 2σ.', ' Ningún día más allá de 2σ.');
+  return L(lang, `Giorni di picco: ${peaks}.`, `Días pico: ${peaks}.`) + anom;
 }
 
 /** Osservazione | Evidenza | Perché conta | Confidenza | Verifica. */
 export function findingGrid(r: Reliability, lang: Lang): Grid {
-  const conf = { high: L(lang, 'alta', 'high'), medium: L(lang, 'media', 'medium'), low: L(lang, 'bassa', 'low') };
-  const sev = { critical: L(lang, 'CRITICO', 'CRITICAL'), caution: L(lang, 'cautela', 'caution'), info: 'info' };
+  const conf = { high: L(lang, 'alta', 'alta'), medium: L(lang, 'media', 'media'), low: L(lang, 'bassa', 'baja') };
+  const sev = { critical: L(lang, 'CRITICO', 'CRÍTICO'), caution: L(lang, 'cautela', 'cautela'), info: 'info' };
   return {
     headers: [
-      L(lang, 'Osservazione', 'Observation'), L(lang, 'Evidenza', 'Evidence'),
-      L(lang, 'Perché conta', 'Why it matters'), L(lang, 'Confidenza', 'Confidence'), L(lang, 'Verifica', 'Check'),
+      L(lang, 'Osservazione', 'Observación'), L(lang, 'Evidenza', 'Evidencia'),
+      L(lang, 'Perché conta', 'Por qué importa'), L(lang, 'Confidenza', 'Confianza'), L(lang, 'Verifica', 'Verificación'),
     ],
     rows: r.findings.map((f) => [`[${sev[f.severity]}] ${f.observation}`, f.evidence, f.why, conf[f.confidence], f.verify]),
   };
@@ -129,14 +129,14 @@ export function verdictGroups(r: Reliability, lang: Lang): { title: string; item
   const group = (v: Verdict) => r.verdicts.filter((x) => x.verdict === v)
     .map((x) => (v === 'reliable' ? x.label : `${x.label} — ${x.reason}`));
   return [
-    { title: L(lang, 'KPI affidabili', 'Reliable KPIs'), items: group('reliable') },
-    { title: L(lang, 'KPI da usare con cautela', 'KPIs to use with caution'), items: group('caution') },
-    { title: L(lang, 'KPI da non usare', 'KPIs not to use'), items: group('unusable') },
+    { title: L(lang, 'KPI affidabili', 'KPI confiables'), items: group('reliable') },
+    { title: L(lang, 'KPI da usare con cautela', 'KPI para usar con cautela'), items: group('caution') },
+    { title: L(lang, 'KPI da non usare', 'KPI que no se deben usar'), items: group('unusable') },
   ].filter((g) => g.items.length);
 }
 
-export const reliabilityTitle = (lang: Lang) => L(lang, 'Affidabilità dei dati — analisi critica L1', 'Data reliability — critical analysis L1');
-export const kpiTitle = (lang: Lang) => L(lang, 'KPI standard', 'Standard KPIs');
-export const cannotSayTitle = (lang: Lang) => L(lang, 'Cosa non si può scrivere nel report', 'What the report cannot say');
-export const channelTitle = (lang: Lang) => L(lang, 'KPI per canale', 'KPIs by channel');
-export const competitiveTitle = (lang: Lang) => L(lang, 'Set competitivo (SOV, SOE, Share of Positive Voice)', 'Competitive set (SOV, SOE, Share of Positive Voice)');
+export const reliabilityTitle = (lang: Lang) => L(lang, 'Affidabilità dei dati — analisi critica L1', 'Confiabilidad de los datos — análisis crítico L1');
+export const kpiTitle = (lang: Lang) => L(lang, 'KPI standard', 'KPI estándar');
+export const cannotSayTitle = (lang: Lang) => L(lang, 'Cosa non si può scrivere nel report', 'Lo que el reporte no puede afirmar');
+export const channelTitle = (lang: Lang) => L(lang, 'KPI per canale', 'KPI por canal');
+export const competitiveTitle = (lang: Lang) => L(lang, 'Set competitivo (SOV, SOE, Share of Positive Voice)', 'Set competitivo (SOV, SOE, Share of Positive Voice)');

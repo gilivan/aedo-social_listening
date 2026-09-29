@@ -13,7 +13,7 @@ import { getDb } from '@/lib/db';
 // reale dei giorni passati, non da un numero a caso.
 // ---------------------------------------------------------------------------
 
-const TZ = 'Europe/Rome';
+const TZ = 'America/Bogota';
 
 /** Regressione lineare ai minimi quadrati: y = intercept + slope*x. Ignora i punti null. */
 function leastSquares(points: { x: number; y: number | null }[]): {

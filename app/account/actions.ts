@@ -8,17 +8,17 @@ import { hashPassword, verifyPasswordHash } from '@/lib/password';
 
 export async function changePassword(_prev: unknown, formData: FormData): Promise<{ ok?: boolean; error?: string }> {
   const user = await getCurrentUser();
-  if (!user) return { error: 'session expired' };
+  if (!user) return { error: 'La sesión expiró' };
 
   const current = String(formData.get('current') ?? '').trim();
   const next = String(formData.get('next') ?? '');
   const confirm = String(formData.get('confirm') ?? '');
 
   if (!verifyPasswordHash(current, user.passwordHash)) {
-    return { error: 'The current password is incorrect.' };
+    return { error: 'La contraseña actual es incorrecta.' };
   }
-  if (next.length < 8) return { error: 'The new password must be at least 8 characters.' };
-  if (next !== confirm) return { error: 'The two passwords do not match.' };
+  if (next.length < 8) return { error: 'La nueva contraseña debe tener al menos 8 caracteres.' };
+  if (next !== confirm) return { error: 'Las dos contraseñas no coinciden.' };
 
   const db = await getDb();
   await db.update(users)

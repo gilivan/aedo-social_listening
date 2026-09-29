@@ -25,7 +25,7 @@ async function pagePosts(pageId: string): Promise<RawMention[]> {
     externalId: p.id,
     url: p.permalink_url,
     content: truncate(stripHtml(p.message ?? ''), 1200),
-    community: `pagina ${pageId.trim()}`,
+    community: `página ${pageId.trim()}`,
     publishedAt: p.created_time ? new Date(p.created_time) : new Date(),
     engagement: {
       likes: p.reactions?.summary?.total_count ?? 0,
@@ -40,7 +40,7 @@ export const facebook: Connector = {
   label: 'Facebook',
   tier: 'premium',
   enabled: () => Boolean(cfg('META_ACCESS_TOKEN') && cfg('FACEBOOK_PAGE_ID')),
-  disabledReason: 'Requires Meta Access Token and Facebook Page ID (Graph API): enter them here',
+  disabledReason: 'Requiere el token de acceso de Meta y el ID de la página de Facebook (Graph API): ingrésalos aquí',
   async fetchMentions() {
     const pages = (cfg('FACEBOOK_PAGE_ID') ?? '').split(',').filter(Boolean).slice(0, 5);
     const results = await Promise.allSettled(pages.map(pagePosts));

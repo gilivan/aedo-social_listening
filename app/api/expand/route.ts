@@ -9,11 +9,11 @@ export const dynamic = 'force-dynamic';
 // poi la pagina Ascolto cerca con OR su tutti i termini.
 export async function POST(req: Request) {
   const project = await getCurrentProject();
-  if (!project) return NextResponse.json({ error: 'no project' }, { status: 404 });
-  if (!await claudeAvailable()) return NextResponse.json({ error: 'Claude API key not configured' }, { status: 400 });
+  if (!project) return NextResponse.json({ error: 'no hay proyecto' }, { status: 404 });
+  if (!await claudeAvailable()) return NextResponse.json({ error: 'La clave de API de Claude no está configurada' }, { status: 400 });
 
   const { q } = await req.json() as { q: string };
-  if (!q?.trim()) return NextResponse.json({ error: 'empty query' }, { status: 400 });
+  if (!q?.trim()) return NextResponse.json({ error: 'la consulta está vacía' }, { status: 400 });
 
   const langs = project.languages.length ? project.languages.join(', ') : 'it, en';
   const text = await callClaude(
@@ -24,7 +24,7 @@ Respond ONLY with a JSON array of 8-14 short strings (1-3 words), lowercase.`,
     `Searched concept: ${q}`,
     400,
   );
-  if (!text) return NextResponse.json({ error: 'spend cap reached or API error' }, { status: 429 });
+  if (!text) return NextResponse.json({ error: 'se alcanzó el tope de gasto o hubo un error de la API' }, { status: 429 });
 
   let terms: string[] = [];
   try {

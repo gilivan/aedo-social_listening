@@ -6,12 +6,12 @@ import { getT } from '@/lib/i18n';
 import { StakeholderMap } from '@/components/stakeholder-map';
 import { SectionTabs } from '@/components/section-tabs';
 
-export const metadata = { title: 'Mappa attori' };
+export const metadata = { title: 'Mapa de actores' };
 
 export default async function StakeholdersPage() {
   const t = await getT();
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message={t('ui.noProject', 'No project configured.')} />;
+  if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const db = await getDb();
   const d14 = new Date(Date.now() - 14 * 86400_000).toISOString();
 
@@ -58,11 +58,11 @@ export default async function StakeholdersPage() {
     <>
       <SectionTabs group="story" />
       <PageHeader
-        title={t('page.stakeholders.title', 'Stakeholder map')}
-        subtitle="Who matters in the conversation: size = weight, color = sentiment. The most influential are at the center."
+        title={t('page.stakeholders.title', 'Mapa de stakeholders')}
+        subtitle="Quién importa en la conversación: tamaño = peso, color = sentimiento. Los más influyentes están en el centro."
       />
       {entityNodes.length + authorNodes.length < 5 ? (
-        <EmptyState message="Few actors detected yet: more AI-analyzed mentions are needed." />
+        <EmptyState message="Todavía se detectan pocos actores: se necesitan más menciones analizadas por IA." />
       ) : (
         <StakeholderMap entities={entityNodes} authors={authorNodes} />
       )}

@@ -32,7 +32,7 @@ type Card = {
   worst: { title: string; engagement: number; date: string } | null;
 };
 
-const num = (n: number) => n.toLocaleString('it-IT');
+const num = (n: number) => n.toLocaleString('es-CO');
 const pct = (n: number) => `${n >= 0 ? '+' : ''}${n}%`;
 
 /** La classifica del team: una riga per persona, tre numeri confrontabili. */
@@ -46,20 +46,20 @@ export function PeopleLeaderboard({ rows }: {
   return (
     <section className="panel px-5 py-4">
       <h2 className="mb-1 flex items-center gap-2 text-sm font-semibold text-slate-200">
-        <Trophy className="size-4 text-amber-400" /> Il quadro del team
+        <Trophy className="size-4 text-amber-400" /> El panorama del equipo
       </h2>
       <p className="mb-3 text-[11px] text-slate-600">
-        Follower all&rsquo;ultima rilevazione, ritmo di pubblicazione ed engagement medio.
-        Tre misure diverse: chi ha più pubblico non è per forza chi lo coinvolge di più.
+        Seguidores en la última medición, ritmo de publicación y engagement promedio.
+        Tres medidas distintas: quien tiene más audiencia no es necesariamente quien más la involucra.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="text-left text-[10px] uppercase tracking-wide text-slate-600">
               <th className="pb-1.5 pr-3">Persona</th>
-              <th className="pb-1.5 pr-3">Pubblico</th>
-              <th className="pb-1.5 pr-3 text-right">Post/mese</th>
-              <th className="pb-1.5 text-right">Engagement medio</th>
+              <th className="pb-1.5 pr-3">Audiencia</th>
+              <th className="pb-1.5 pr-3 text-right">Posts/mes</th>
+              <th className="pb-1.5 text-right">Engagement promedio</th>
             </tr>
           </thead>
           <tbody>
@@ -108,7 +108,7 @@ const fmt = (n: number) => {
   if (a > 0 && a < 1) return n.toFixed(2);
   return String(Math.round(n));
 };
-const monthTick = (d: string) => new Date(d).toLocaleDateString('it-IT', { month: 'short', year: '2-digit' });
+const monthTick = (d: string) => new Date(d).toLocaleDateString('es-CO', { month: 'short', year: '2-digit' });
 
 /**
  * Il confronto: una linea per persona sullo stesso grafico.
@@ -144,14 +144,14 @@ export function PeopleTrend({ series, focus, onFocus }: {
   return (
     <section className="panel px-5 py-4">
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <h2 className="text-sm font-semibold text-slate-200">Crescita del pubblico</h2>
+        <h2 className="text-sm font-semibold text-slate-200">Crecimiento de la audiencia</h2>
         <NewBadge id="people:trend" latest={latest} />
         <button onClick={() => setIndexed((v) => !v)}
-          title="Indicizzando a 100 tutte le curve partono dallo stesso punto: si confronta la crescita, non la dimensione"
+          title="Al indexar a 100 todas las curvas parten del mismo punto: se compara el crecimiento, no el tamaño"
           className={`ml-auto rounded-lg border px-2 py-1 text-[11px] ${indexed
             ? 'border-sky-500/50 bg-sky-500/10 text-sky-200'
             : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>
-          {indexed ? 'crescita (base 100)' : 'follower assoluti'}
+          {indexed ? 'crecimiento (base 100)' : 'seguidores absolutos'}
         </button>
       </div>
 
@@ -161,7 +161,7 @@ export function PeopleTrend({ series, focus, onFocus }: {
           className={`rounded-lg border px-2 py-1 text-[11px] ${!focus
             ? 'border-sky-500/50 bg-sky-500/10 text-sky-200'
             : 'border-[var(--border)] text-slate-400 hover:bg-white/5'}`}>
-          tutti
+          todas
         </button>
         {series.map((s) => (
           <button key={s.name} onClick={() => onFocus(focus === s.name ? null : s.name)}
@@ -180,8 +180,8 @@ export function PeopleTrend({ series, focus, onFocus }: {
           <XAxis dataKey="date" tickFormatter={monthTick} stroke={AXIS} fontSize={11} tickLine={false} />
           <YAxis tickFormatter={fmt} stroke={AXIS} fontSize={11} tickLine={false} axisLine={false} width={52} />
           <Tooltip contentStyle={TOOLTIP}
-            labelFormatter={(d) => new Date(String(d)).toLocaleDateString('it-IT')}
-            formatter={(v) => [indexed ? `${Number(v)} (base 100)` : Number(v).toLocaleString('it-IT'), '']} />
+            labelFormatter={(d) => new Date(String(d)).toLocaleDateString('es-CO')}
+            formatter={(v) => [indexed ? `${Number(v)} (base 100)` : Number(v).toLocaleString('es-CO'), '']} />
           {shown.length > 1 && <Legend wrapperStyle={{ fontSize: 11, color: AXIS }} />}
           {shown.map((s) => (
             <Line key={s.name} type="monotone" dataKey={s.name} connectNulls
@@ -191,7 +191,7 @@ export function PeopleTrend({ series, focus, onFocus }: {
       </ResponsiveContainer>
       {!focus && series.length > 8 && (
         <p className="mt-1 text-[11px] text-slate-600">
-          Mostrate le 8 con più pubblico. Clicca un nome per vedere solo quella.
+          Se muestran las 8 con más audiencia. Haz clic en un nombre para ver solo esa persona.
         </p>
       )}
     </section>
@@ -203,9 +203,9 @@ export function PersonRhythm({ s }: { s: PersonSeries }) {
   if (s.publishing.length < 2) return null;
   return (
     <section className="panel px-5 py-4">
-      <h2 className="mb-1 text-sm font-semibold text-slate-200">Ritmo di pubblicazione — {s.name}</h2>
+      <h2 className="mb-1 text-sm font-semibold text-slate-200">Ritmo de publicación — {s.name}</h2>
       <p className="mb-3 text-[11px] text-slate-600">
-        Quanti contenuti per periodo. Un calo prolungato spiega quasi sempre una crescita che si ferma.
+        Cuántos contenidos por periodo. Una caída prolongada casi siempre explica un crecimiento que se detiene.
       </p>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={s.publishing} margin={{ top: 4, right: 8, bottom: 0, left: 4 }}>
@@ -213,8 +213,8 @@ export function PersonRhythm({ s }: { s: PersonSeries }) {
           <XAxis dataKey="date" tickFormatter={monthTick} stroke={AXIS} fontSize={11} tickLine={false} />
           <YAxis tickFormatter={fmt} stroke={AXIS} fontSize={11} tickLine={false} axisLine={false} width={40} />
           <Tooltip contentStyle={TOOLTIP} cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-            labelFormatter={(d) => new Date(String(d)).toLocaleDateString('it-IT')}
-            formatter={(v) => [`${Number(v)} contenuti`, '']} />
+            labelFormatter={(d) => new Date(String(d)).toLocaleDateString('es-CO')}
+            formatter={(v) => [`${Number(v)} contenidos`, '']} />
           <Bar dataKey="value" fill={entityColor(2)} radius={[4, 4, 0, 0]} barSize={14} />
         </BarChart>
       </ResponsiveContainer>
@@ -261,7 +261,7 @@ function PersonPanel({ card, color, open, onToggle }: {
         {card.followers && (
           <span className="flex items-baseline gap-1.5">
             <span className="text-lg font-semibold tabular-nums text-slate-100">{num(card.followers.latest)}</span>
-            <span className="text-[11px] text-slate-600">follower</span>
+            <span className="text-[11px] text-slate-600">seguidores</span>
             {growth !== null && (
               <span className={`inline-flex items-center gap-0.5 text-[11px] ${card.followers.gained >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
                 {card.followers.gained >= 0 ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
@@ -275,7 +275,7 @@ function PersonPanel({ card, color, open, onToggle }: {
           <span className="flex items-baseline gap-1.5">
             <CalendarClock className="size-3.5 self-center text-slate-600" />
             <span className="text-sm font-medium tabular-nums text-slate-200">{card.rhythm.perMonth}</span>
-            <span className="text-[11px] text-slate-600">post/mese</span>
+            <span className="text-[11px] text-slate-600">posts/mes</span>
             {card.rhythm.trend !== null && (
               <span className={`text-[11px] ${card.rhythm.trend >= 0 ? 'text-emerald-300' : 'text-amber-300'}`}>
                 {pct(card.rhythm.trend)}
@@ -292,14 +292,14 @@ function PersonPanel({ card, color, open, onToggle }: {
           </span>
         )}
 
-        <span className="ml-auto text-[11px] text-slate-600">{open ? 'chiudi' : 'dettaglio'}</span>
+        <span className="ml-auto text-[11px] text-slate-600">{open ? 'cerrar' : 'detalle'}</span>
       </button>
 
       {open && (
         <div className="mt-4 grid gap-4 border-t border-[var(--border)] pt-4 lg:grid-cols-2">
           {card.averages.length > 0 && (
             <div>
-              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Le medie</p>
+              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">Promedios</p>
               <ul className="flex flex-col gap-1">
                 {card.averages.map((a) => (
                   <li key={a.metric} className="flex items-baseline justify-between gap-3 text-xs">
@@ -309,7 +309,7 @@ function PersonPanel({ card, color, open, onToggle }: {
                 ))}
               </ul>
               <p className="mt-1 text-[10px] text-slate-600">
-                Medie del periodo: un tasso non si somma.
+                Promedios del periodo: una tasa no se suma.
               </p>
             </div>
           )}
@@ -317,7 +317,7 @@ function PersonPanel({ card, color, open, onToggle }: {
           {card.formats.length > 0 && (
             <div>
               <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-                Che formato rende
+                Qué formato rinde
               </p>
               <ul className="flex flex-col gap-1.5">
                 {card.formats.map((f, i) => {
@@ -330,7 +330,7 @@ function PersonPanel({ card, color, open, onToggle }: {
                           style={{ width: `${(f.avgEngagement / max) * 100}%`, backgroundColor: entityColor(i) }} />
                       </span>
                       <span className="w-14 shrink-0 text-right tabular-nums text-slate-400">{num(f.avgEngagement)}</span>
-                      <span className="w-10 shrink-0 text-right text-[10px] text-slate-600">{f.posts} post</span>
+                      <span className="w-10 shrink-0 text-right text-[10px] text-slate-600">{f.posts} posts</span>
                     </li>
                   );
                 })}
@@ -341,7 +341,7 @@ function PersonPanel({ card, color, open, onToggle }: {
           {card.audience.map((a) => (
             <div key={a.dimension}>
               <p className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-                <Users className="size-3" /> Pubblico per {a.dimension}
+                <Users className="size-3" /> Audiencia por {a.dimension}
               </p>
               <ul className="flex flex-col gap-1">
                 {a.rows.slice(0, 6).map((r, i) => (
@@ -363,7 +363,7 @@ function PersonPanel({ card, color, open, onToggle }: {
           {(card.best || card.worst) && (
             <div>
               <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-                Il migliore e il peggiore
+                El mejor y el peor
               </p>
               {card.best && (
                 <p className="mb-1 text-xs">

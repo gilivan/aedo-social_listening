@@ -4,20 +4,20 @@ import { PageHeader, EmptyState } from '@/components/ui';
 import { ReportTabs } from '@/components/report-tabs';
 import { PeriodicReports } from '@/components/periodic-reports';
 
-export const metadata = { title: 'Periodic report' };
+export const metadata = { title: 'Reporte periódico' };
 export const dynamic = 'force-dynamic';
 
 export default async function PeriodicReportPage() {
-  if (!isAdmin(await getCurrentUser())) return <EmptyState message="Building reports is available to admins." />;
+  if (!isAdmin(await getCurrentUser())) return <EmptyState message="La creación de reportes está disponible para administradores." />;
   const project = await getCurrentProject();
-  if (!project) return <EmptyState message="Select a project first." />;
+  if (!project) return <EmptyState message="Primero selecciona un proyecto." />;
 
   return (
     <>
       <PageHeader
-        title="Periodic report"
-        subtitle="The period’s figures, the brief and the thesis in one document — daily, weekly, fortnightly, monthly, quarterly, half-yearly or yearly."
-        info="Short cadences REUSE the current Point of View rather than rewriting it: a thesis that holds for a week is realistic, and regenerating one per cadence per project would be the app's largest single cost. From monthly upwards a fresh thesis is written on that period's window. Either way the document always states where the thesis comes from — when it was written, on which window, on how many mentions, and whether it was reused. An issue is frozen once generated: the thesis is stored with it, so reopening a July issue in December still shows July's reading, not today's."
+        title="Reporte periódico"
+        subtitle="Las cifras del periodo, el brief y la tesis en un solo documento: diario, semanal, quincenal, mensual, trimestral, semestral o anual."
+        info="Las cadencias cortas REUTILIZAN el Punto de vista actual en lugar de reescribirlo: una tesis que se sostiene por una semana es realista, y regenerar una por cadencia y por proyecto sería el mayor costo individual de la app. De mensual en adelante se escribe una tesis nueva sobre la ventana de ese periodo. En ambos casos, el documento siempre indica de dónde viene la tesis: cuándo se escribió, sobre qué ventana, con cuántas menciones y si fue reutilizada. Una edición queda congelada una vez generada: la tesis se guarda con ella, así que abrir en diciembre una edición de julio sigue mostrando la lectura de julio, no la de hoy."
       />
       <ReportTabs />
       <PeriodicReports />

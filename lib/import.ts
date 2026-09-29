@@ -347,7 +347,7 @@ function looksLikeGroupRow(top: unknown[], bottom: unknown[]): boolean {
 function nameColumns(raw: unknown[]): string[] {
   const seen = new Map<string, number>();
   return raw.map((v, i) => {
-    let name = isBlank(v) ? `Colonna ${i + 1}` : String(v).replace(/\s+/g, ' ').trim();
+    let name = isBlank(v) ? `Columna ${i + 1}` : String(v).replace(/\s+/g, ' ').trim();
     // Un'intestazione ripetuta nello stesso foglio esiste davvero (un file
     // reale ha "PILLAR" due volte): senza rinominarla, la seconda colonna
     // sovrascriverebbe la prima e quei dati sparirebbero.
@@ -399,7 +399,7 @@ export async function listSheets(buffer: Buffer, filename: string): Promise<Shee
       name: ws.name,
       hidden: ws.state !== 'visible',
       rows: Math.max(0, last - (h + (two ? 2 : 1))),
-      columns: headers.filter((x) => x && !/^Colonna \d+$/.test(x)).length,
+      columns: headers.filter((x) => x && !/^Columna \d+$/.test(x)).length,
       headerRow: h + 1,
       headers,
       twoRowHeader: two,

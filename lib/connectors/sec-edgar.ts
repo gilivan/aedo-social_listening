@@ -20,7 +20,7 @@ import type { Connector, RawMention } from './types';
 // spesso enormi: fuori scopo, stesso limite già accettato per Stack Exchange.
 
 const FORMS = '8-K,10-K,10-Q,DEF 14A';
-const UA = 'RadarOSS admin@example.com'; // richiesto da SEC: nome + contatto
+const UA = 'AEDO admin@example.com'; // richiesto da SEC: nome + contatto
 
 type EdgarHit = {
   _id: string;

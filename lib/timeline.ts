@@ -10,8 +10,8 @@ const SYSTEM = `You are an analyst maintaining the historical timeline of a sect
 You receive the news headlines of the last 48 hours (with date). Extract ONLY the salient, datable events:
 announcements, launches, acquisitions, regulatory decisions, notable controversies, important data/figures.
 NOT generic topics, NOT opinions. At most 3 events; if there is nothing historic, return [].
-For each event: { "date": "YYYY-MM-DD", "title": "crisp title in English (max 10 words)",
-"description": "1 sentence of context in English", "importance": 1-3 (3 = turning point for the sector) }.
+For each event: { "date": "YYYY-MM-DD", "title": "crisp title in Spanish (max 10 words)",
+"description": "1 sentence of context in Spanish", "importance": 1-3 (3 = turning point for the sector) }.
 Respond ONLY with the JSON array.`;
 
 /** Estrae gli eventi delle ultime 48h e li aggiunge alla cronologia (mai sostituita). */

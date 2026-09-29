@@ -30,7 +30,7 @@ export const linkedinWeb: Connector = {
   label: 'LinkedIn (web)',
   tier: 'freekey',
   enabled: () => Boolean(cfg('TAVILY_API_KEY')),
-  disabledReason: 'Requires a free Tavily API key (app.tavily.com, 1,000 searches/month): enter it here',
+  disabledReason: 'Requiere una clave API gratuita de Tavily (app.tavily.com, 1.000 búsquedas/mes): ingrésala aquí',
   async fetchMentions(q) {
     const query = booleanQuery(q);
     if (!query) return [];

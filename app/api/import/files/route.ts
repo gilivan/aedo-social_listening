@@ -15,12 +15,12 @@ export const runtime = 'nodejs';
 export const maxDuration = 300;
 
 async function guard(projectId: number) {
-  if (!isAdmin(await getCurrentUser())) return 'Solo gli amministratori possono importare';
-  if (!projectId) return 'Progetto mancante';
+  if (!isAdmin(await getCurrentUser())) return 'Solo los administradores pueden importar';
+  if (!projectId) return 'Falta el proyecto';
   const db = await getDb();
   const [p] = await db.select({ id: projects.id, mode: projects.mode }).from(projects).where(eq(projects.id, projectId));
-  if (!p) return 'Progetto non trovato';
-  if (p.mode !== 'upload') return 'Questo progetto non è di tipo import';
+  if (!p) return 'Proyecto no encontrado';
+  if (p.mode !== 'upload') return 'Este proyecto no es de tipo importación';
   return null;
 }
 
@@ -40,8 +40,8 @@ export async function POST(req: Request) {
   if (err) return NextResponse.json({ error: err }, { status: 400 });
 
   const file = form.get('file');
-  if (!(file instanceof File)) return NextResponse.json({ error: 'Nessun file' }, { status: 400 });
-  if (!/\.(xlsx|csv)$/i.test(file.name)) return NextResponse.json({ error: 'Carica un file .xlsx o .csv' }, { status: 400 });
+  if (!(file instanceof File)) return NextResponse.json({ error: 'No hay archivo' }, { status: 400 });
+  if (!/\.(xlsx|csv)$/i.test(file.name)) return NextResponse.json({ error: 'Sube un archivo .xlsx o .csv' }, { status: 400 });
 
   try {
     const buf = Buffer.from(await file.arrayBuffer());
@@ -127,7 +127,7 @@ export async function PATCH(req: Request) {
         await purgeRaw(body.fileId, body.projectId);
         return NextResponse.json({ ok: true });
       default:
-        return NextResponse.json({ error: 'Azione sconosciuta' }, { status: 400 });
+        return NextResponse.json({ error: 'Acción desconocida' }, { status: 400 });
     }
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 400 });

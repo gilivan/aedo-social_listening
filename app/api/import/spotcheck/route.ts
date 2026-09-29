@@ -14,18 +14,18 @@ export const maxDuration = 120;
 /** Il confronto riga per riga fra il foglio e l'archivio. */
 export async function GET(req: Request) {
   if (!isAdmin(await getCurrentUser())) {
-    return NextResponse.json({ error: 'Solo gli amministratori' }, { status: 403 });
+    return NextResponse.json({ error: 'Solo para administradores' }, { status: 403 });
   }
   const url = new URL(req.url);
   const fileId = Number(url.searchParams.get('file'));
   const projectId = Number(url.searchParams.get('project'));
   if (!fileId || !projectId) {
-    return NextResponse.json({ error: 'Serve il file e il progetto' }, { status: 400 });
+    return NextResponse.json({ error: 'Se necesitan el archivo y el proyecto' }, { status: 400 });
   }
 
   const db = await getDb();
   const [p] = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, projectId));
-  if (!p) return NextResponse.json({ error: 'Progetto non trovato' }, { status: 404 });
+  if (!p) return NextResponse.json({ error: 'Proyecto no encontrado' }, { status: 404 });
 
   const n = Math.min(8, Math.max(1, Number(url.searchParams.get('n')) || 3));
   try {

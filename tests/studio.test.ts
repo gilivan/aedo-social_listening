@@ -159,12 +159,12 @@ test('nessuna stringa scelta dal client diventa SQL', async () => {
   ]) {
     await assert.rejects(
       () => studio.runStudio(projectId, { ...base, x: evil }),
-      /Campi non validi/,
+      /Campos no válidos/,
       `dimensione accettata: ${evil}`,
     );
     await assert.rejects(
       () => studio.runStudio(projectId, { ...base, y: evil, yAgg: 'sum' }),
-      /Campi non validi/,
+      /Campos no válidos/,
       `misura accettata: ${evil}`,
     );
   }
@@ -210,20 +210,20 @@ test('una torta con troppe fette viene segnalata', async () => {
 
   const r = await studio.runStudio(p.id, { ...base, chart: 'pie', x: 'day' });
   assert.ok(r.rows.length > 4, `servono più di quattro fette, ricevute ${r.rows.length}`);
-  assert.ok(r.warnings.some((w) => /torta|fette/i.test(w)),
+  assert.ok(r.warnings.some((w) => /torta|porciones/i.test(w)),
     `atteso l’avviso sulla torta, ricevuto: ${r.warnings.join(' | ')}`);
 
   const poche = await studio.runStudio(p.id, { ...base, chart: 'pie' });
-  assert.equal(poche.warnings.filter((w) => /torta|fette/i.test(w)).length, 0,
+  assert.equal(poche.warnings.filter((w) => /torta|porciones/i.test(w)).length, 0,
     'due sole fette non vanno segnalate');
 });
 
 test('una linea fra categorie viene segnalata, una nel tempo no', async () => {
   const male = await studio.runStudio(projectId, { ...base, chart: 'line' });
-  assert.ok(male.warnings.some((w) => /linea/i.test(w)));
+  assert.ok(male.warnings.some((w) => /línea/i.test(w)));
 
   const bene = await studio.runStudio(projectId, { ...base, chart: 'line', x: 'day' });
-  assert.equal(bene.warnings.filter((w) => /linea/i.test(w)).length, 0);
+  assert.equal(bene.warnings.filter((w) => /línea/i.test(w)).length, 0);
 });
 
 test('le fonti escono con il nome leggibile, non con lo slug', async () => {

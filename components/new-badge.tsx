@@ -41,14 +41,14 @@ export function useIsNew(id: string, latest: string | null | undefined): boolean
   return isNew;
 }
 
-export function NewBadge({ id, latest, label = 'dati nuovi' }: {
+export function NewBadge({ id, latest, label = 'datos nuevos' }: {
   id: string; latest: string | null | undefined; label?: string;
 }) {
   const isNew = useIsNew(id, latest);
   if (!isNew) return null;
   return (
     <span
-      title={`Aggiornato al ${latest ? new Date(latest).toLocaleDateString('it-IT') : ''}: non c'era l'ultima volta che hai guardato`}
+      title={`Actualizado al ${latest ? new Date(latest).toLocaleDateString('es-CO') : ''}: no estaba la última vez que miraste`}
       className="inline-flex items-center gap-1 rounded-full border border-amber-400/40 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-300">
       <Sparkles className="size-2.5" /> {label}
     </span>

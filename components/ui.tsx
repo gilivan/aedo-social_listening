@@ -22,13 +22,13 @@ export function InfoTip({ title, children }: { title?: string; children: React.R
 export function StarRating({ relevance, reason }: { relevance: number | null; reason?: string | null }) {
   if (!relevance) return null;
   return (
-    <span className="group relative inline-flex items-center gap-px" aria-label={`Relevance ${relevance} of 5`}>
+    <span className="group relative inline-flex items-center gap-px" aria-label={`Relevancia ${relevance} de 5`}>
       {[1, 2, 3, 4, 5].map((i) => (
         <Star key={i} className={`size-3 ${i <= relevance ? 'fill-amber-400 text-amber-400' : 'fill-transparent text-slate-700'}`} />
       ))}
       {reason && (
         <span className="pointer-events-none invisible absolute bottom-full left-1/2 z-30 mb-2 w-60 -translate-x-1/2 rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-3 py-2 text-[11px] font-normal normal-case leading-snug text-slate-300 opacity-0 shadow-xl transition-opacity duration-150 group-hover:visible group-hover:opacity-100">
-          <span className="mb-0.5 block font-semibold text-amber-300">Relevance {relevance}/5</span>
+          <span className="mb-0.5 block font-semibold text-amber-300">Relevancia {relevance}/5</span>
           {reason}
           <span className="absolute left-1/2 top-full -mt-1 size-2 -translate-x-1/2 rotate-45 border-b border-r border-[var(--border)] bg-[var(--panel-2)]" />
         </span>
@@ -46,7 +46,7 @@ export function PageHeader({ title, subtitle, info }: {
     <header className="mb-6">
       <div className="flex items-center gap-2">
         <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-        {info && <InfoTip title={`About: ${title}`}>{info}</InfoTip>}
+        {info && <InfoTip title={`Acerca de: ${title}`}>{info}</InfoTip>}
       </div>
       {subtitle && <p className="mt-1 text-sm text-slate-400">{subtitle}</p>}
     </header>
@@ -69,7 +69,7 @@ export function KpiCard({ label, value, hint, exact }: {
 
 /** 1234 → "1.2k", 1250000 → "1.3M" (en-US). */
 export function fmtCompact(n: number): string {
-  return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+  return new Intl.NumberFormat('es-CO', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
 }
 
 export function SourceBadge({ source }: { source: string }) {
@@ -103,12 +103,13 @@ function normSentiment(s: string): 'positive' | 'neutral' | 'negative' {
 
 export function SentimentBadge({ sentiment }: { sentiment: string | null }) {
   if (!sentiment) {
-    return <span className="rounded-full bg-slate-700/40 px-2 py-0.5 text-[11px] text-slate-500">analyzing</span>;
+    return <span className="rounded-full bg-slate-700/40 px-2 py-0.5 text-[11px] text-slate-500">analizando</span>;
   }
   const key = normSentiment(sentiment);
+  const SENTIMENT_LABEL = { positive: 'positivo', neutral: 'neutral', negative: 'negativo' } as const;
   return (
     <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${SENTIMENT_STYLE[key]}`}>
-      {key}
+      {SENTIMENT_LABEL[key]}
     </span>
   );
 }
@@ -116,8 +117,8 @@ export function SentimentBadge({ sentiment }: { sentiment: string | null }) {
 /** Le date seguono la lingua scelta. Il locale arriva dall'attributo lang del
  *  documento, così server e client formattano allo stesso modo senza prop drilling. */
 function docLocale(): string {
-  if (typeof document !== 'undefined') return document.documentElement.lang === 'it' ? 'it-IT' : 'en-US';
-  return globalThis.__srLocaleTag ?? 'en-US';
+  if (typeof document !== 'undefined') return document.documentElement.lang === 'it' ? 'it-IT' : 'es-CO';
+  return globalThis.__srLocaleTag ?? 'es-CO';
 }
 
 export function fmtDate(d: Date | string) {
@@ -127,7 +128,7 @@ export function fmtDate(d: Date | string) {
 }
 
 export function fmtNum(n: number) {
-  return n.toLocaleString('en-US');
+  return n.toLocaleString('es-CO');
 }
 
 type Mention = typeof mentions.$inferSelect;
@@ -165,8 +166,8 @@ export function MentionCard({ m, translated, highlight, keywords }: {
         <StarRating relevance={m.relevance} reason={m.relevanceReason} />
         {translated ? (
           <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-medium text-violet-300"
-            title="Translated by AI — the link opens the original">
-            🌐 translated{m.language ? ` · orig. ${m.language.toUpperCase()}` : ''}
+            title="Traducido por IA — el enlace abre el original">
+            🌐 traducido{m.language ? ` · orig. ${m.language.toUpperCase()}` : ''}
           </span>
         ) : m.language && <span className="uppercase">{m.language}</span>}
         <span>{fmtDate(m.publishedAt)}</span>
@@ -179,7 +180,7 @@ export function MentionCard({ m, translated, highlight, keywords }: {
       )}
       <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
         {m.author && (aLink ? (
-          <a href={aLink} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-300" title="Open the author on the source">
+          <a href={aLink} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-sky-300" title="Ver al autor en la fuente">
             {m.authorHandle ?? m.author}
           </a>
         ) : <span>{m.authorHandle ?? m.author}</span>)}
@@ -200,7 +201,7 @@ export function MentionCard({ m, translated, highlight, keywords }: {
         {m.url && (
           <a href={m.url} target="_blank" rel="noopener noreferrer"
             className="ml-auto flex items-center gap-1 text-sky-400 hover:text-sky-300">
-            open <ExternalLink className="size-3" />
+            abrir <ExternalLink className="size-3" />
           </a>
         )}
       </div>

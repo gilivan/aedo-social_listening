@@ -20,7 +20,7 @@ import { cfg } from '@/lib/connector-config';
 // ---------------------------------------------------------------------------
 
 const BASE = 'https://api.podcastindex.org/api/1.0';
-const UA = 'Radar/1.0 (media intelligence)';
+const UA = 'AEDO/1.0 (media intelligence)';
 
 type Episode = {
   id: number;
@@ -89,7 +89,7 @@ async function search(term: string, key: string, secret: string): Promise<RawMen
     signal: AbortSignal.timeout(20000),
     cache: 'no-store',
   });
-  if (res.status === 401) throw new Error('Podcast Index: chiave o segreto non validi');
+  if (res.status === 401) throw new Error('Podcast Index: clave o secreto no válidos');
   if (!res.ok) throw new Error(`Podcast Index: HTTP ${res.status}`);
   const data = await res.json() as { items?: Episode[] };
   return (data.items ?? [])
@@ -102,7 +102,7 @@ export const podcastIndex: Connector = {
   label: 'Podcast Index',
   tier: 'freekey',
   enabled: () => Boolean(cfg('PODCASTINDEX_API_KEY') && cfg('PODCASTINDEX_API_SECRET')),
-  disabledReason: 'Missing PODCASTINDEX_API_KEY / PODCASTINDEX_API_SECRET (free at api.podcastindex.org)',
+  disabledReason: 'Falta PODCASTINDEX_API_KEY / PODCASTINDEX_API_SECRET (gratis en api.podcastindex.org)',
   async fetchMentions(q) {
     const key = cfg('PODCASTINDEX_API_KEY');
     const secret = cfg('PODCASTINDEX_API_SECRET');

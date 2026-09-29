@@ -14,13 +14,13 @@ import type { Gap } from '@/lib/trials';
 export const L = (lang: Lang, it: string, en: string) => (lang === 'it' ? it : en);
 
 const VERDICT: Record<Verdict, { it: string; en: string; cls: string }> = {
-  false: { it: 'Falso', en: 'False', cls: 'bg-red-500/15 text-red-300 border-red-500/30' },
-  misleading: { it: 'Fuorviante', en: 'Misleading', cls: 'bg-orange-500/15 text-orange-300 border-orange-500/30' },
-  mixed: { it: 'In parte vero', en: 'Partly true', cls: 'bg-amber-500/15 text-amber-200 border-amber-500/30' },
-  true: { it: 'Vero', en: 'True', cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
-  unverifiable: { it: 'Non verificabile', en: 'Unverifiable', cls: 'bg-slate-500/15 text-slate-300 border-slate-500/30' },
-  contested: { it: 'Verdetti discordi', en: 'Conflicting verdicts', cls: 'bg-violet-500/15 text-violet-300 border-violet-500/30' },
-  other: { it: 'Altro verdetto', en: 'Other rating', cls: 'bg-slate-500/10 text-slate-400 border-slate-500/20' },
+  false: { it: 'Falso', en: 'Falso', cls: 'bg-red-500/15 text-red-300 border-red-500/30' },
+  misleading: { it: 'Fuorviante', en: 'Engañoso', cls: 'bg-orange-500/15 text-orange-300 border-orange-500/30' },
+  mixed: { it: 'In parte vero', en: 'Parcialmente cierto', cls: 'bg-amber-500/15 text-amber-200 border-amber-500/30' },
+  true: { it: 'Vero', en: 'Cierto', cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
+  unverifiable: { it: 'Non verificabile', en: 'No verificable', cls: 'bg-slate-500/15 text-slate-300 border-slate-500/30' },
+  contested: { it: 'Verdetti discordi', en: 'Veredictos contradictorios', cls: 'bg-violet-500/15 text-violet-300 border-violet-500/30' },
+  other: { it: 'Altro verdetto', en: 'Otro veredicto', cls: 'bg-slate-500/10 text-slate-400 border-slate-500/20' },
 };
 
 export function VerdictBadge({ verdict, lang }: { verdict: string; lang: Lang }) {
@@ -31,12 +31,12 @@ export function VerdictBadge({ verdict, lang }: { verdict: string; lang: Lang })
 export const verdictLabel = (verdict: string, lang: Lang) => (VERDICT[verdict as Verdict] ?? VERDICT.other)[lang];
 
 const SIGNAL: Record<Signal, { it: string; en: string; cls: string }> = {
-  'debunked-growing': { it: 'Smentita, e circola sempre di più', en: 'Debunked, and spreading more', cls: 'text-red-300' },
-  'debunked-circulating': { it: 'Smentita, ma circola ancora', en: 'Debunked, still circulating', cls: 'text-orange-300' },
-  'debunked-quiet': { it: 'Smentita, non circola più', en: 'Debunked, no longer circulating', cls: 'text-slate-500' },
-  contested: { it: 'I fact-checker non sono d’accordo', en: 'Fact-checkers disagree', cls: 'text-violet-300' },
-  confirmed: { it: 'Confermata', en: 'Confirmed', cls: 'text-emerald-300' },
-  open: { it: 'Senza un verdetto netto', en: 'No clear verdict', cls: 'text-slate-400' },
+  'debunked-growing': { it: 'Smentita, e circola sempre di più', en: 'Desmentida, y circula cada vez más', cls: 'text-red-300' },
+  'debunked-circulating': { it: 'Smentita, ma circola ancora', en: 'Desmentida, pero sigue circulando', cls: 'text-orange-300' },
+  'debunked-quiet': { it: 'Smentita, non circola più', en: 'Desmentida, ya no circula', cls: 'text-slate-500' },
+  contested: { it: 'I fact-checker non sono d’accordo', en: 'Los verificadores no coinciden', cls: 'text-violet-300' },
+  confirmed: { it: 'Confermata', en: 'Confirmada', cls: 'text-emerald-300' },
+  open: { it: 'Senza un verdetto netto', en: 'Sin un veredicto claro', cls: 'text-slate-400' },
 };
 
 export function SignalText({ signal, lang }: { signal: Signal; lang: Lang }) {
@@ -45,10 +45,10 @@ export function SignalText({ signal, lang }: { signal: Signal; lang: Lang }) {
 }
 
 const GAP: Record<Gap, { it: string; en: string; cls: string }> = {
-  hype: { it: 'Notizie più avanti dell’evidenza', en: 'News ahead of the evidence', cls: 'bg-orange-500/15 text-orange-300' },
-  untold: { it: 'Evidenza che nessuno racconta', en: 'Evidence nobody covers', cls: 'bg-sky-500/15 text-sky-300' },
-  aligned: { it: 'Allineati', en: 'Aligned', cls: 'bg-emerald-500/10 text-emerald-300' },
-  quiet: { it: 'Silenzio', en: 'Quiet', cls: 'bg-slate-500/10 text-slate-500' },
+  hype: { it: 'Notizie più avanti dell’evidenza', en: 'Noticias por delante de la evidencia', cls: 'bg-orange-500/15 text-orange-300' },
+  untold: { it: 'Evidenza che nessuno racconta', en: 'Evidencia que nadie cuenta', cls: 'bg-sky-500/15 text-sky-300' },
+  aligned: { it: 'Allineati', en: 'Alineados', cls: 'bg-emerald-500/10 text-emerald-300' },
+  quiet: { it: 'Silenzio', en: 'Silencio', cls: 'bg-slate-500/10 text-slate-500' },
 };
 
 export function GapBadge({ gap, lang }: { gap: Gap; lang: Lang }) {
@@ -95,7 +95,7 @@ export function MentionsLink({ ids, count, lang }: { ids: number[]; count: numbe
   return (
     <Link href={`/listening?ids=${ids.join(',')}`} className="text-[11px] text-sky-300 hover:underline">
       {L(lang, `vedi ${count > ids.length ? `le ${ids.length} più viste su ${fmtNumber(count, lang)}` : `le ${ids.length} menzioni`}`,
-        `see ${count > ids.length ? `the top ${ids.length} of ${fmtNumber(count, lang)}` : `the ${ids.length} mentions`}`)} →
+        `ver ${count > ids.length ? `las ${ids.length} más vistas de ${fmtNumber(count, lang)}` : `las ${ids.length} menciones`}`)} →
     </Link>
   );
 }

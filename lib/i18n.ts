@@ -6,8 +6,9 @@ import { DICT, DEFAULT_LOCALE, localeTag, type Locale } from '@/lib/i18n-dict';
 export * from '@/lib/i18n-dict';
 
 export async function getLocale(): Promise<Locale> {
-  const v = (await cookies()).get('sr_locale')?.value;
-  return v === 'it' ? 'it' : DEFAULT_LOCALE;
+  // AEDO: interfaz solo en español. El "slot" 'en' contiene los textos en español.
+  void cookies;
+  return DEFAULT_LOCALE;
 }
 
 /** Traduttore per i componenti server. La chiave non tradotta resta in inglese. */

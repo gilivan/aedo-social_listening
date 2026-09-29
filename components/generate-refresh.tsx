@@ -24,14 +24,14 @@ export function GenerateRefresh({ endpoint, label, busyLabel }: {
         throw new Error(
           d?.error
           ?? (res.status === 504 || res.status === 408
-            ? 'it took too long and timed out — try again in a moment'
-            : `the server returned ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`),
+            ? 'tardó demasiado y se agotó el tiempo; inténtalo de nuevo en un momento'
+            : `el servidor respondió ${res.status}${res.statusText ? ` ${res.statusText}` : ''}`),
         );
       }
       router.refresh();
     } catch (e) {
       const m = (e as Error).message;
-      setError(/fetch|network/i.test(m) ? 'network error — check your connection and retry' : m);
+      setError(/fetch|network/i.test(m) ? 'error de red; revisa tu conexión e inténtalo de nuevo' : m);
     } finally {
       setBusy(false);
     }
