@@ -267,7 +267,7 @@ export const timelineEvents = pgTable('timeline_events', {
 export const reviewSources = pgTable('review_sources', {
   id: serial('id').primaryKey(),
   projectId: integer('project_id').notNull(),
-  type: text('type').notNull(), // 'appstore' | 'googleplaces' | 'upload'
+  type: text('type').notNull(), // 'appstore' | 'googleplaces' | 'googlemaps' | 'yelp' | 'upload'
   identifier: text('identifier').notNull(), // app id / place id / nome del file importato
   label: text('label').notNull(),
   country: text('country'), // solo appstore: codice a 2 lettere, default 'us'

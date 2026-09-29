@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
-import { Star, Trash2, ExternalLink, ShoppingBag, MapPin, FileUp, Utensils } from 'lucide-react';
+import { Star, Trash2, ExternalLink, ShoppingBag, MapPin, FileUp, Utensils, Map as MapIcon } from 'lucide-react';
 import { getCurrentProject } from '@/lib/data';
 import { getCurrentUser, isAdmin } from '@/lib/auth';
 import { reviewStats } from '@/lib/reviews';
@@ -19,6 +19,7 @@ export const metadata = { title: 'Reseñas' };
 const TYPE_META: Record<string, { label: string; icon: typeof ShoppingBag }> = {
   appstore: { label: 'App Store', icon: ShoppingBag },
   googleplaces: { label: 'Google Places', icon: MapPin },
+  googlemaps: { label: 'Google Maps (sesión)', icon: MapIcon },
   yelp: { label: 'Yelp', icon: Utensils },
   upload: { label: 'Archivo importado', icon: FileUp },
 };
@@ -46,8 +47,8 @@ export default async function ReviewsPage() {
     } as CSSProperties}>
       <PageHeader
         title={t('page.reviews.title', 'Reseñas')}
-        info="Una sección autónoma, separada a propósito de Escucha: una reseña no se encuentra con una búsqueda por palabras clave, está ligada a un identificador fijo (una app, un lugar) y trae un dato que el resto de AEDO no tiene: una calificación en estrellas, que ES el sentimiento, sin necesidad de IA. Fuentes: Apple App Store (gratis, sin clave), Google Places (clave de nivel gratuito) o tu propio archivo. Los datos se actualizan con el ciclo diario o a pedido, abajo."
-        subtitle="Cómo te califican, no lo que dicen de ti en otros lugares: App Store, Google Places y todo lo que importes, separado a propósito del resto de la app."
+        info="Una sección autónoma, separada a propósito de Escucha: una reseña no se encuentra con una búsqueda por palabras clave, está ligada a un identificador fijo (una app, un lugar) y trae un dato que el resto de AEDO no tiene: una calificación en estrellas, que ES el sentimiento, sin necesidad de IA. Fuentes: Google Maps con sesión de Google (todas las reseñas), Apple App Store (gratis, sin clave), Google Places (clave de nivel gratuito, máx. 5) o tu propio archivo. Los datos se actualizan con el ciclo diario o a pedido, abajo."
+        subtitle="Cómo te califican, no lo que dicen de ti en otros lugares: Google Maps, App Store y todo lo que importes, separado a propósito del resto de la app."
       />
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -81,6 +82,9 @@ export default async function ReviewsPage() {
                     {s.type === 'googleplaces' && !stats.googlePlacesEnabled && (
                       <span className="text-amber-400">requiere clave de API ↓</span>
                     )}
+                    {s.type === 'googlemaps' && !stats.googleMapsSessionReady && (
+                      <span className="text-amber-400">falta iniciar sesión (npm run gmaps:login)</span>
+                    )}
                     {s.type === 'yelp' && !stats.yelpEnabled && (
                       <span className="text-amber-400">requiere clave de API ↓</span>
                     )}
@@ -100,6 +104,27 @@ export default async function ReviewsPage() {
         )}
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <form action={addReviewSourceAction} className="flex flex-col gap-2 rounded-lg border border-emerald-500/30 px-4 py-3">
+            <p className="text-xs font-semibold text-slate-300">
+              <MapIcon className="mr-1 inline size-3.5" /> Google Maps
+              <span className="ml-1.5 rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-300">todas las reseñas · con sesión</span>
+            </p>
+            <input type="hidden" name="type" value="googlemaps" />
+            <input name="identifier" placeholder="URL de Google Maps o nombre del lugar" required
+              className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 outline-none focus:border-sky-500/50" />
+            <input name="label" placeholder="Etiqueta (p. ej. San Nicolás)"
+              className="rounded-lg border border-[var(--border)] bg-[var(--panel-2)] px-2.5 py-1.5 text-sm text-slate-100 outline-none focus:border-sky-500/50" />
+            <button type="submit" className="mt-1 self-start rounded-lg bg-sky-500/90 px-3 py-1.5 text-xs font-medium text-slate-950 hover:bg-sky-400">
+              Agregar lugar
+            </button>
+            {stats.googleMapsSessionReady
+              ? <p className="text-[11px] text-emerald-400">Sesión de Google lista.</p>
+              : <p className="text-[11px] text-amber-400">Antes de usarla: en la carpeta de AEDO ejecuta <code className="text-amber-300">npm run gmaps:login</code> e inicia sesión (una sola vez, idealmente con una cuenta dedicada).</p>}
+            <p className="text-[11px] text-slate-600">
+              Lee la ficha con una sesión de Google iniciada, ordenada por más recientes: la primera vez trae hasta 300 reseñas y después solo las nuevas. Las fechas son aproximadas (Maps solo muestra “Hace 2 meses”). Agregar el lugar lo revisa de inmediato y puede tardar un par de minutos.
+            </p>
+          </form>
+
           <form action={addReviewSourceAction} className="flex flex-col gap-2 rounded-lg border border-[var(--border)] px-4 py-3">
             <p className="text-xs font-semibold text-slate-300">
               <ShoppingBag className="mr-1 inline size-3.5" /> Apple App Store
@@ -171,7 +196,7 @@ export default async function ReviewsPage() {
           <p className="max-w-md text-sm text-slate-400">
             {stats.sources.length > 0
               ? 'Fuente agregada: pulsa “Revisar fuentes ahora” arriba para traer sus reseñas.'
-              : 'Agrega arriba una app de App Store o un lugar de Google Places para empezar.'}
+              : 'Agrega arriba un lugar de Google Maps, una app de App Store o un lugar de Google Places para empezar.'}
           </p>
         </div>
       ) : (

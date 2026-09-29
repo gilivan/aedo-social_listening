@@ -27,5 +27,16 @@ Claves de IA y fuentes: `.env.local` o Ajustes → Sources (cifradas).
 1. ~~Interfaz en español y marca AEDO~~ ✅
 2. Cuentas propias vía APIs oficiales (Meta, YouTube) o Metricool.
 3. Conectores de menciones externas: X (twscrape), Instagram (Instaloader), TikTok (TikTok-Api),
-   reseñas de Google Maps (gosom), noticias (GDELT ya incluido).
+   noticias (GDELT ya incluido). ✅ Reseñas de Google Maps: `lib/reviews/googlemaps.ts`.
+
+## Reseñas de Google Maps (con sesión)
+Google Maps ya no muestra reseñas sin sesión iniciada (gosom quedó descartado por eso).
+AEDO usa el Google Chrome instalado con un perfil propio en `.data/gmaps-chrome-profile`.
+```bash
+npm run gmaps:login                                  # una vez: inicia sesión (cuenta dedicada)
+npm run gmaps:test -- "Centro Comercial San Nicolás Rionegro" 40 --visible   # prueba sin guardar
+```
+Luego en Reseñas → Google Maps se agrega el lugar (URL o nombre). Primera vez: hasta 300
+reseñas; después solo las nuevas (ordena por más recientes). Fechas aproximadas.
+Variables opcionales: GMAPS_CHROME_PATH, GMAPS_HEADLESS=0 (ver el navegador), GMAPS_PROFILE_DIR.
 4. Facebook de terceros vía Apify solo si hace falta.

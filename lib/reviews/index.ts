@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { reviewSources, reviews } from '@/lib/db/schema';
 import { fetchAppStoreReviews } from './appstore';
 import { fetchGooglePlacesReviews, googlePlacesEnabled } from './googleplaces';
+import { fetchGoogleMapsReviews, googleMapsSessionReady } from './googlemaps';
 import { fetchYelpReviews, yelpEnabled } from './yelp';
 
 const TZ = 'America/Bogota';
@@ -26,6 +27,11 @@ export async function ingestReviews(projectId: number): Promise<{ tried: number;
       if (src.type === 'appstore') raw = await fetchAppStoreReviews(src.identifier, src.country ?? 'us');
       else if (src.type === 'googleplaces') raw = await fetchGooglePlacesReviews(src.identifier);
       else if (src.type === 'yelp') raw = await fetchYelpReviews(src.identifier);
+      else if (src.type === 'googlemaps') {
+        // Incremental: con los IDs ya guardados, el lector deja de bajar al llegar a ellos.
+        const prev = await db.select({ id: reviews.externalId }).from(reviews).where(eq(reviews.sourceId, src.id));
+        raw = await fetchGoogleMapsReviews(src.identifier, { known: new Set(prev.map((p) => p.id)) });
+      }
     } catch (e) {
       console.error(`[reviews] fetch fallita per la fonte #${src.id} (${src.type} · ${src.identifier}):`, e);
     }
@@ -57,6 +63,7 @@ export type ReviewRow = {
 
 export type ReviewStats = {
   googlePlacesEnabled: boolean;
+  googleMapsSessionReady: boolean;
   yelpEnabled: boolean;
   sources: ReviewSourceRow[];
   total: number;
@@ -124,6 +131,7 @@ export async function reviewStats(projectId: number, weeks = 12): Promise<Review
 
   return {
     googlePlacesEnabled: googlePlacesEnabled(),
+    googleMapsSessionReady: googleMapsSessionReady(),
     yelpEnabled: yelpEnabled(),
     sources,
     total: Number(totals?.total ?? 0),

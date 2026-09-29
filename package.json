@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test tests/*.test.ts"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "gmaps:login": "tsx scripts/gmaps-login.ts",
+    "gmaps:test": "tsx scripts/gmaps-test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.109.1",
@@ -25,6 +27,7 @@
     "modern-screenshot": "^4.7.0",
     "next": "16.2.10",
     "pdfkit": "^0.19.1",
+    "playwright-core": "^1.56.0",
     "pptxgenjs": "^4.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
