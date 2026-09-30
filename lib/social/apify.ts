@@ -51,9 +51,22 @@ export function igUsername(raw: string): string {
 
 /** URL de página de Facebook (o su nombre corto) → URL completa. */
 export function fbPageUrl(raw: string): string {
-  const s = raw.trim();
-  if (/^https?:\/\//i.test(s)) return s.replace(/\/+$/, '') + '/';
+  const s = raw.trim().replace(/#.*$/, '');
+  if (/^https?:\/\//i.test(s)) {
+    // Páginas sin nombre corto: https://www.facebook.com/profile.php?id=123 (se conserva el id)
+    const id = s.match(/profile\.php\?(?:.*&)?id=(\d+)/i)?.[1];
+    if (id) return `https://www.facebook.com/profile.php?id=${id}`;
+    return s.replace(/[?].*$/, '').replace(/\/+$/, '') + '/';
+  }
   return `https://www.facebook.com/${s.replace(/^@/, '').replace(/\/+$/, '')}/`;
+}
+
+/** Forma comparable de una URL de Facebook (conserva el id de profile.php). */
+function fbKeyOf(u?: string): string {
+  if (!u) return '';
+  const id = u.match(/profile\.php\?(?:.*&)?id=(\d+)/i)?.[1] ?? u.match(/facebook\.com\/(\d{8,})/)?.[1];
+  if (id) return `id:${id}`;
+  return u.replace(/[?#].*$/, '').replace(/\/+$/, '').replace(/^https?:\/\/(www\.|m\.)?/i, '').toLowerCase();
 }
 
 /** Líneas "cuenta | Nombre" → cuentas limpias (sin duplicados). */
@@ -231,7 +244,7 @@ export async function ingestSocialApify(
   }
 
   // ── Facebook ──
-  const fb = accounts.filter((a) => a.network === 'facebook');
+  const fb = accounts.filter((a) => a.network === 'facebook').map((a) => ({ ...a, handle: fbPageUrl(a.handle) }));
   if (fb.length) {
     try {
       const posts = await runActor<FbPost>(ACTORS.fbPosts, {
@@ -240,11 +253,11 @@ export async function ingestSocialApify(
         resultsLimit: 60,
       }, log);
       log(`Facebook: ${posts.length} publicaciones desde ${ymd(postsSince)}`);
-      const norm = (u?: string) => (u ?? '').replace(/[?#].*$/, '').replace(/\/+$/, '').toLowerCase();
+      const norm = (u?: string) => (u ?? '').replace(/#.*$/, '').replace(/\/+$/, '').toLowerCase();
       const withComments = posts.filter((p) => p.url && num(p.comments) > 0);
       const accFor = (p: FbPost) => {
-        const src = norm(p.inputUrl ?? p.facebookUrl);
-        return fb.find((a) => norm(a.handle) === src) ?? fb.find((a) => src && norm(a.handle).endsWith(src.split('/').pop() ?? '#')) ?? (fb.length === 1 ? fb[0] : undefined);
+        const src = fbKeyOf(p.inputUrl ?? p.facebookUrl);
+        return fb.find((a) => fbKeyOf(a.handle) === src) ?? (fb.length === 1 ? fb[0] : undefined);
       };
       if (withComments.length) {
         const comments = await runActor<FbComment>(ACTORS.fbComments, {
@@ -256,7 +269,9 @@ export async function ingestSocialApify(
         }, log);
         log(`Facebook: ${comments.length} comentarios de ${withComments.length} publicaciones`);
         for (const c of comments) {
-          const post = withComments.find((p) => norm(p.url) === norm(c.postUrl ?? c.facebookUrl ?? c.inputUrl));
+          // inputUrl es exactamente la URL de publicación que se le pasó al extractor.
+          const cands = [c.inputUrl, c.postUrl, c.facebookUrl].filter(Boolean).map((u) => norm(u));
+          const post = withComments.find((p) => cands.includes(norm(p.url)));
           const acc = post ? accFor(post) : undefined;
           if (!post || !acc || !c.id || !c.text) continue;
           push(acc, {
