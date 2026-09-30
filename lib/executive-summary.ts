@@ -156,8 +156,7 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
       .sort((a, b) => Number(b.likes) - Number(a.likes)).slice(0, 6)
       .map((r) => ({ account: acc.account, text: r.content.replace(/\s+/g, ' ').slice(0, 220), likes: Number(r.likes) })));
   }
-  // La tabla social_posts se crea al reiniciar AEDO; antes de eso, la sección queda vacía.
-  const content = await socialContentByAccount(projectId, days).catch(() => [] as AccountContent[]);
+  const content = await socialContentByAccount(projectId, days);
 
   // ── Búsquedas en Google ──
   const searchPeaks = ((await db.execute(sql`
