@@ -177,7 +177,7 @@ function SourceRow({ c, st, off, canEdit }: {
                 : `error: ${st.error}`
             : 'pendiente de la primera recopilación'}
       </span>
-      {canEdit && !c.projectLevel && (
+      {canEdit && (
         <form action={toggleConnectorAction} className="ml-auto shrink-0">
           <input type="hidden" name="id" value={c.id} />
           <input type="hidden" name="off" value={off ? '0' : '1'} />

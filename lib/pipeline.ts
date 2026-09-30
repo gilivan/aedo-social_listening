@@ -5,6 +5,7 @@ import { ingestProject } from '@/lib/ingest';
 import { enrichArticles } from '@/lib/article-enrich';
 import { ingestReviews } from '@/lib/reviews';
 import { ingestSocialApify } from '@/lib/social/apify';
+import { getDisabledConnectors } from '@/lib/source-toggles';
 import { ingestSport } from '@/lib/sport';
 import { ingestSearchInterest } from '@/lib/search-interest';
 import { ingestWikiEdits } from '@/lib/wikipedia';
@@ -85,7 +86,9 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
             return r;
           })();
       // AEDO: comentarios de Instagram/Facebook vía Apify, ANTES del análisis de IA.
-      if (project.mode !== 'upload' && project.mode !== 'talkwalker') {
+      if (project.mode !== 'upload' && project.mode !== 'talkwalker' && (await getDisabledConnectors()).has('apify')) {
+        console.log('[pipeline] redes (Apify): apagada en Ajustes → Fuentes');
+      } else if (project.mode !== 'upload' && project.mode !== 'talkwalker') {
         const social = await ingestSocialApify(project).catch((e) => {
           console.error(`[pipeline] Apify falló para "${project.name}":`, e);
           return { tried: 0, inserted: 0, errors: [] as string[] };
