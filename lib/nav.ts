@@ -3,7 +3,7 @@ import {
   Star, Bell, FileText, Settings, MessageSquareText, GitBranch,
   Diff, PenLine, MonitorPlay, Network, History, LayoutGrid, Lightbulb,
   MessageSquareQuote, Euro, Award, Trophy, FileClock, BookOpen, LineChart,
-  UserRound, Shapes, UploadCloud, Gauge, SearchCheck, FlaskConical, Podcast, PlugZap, Blocks,
+  UserRound, Shapes, UploadCloud, Gauge, SearchCheck, FlaskConical, Podcast, PlugZap, Blocks, ClipboardList,
 } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -41,6 +41,7 @@ export type NavItem = NavLink | { section: string; key: string };
 
 export const NAV: NavItem[] = [
   { section: 'Monitoreo', key: 'nav.monitor' },
+  { href: '/resumen', label: 'Resumen ejecutivo', key: 'nav.resumen', icon: ClipboardList, primary: true, also: ['hallazgos', 'oportunidades', 'resumen', 'summary', 'executive'] },
   { href: '/', label: 'Tablero', key: 'nav.dashboard', icon: LayoutDashboard, primary: true },
   { href: '/listening', label: 'Escucha', key: 'nav.listening', icon: Ear, primary: true, also: ['mentions', 'post', 'stream'] },
   { href: '/media', label: 'Medios', key: 'nav.media', icon: Newspaper, also: ['news', 'stories', 'press'] },

@@ -15,7 +15,7 @@ export default async function BenchmarkPage() {
   if (!project) return <EmptyState message={t('ui.noProject', 'No hay ningún proyecto configurado.')} />;
   const [results, searchInterest, places, content] = await Promise.all([
     benchmarkData(project.id), searchInterestData(project.id),
-    reviewsByPlace(project.id), socialContentByAccount(project.id),
+    reviewsByPlace(project.id), socialContentByAccount(project.id).catch(() => []),
   ]);
   const hasSearchInterest = searchInterest.some((s) => s.points.length > 0);
 
