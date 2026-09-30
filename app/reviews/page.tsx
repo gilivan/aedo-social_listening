@@ -13,6 +13,7 @@ import { RatingStars, RatingDistribution, RatingTrend } from '@/components/revie
 import { ReviewImportWizard } from '@/components/review-import-wizard';
 import { YelpBusinessSearch } from '@/components/yelp-business-search';
 import { addReviewSourceAction, removeReviewSourceAction } from './actions';
+import { RefreshSourceButton } from '@/components/refresh-source-button';
 
 export const metadata = { title: 'Reseñas' };
 
@@ -52,7 +53,7 @@ export default async function ReviewsPage() {
       />
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <GenerateRefresh endpoint="/api/reviews/refresh" label={t('page.reviews.refresh', 'Revisar fuentes ahora')} busyLabel={t('page.reviews.checking', 'Revisando…')} />
+        <GenerateRefresh endpoint="/api/reviews/refresh" label="Actualizar las desactualizadas (más de 24 h)" busyLabel={t('page.reviews.checking', 'Revisando…')} />
       </div>
 
       {/* ── Fonti configurate ─────────────────────────────────────────── */}
@@ -90,6 +91,7 @@ export default async function ReviewsPage() {
                     )}
                     <span className="hidden sm:inline">{s.lastFetchedAt ? `revisada ${fmtDate(s.lastFetchedAt)}` : 'aún sin revisar'}</span>
                   </span>
+                  {s.type !== 'upload' && <RefreshSourceButton id={s.id} label={s.label} />}
                   <form action={removeReviewSourceAction}>
                     <input type="hidden" name="id" value={s.id} />
                     <button type="submit" aria-label={`Eliminar ${s.label}`}

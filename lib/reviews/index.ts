@@ -13,9 +13,27 @@ const TZ = 'America/Bogota';
  * Le fonti "upload" non si interrogano: sono state popolate una volta sola
  * al momento dell'import, non hanno un endpoint da rileggere.
  */
-export async function ingestReviews(projectId: number): Promise<{ tried: number; fetched: number; errors: { label: string; message: string }[] }> {
+/** Una fuente se considera al día si se revisó hace menos de estas horas. */
+export const REVIEWS_FRESH_HOURS = 24;
+
+/**
+ * AEDO — qué fuentes leer:
+ *  - `sourceIds`: solo esas (al agregar una fuente o con su botón de actualizar);
+ *  - `onlyStale`: solo las que no se revisan hace más de REVIEWS_FRESH_HOURS
+ *    (botón general y ejecución del pipeline): así no se vuelve a abrir Google
+ *    Maps para lugares que se acaban de leer.
+ */
+export async function ingestReviews(
+  projectId: number,
+  opts: { sourceIds?: number[]; onlyStale?: boolean } = {},
+): Promise<{ tried: number; fetched: number; skipped: number; errors: { label: string; message: string }[] }> {
   const db = await getDb();
-  const sources = await db.select().from(reviewSources).where(eq(reviewSources.projectId, projectId));
+  const all = await db.select().from(reviewSources).where(eq(reviewSources.projectId, projectId));
+  const freshSince = Date.now() - REVIEWS_FRESH_HOURS * 3600_000;
+  const sources = all.filter((s) =>
+    (!opts.sourceIds || opts.sourceIds.includes(s.id))
+    && (!opts.onlyStale || !s.lastFetchedAt || s.lastFetchedAt.getTime() < freshSince));
+  const skipped = all.length - sources.length;
   let tried = 0;
   let fetched = 0;
   const errors: { label: string; message: string }[] = [];
@@ -48,7 +66,7 @@ export async function ingestReviews(projectId: number): Promise<{ tried: number;
     }
     await db.update(reviewSources).set({ lastFetchedAt: new Date() }).where(eq(reviewSources.id, src.id));
   }
-  return { tried, fetched, errors };
+  return { tried, fetched, skipped, errors };
 }
 
 export type ReviewSourceRow = {

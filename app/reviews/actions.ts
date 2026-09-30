@@ -39,7 +39,7 @@ export async function addReviewSourceAction(formData: FormData) {
     // senza rifarlo qui, una fonte Google Places con chiave salvata
     // fallirebbe silenziosamente al primo fetch.
     await hydrateConnectorCredentials();
-    await ingestReviews(project.id).catch((e) => console.error('[reviews] primo fetch fallito:', e));
+    await ingestReviews(project.id, { sourceIds: [src.id] }).catch((e) => console.error('[reviews] primo fetch fallito:', e));
   }
   revalidatePath('/reviews');
 }

@@ -108,7 +108,7 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
       // Recensioni: sezione autonoma, indipendente dalla modalità del progetto
       // (anche un progetto "upload" può seguire un'app o un locale) e senza
       // costo AI — il voto è già il sentimento.
-      const revs = await ingestReviews(project.id).catch((e) => {
+      const revs = await ingestReviews(project.id, { onlyStale: true }).catch((e) => {
         console.error(`[pipeline] recensioni fallite per "${project.name}":`, e);
         return { tried: 0, fetched: 0 };
       });
