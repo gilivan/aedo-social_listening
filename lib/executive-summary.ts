@@ -135,7 +135,7 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
       url: string | null; published_at: string; sentiment: string | null; relevance: number | null; country: string | null;
     }[];
     const kept = rows.filter((r) => {
-      if (r.source === 'instagram' || r.source === 'facebook') return true;
+      if (['instagram', 'facebook', 'tiktok', 'x'].includes(r.source)) return true;
       if (compiled && compiled.length && queriesMatching(compiled, `${r.title ?? ''} ${r.content}`).length === 0) return false;
       if (idx === 0 && r.relevance != null && r.relevance < 3) return false;
       // Medios de otro país (p. ej. un .mx) cuando el proyecto se limita a ciertos países.
@@ -164,14 +164,14 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
       count(*) FILTER (WHERE sentiment = 'neutral')::int AS neutral,
       count(*) FILTER (WHERE sentiment IS NULL)::int AS pending
     FROM mentions
-    WHERE project_id IN (${inScope}) AND source IN ('instagram', 'facebook') AND published_at >= ${sinceIso}::timestamptz
+    WHERE project_id IN (${inScope}) AND source IN ('instagram', 'facebook', 'tiktok', 'x') AND published_at >= ${sinceIso}::timestamptz
     GROUP BY source, community ORDER BY comments DESC`)).rows as Record<string, unknown>[]).map((r) => ({
     network: String(r.network), account: String(r.account), comments: Number(r.comments),
     positive: Number(r.positive), negative: Number(r.negative), neutral: Number(r.neutral), pending: Number(r.pending),
   }));
   const sq = (await db.execute(sql`
     SELECT community, content, coalesce((engagement->>'likes')::int, 0) AS likes FROM mentions
-    WHERE project_id IN (${inScope}) AND source IN ('instagram', 'facebook') AND published_at >= ${sinceIso}::timestamptz
+    WHERE project_id IN (${inScope}) AND source IN ('instagram', 'facebook', 'tiktok', 'x') AND published_at >= ${sinceIso}::timestamptz
     ORDER BY published_at DESC LIMIT 600`)).rows as { community: string; content: string; likes: number }[];
   const socialQuotes: SocialQuote[] = [];
   for (const acc of social) {

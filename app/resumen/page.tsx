@@ -275,7 +275,7 @@ export default async function ResumenPage() {
               <tbody>
                 {f.social.map((s) => (
                   <tr key={`${s.network}-${s.account}`} className="border-b border-[var(--border)]/50 last:border-0">
-                    <td className="py-2 font-medium">{s.account} <span className="text-xs text-slate-500">· {s.network === 'instagram' ? 'Instagram' : 'Facebook'}</span></td>
+                    <td className="py-2 font-medium">{s.account} <span className="text-xs text-slate-500">· {({ instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', x: 'X' } as Record<string, string>)[s.network] ?? s.network}</span></td>
                     <td className="py-2 text-right">{fmtNum(s.comments)}</td>
                     <td className="py-2 text-right text-emerald-400">{fmtNum(s.positive)}</td>
                     <td className={`py-2 text-right ${s.negative ? 'text-red-400' : 'text-slate-600'}`}>{fmtNum(s.negative)}</td>
