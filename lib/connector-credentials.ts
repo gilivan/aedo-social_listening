@@ -68,6 +68,7 @@ export const CREDENTIAL_FIELDS: Record<string, CredField[]> = {
   ],
   apify: [
     { env: 'APIFY_TOKEN', label: 'Token de API de Apify', hint: 'apify.com → Settings → API & Integrations', secret: true },
+    { env: 'APIFY_INTERVAL_DAYS', label: 'Días entre actualizaciones', hint: 'cada cuántos días como máximo se vuelve a consultar cada cuenta (por defecto 7); controla el gasto', secret: false },
   ],
   podcastindex: [
     { env: 'PODCASTINDEX_API_KEY', label: 'Clave API', hint: 'gratis, desde api.podcastindex.org (llega por correo)', secret: true },

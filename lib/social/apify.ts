@@ -1,3 +1,4 @@
+import { and, eq } from 'drizzle-orm';
 import { getDb, getMeta, setMeta } from '@/lib/db';
 import { mentions, type projects } from '@/lib/db/schema';
 import { cfg } from '@/lib/connector-config';
@@ -17,9 +18,10 @@ import { compilePlan, queriesMatching, validatePlan, type QueryPlan } from '@/li
 //
 // Costo bajo control:
 //  - primera carga: publicaciones de los últimos APIFY_FIRST_DAYS (60) días;
-//  - después: publicaciones de los últimos 14 días (siguen recibiendo
-//    comentarios) y comentarios solo de las publicaciones cuyo contador de
-//    comentarios subió desde la última vez;
+//  - después, cada APIFY_INTERVAL_DAYS (7) días como máximo por cuenta:
+//    publicaciones de los últimos 14 días (siguen recibiendo comentarios) y
+//    comentarios solo de las publicaciones cuyo contador subió desde la última vez;
+//  - una cuenta nueva o corregida hace su propia primera carga sin recargar las demás;
 //  - cada ejecución en Apify lleva un tope de gasto (APIFY_MAX_USD_PER_RUN, 3 USD).
 // ---------------------------------------------------------------------------
 
@@ -146,36 +148,93 @@ function title(acc: SocialAccount, caption: string | undefined): string {
 
 // ── Ingesta por proyecto ──────────────────────────────────────────────────
 
+/** Clave estable de una publicación de Facebook: conserva los parámetros que la identifican. */
+function fbPostKey(u?: string): string {
+  if (!u) return '';
+  try {
+    const x = new URL(u);
+    const keep = ['story_fbid', 'fbid', 'id', 'v']
+      .map((k) => (x.searchParams.get(k) ? `${k}=${x.searchParams.get(k)}` : ''))
+      .filter(Boolean).join('&');
+    return `${x.hostname.replace(/^(www|m|web)\./, '')}${x.pathname.replace(/\/+$/, '')}${keep ? `?${keep}` : ''}`.toLowerCase();
+  } catch {
+    return u.replace(/#.*$/, '').replace(/\/+$/, '').toLowerCase();
+  }
+}
+
+const accId = (a: SocialAccount) => (a.network === 'instagram' ? a.handle : fbKeyOf(a.handle));
+
 export async function ingestSocialApify(
   project: typeof projects.$inferSelect,
   log: (m: string) => void = (m) => console.log(`[apify] ${m}`),
 ): Promise<{ tried: number; inserted: number; errors: string[] }> {
-  const accounts = ((project as { socialAccounts?: SocialAccount[] }).socialAccounts ?? []);
+  const accounts = ((project as { socialAccounts?: SocialAccount[] }).socialAccounts ?? [])
+    .map((a) => (a.network === 'facebook' ? { ...a, handle: fbPageUrl(a.handle) } : a));
   if (!accounts.length || !apifyEnabled()) return { tried: 0, inserted: 0, errors: [] };
 
   const now = new Date();
   const firstDays = Number(cfg('APIFY_FIRST_DAYS') ?? '') || 60;
-  const lastKey = `apify_last_run:${project.id}`;
-  const lastIso = await getMeta<string>(lastKey);
-  const last = lastIso ? new Date(lastIso) : null;
+  const intervalDays = Number(cfg('APIFY_INTERVAL_DAYS') ?? '') || 7;
   const floor = new Date(now.getTime() - firstDays * DAY);
-  // Publicaciones: en la primera carga, todo el periodo; después, las de los últimos 14 días.
-  const postsSince = last ? new Date(Math.max(floor.getTime(), now.getTime() - 14 * DAY)) : floor;
-  // Comentarios: desde un día antes de la última ejecución (margen), o todo el periodo la primera vez.
-  const commentsSince = last ? new Date(Math.max(floor.getTime(), last.getTime() - DAY)) : floor;
+  const lastKey = `apify_last_run:${project.id}`;
+  const globalLastIso = await getMeta<string>(lastKey);
+  const accKey = (a: SocialAccount) => `apify_acc:${project.id}:${a.network}:${accId(a)}`;
+  const db = await getDb();
+
+  // Estado por cuenta. Las cuentas que ya estaban antes de este cambio heredan la
+  // última ejecución global si ya tienen comentarios guardados; una cuenta nueva
+  // (o corregida) hace su propia primera carga de APIFY_FIRST_DAYS días.
+  type Plan = { acc: SocialAccount; last: Date | null };
+  const plans: Plan[] = [];
+  for (const a of accounts) {
+    let iso = await getMeta<string>(accKey(a));
+    if (!iso && globalLastIso) {
+      const community = a.network === 'instagram' ? `@${a.handle}` : a.label;
+      const has = await db.select({ id: mentions.id }).from(mentions)
+        .where(and(eq(mentions.projectId, project.id), eq(mentions.source, a.network), eq(mentions.community, community)))
+        .limit(1);
+      if (has.length) {
+        iso = globalLastIso;
+        await setMeta(accKey(a), iso);
+      }
+    }
+    plans.push({ acc: a, last: iso ? new Date(iso) : null });
+  }
+
+  // Tope de frecuencia: una cuenta ya cargada solo se actualiza cada APIFY_INTERVAL_DAYS días.
+  const due = plans.filter((p) => !p.last || now.getTime() - p.last.getTime() >= intervalDays * DAY);
+  const waiting = plans.filter((p) => !due.includes(p));
+  if (waiting.length) {
+    const next = new Date(Math.min(...waiting.map((p) => p.last!.getTime())) + intervalDays * DAY);
+    log(`${waiting.length} cuenta(s) al día; próxima actualización desde ${ymd(next)} (cada ${intervalDays} días)`);
+  }
+  if (!due.length) return { tried: 0, inserted: 0, errors: [] };
+
+  // Grupos: primera carga (todo el periodo) y actualización (publicaciones de los últimos 14 días).
+  const sinceOf = (p: Plan) => (p.last ? new Date(Math.max(floor.getTime(), p.last.getTime() - DAY)) : floor);
+  const groups = [
+    { name: 'primera carga', plans: due.filter((p) => !p.last), postsSince: floor },
+    { name: 'actualización', plans: due.filter((p) => p.last), postsSince: new Date(Math.max(floor.getTime(), now.getTime() - 14 * DAY)) },
+  ].filter((g) => g.plans.length);
 
   const compiled = (() => {
     try { return project.queryPlan ? compilePlan(validatePlan(project.queryPlan as QueryPlan).plan) : null; } catch { return null; }
   })();
   const rows: Row[] = [];
   const errors: string[] = [];
-  const countKey = (code: string) => `apify_cc:${project.id}:${code}`;
+  const okAccounts: SocialAccount[] = [];
+  const igCountKey = (code: string) => `apify_cc:${project.id}:${code}`;
+  const fbCountKey = (key: string) => `apify_fbcc:${project.id}:${key}`;
+  const commentsSince = new Map(due.map((p) => [p.acc, sinceOf(p)]));
 
+  /** Devuelve el motivo si el comentario se descarta. */
   const push = (acc: SocialAccount, r: {
     id: string; text: string; author?: string; handle?: string; at: Date; url?: string;
     likes: number; replies: number; caption?: string;
-  }) => {
-    if (!r.text.trim() || Number.isNaN(r.at.getTime()) || r.at < commentsSince || r.at > new Date(now.getTime() + 3600_000)) return;
+  }): string | null => {
+    if (!r.text.trim()) return 'sin texto';
+    if (Number.isNaN(r.at.getTime())) return 'sin fecha';
+    if (r.at < commentsSince.get(acc)! || r.at > new Date(now.getTime() + 3600_000)) return 'fuera del periodo';
     const t = title(acc, r.caption);
     rows.push({
       projectId: project.id,
@@ -195,111 +254,134 @@ export async function ingestSocialApify(
       engagementScore: r.likes + 2 * r.replies,
       queryIds: compiled ? queriesMatching(compiled, `${t} ${r.text}`) : [],
     } as Row);
+    return null;
   };
+  const tally = (drops: Record<string, number>) =>
+    Object.entries(drops).map(([k, v]) => `${v} ${k}`).join(', ');
 
-  // ── Instagram ──
-  const ig = accounts.filter((a) => a.network === 'instagram');
-  if (ig.length) {
-    try {
-      const posts = await runActor<IgPost>(ACTORS.igPosts, {
-        username: ig.map((a) => a.handle),
-        onlyPostsNewerThan: ymd(postsSince),
-        resultsLimit: 100,
-        skipPinnedPosts: false,
-      }, log);
-      log(`Instagram: ${posts.length} publicaciones desde ${ymd(postsSince)}`);
-      const byCode = new Map<string, { post: IgPost; acc: SocialAccount }>();
-      const toFetch: string[] = [];
-      for (const p of posts) {
-        const code = p.shortCode ?? igCode(p.url);
-        const owner = (p.ownerUsername ?? igUsername(p.inputUrl ?? '')).toLowerCase();
-        const acc = ig.find((a) => a.handle === owner);
-        if (!code || !acc || !p.url) continue;
-        byCode.set(code, { post: p, acc });
-        const prev = (await getMeta<number>(countKey(code))) ?? 0;
-        if (num(p.commentsCount) > prev) toFetch.push(p.url);
-      }
-      if (toFetch.length) {
-        const comments = await runActor<IgComment>(ACTORS.igComments, {
-          directUrls: toFetch, resultsLimit: 150, includeNestedComments: false,
+  for (const g of groups) {
+    // ── Instagram ──
+    const ig = g.plans.map((p) => p.acc).filter((a) => a.network === 'instagram');
+    if (ig.length) {
+      try {
+        const posts = await runActor<IgPost>(ACTORS.igPosts, {
+          username: ig.map((a) => a.handle),
+          onlyPostsNewerThan: ymd(g.postsSince),
+          resultsLimit: 100,
+          skipPinnedPosts: false,
         }, log);
-        log(`Instagram: ${comments.length} comentarios de ${toFetch.length} publicaciones con comentarios nuevos`);
-        for (const c of comments) {
-          const code = igCode(c.postUrl ?? c.inputUrl ?? c.url);
-          const ctx = code ? byCode.get(code) : undefined;
-          if (!ctx || !c.id || !c.text) continue;
-          push(ctx.acc, {
-            id: c.id, text: c.text, author: c.ownerUsername, handle: c.ownerUsername ? `@${c.ownerUsername}` : undefined,
-            at: new Date(c.timestamp ?? ''), url: ctx.post.url, likes: num(c.likesCount), replies: num(c.repliesCount),
-            caption: ctx.post.caption,
-          });
+        const perAcc = new Map<string, number>();
+        const byCode = new Map<string, { post: IgPost; acc: SocialAccount }>();
+        const toFetch: string[] = [];
+        for (const p of posts) {
+          const code = p.shortCode ?? igCode(p.url);
+          const owner = (p.ownerUsername ?? igUsername(p.inputUrl ?? '')).toLowerCase();
+          const acc = ig.find((a) => a.handle === owner);
+          if (!code || !acc || !p.url) continue;
+          perAcc.set(acc.handle, (perAcc.get(acc.handle) ?? 0) + 1);
+          byCode.set(code, { post: p, acc });
+          const prev = (await getMeta<number>(igCountKey(code))) ?? 0;
+          if (num(p.commentsCount) > prev) toFetch.push(p.url);
         }
-        for (const [code, { post }] of byCode) await setMeta(countKey(code), num(post.commentsCount));
-      } else {
-        log('Instagram: sin comentarios nuevos');
+        log(`Instagram (${g.name}): ${posts.length} publicaciones desde ${ymd(g.postsSince)} — ${ig.map((a) => `@${a.handle} ${perAcc.get(a.handle) ?? 0}`).join(', ')}`);
+        for (const a of ig) if (!perAcc.get(a.handle)) log(`Instagram: @${a.handle} no devolvió publicaciones (¿usuario correcto? ¿cuenta privada?)`);
+        if (toFetch.length) {
+          const comments = await runActor<IgComment>(ACTORS.igComments, {
+            directUrls: toFetch, resultsLimit: 150, includeNestedComments: false,
+          }, log);
+          const drops: Record<string, number> = {};
+          for (const c of comments) {
+            const code = igCode(c.postUrl ?? c.inputUrl ?? c.url);
+            const ctx = code ? byCode.get(code) : undefined;
+            const why = !ctx ? 'sin publicación' : !c.id ? 'sin id' : push(ctx.acc, {
+              id: c.id, text: c.text ?? '', author: c.ownerUsername, handle: c.ownerUsername ? `@${c.ownerUsername}` : undefined,
+              at: new Date(c.timestamp ?? ''), url: ctx.post.url, likes: num(c.likesCount), replies: num(c.repliesCount),
+              caption: ctx.post.caption,
+            });
+            if (why) drops[why] = (drops[why] ?? 0) + 1;
+          }
+          log(`Instagram: ${comments.length} comentarios de ${toFetch.length} publicaciones con comentarios nuevos${Object.keys(drops).length ? ` (descartados: ${tally(drops)})` : ''}`);
+        } else {
+          log('Instagram: sin comentarios nuevos');
+        }
+        for (const [code, { post }] of byCode) await setMeta(igCountKey(code), num(post.commentsCount));
+        okAccounts.push(...ig);
+      } catch (e) {
+        errors.push(`Instagram: ${(e as Error).message}`);
       }
-    } catch (e) {
-      errors.push(`Instagram: ${(e as Error).message}`);
     }
-  }
 
-  // ── Facebook ──
-  const fb = accounts.filter((a) => a.network === 'facebook').map((a) => ({ ...a, handle: fbPageUrl(a.handle) }));
-  if (fb.length) {
-    try {
-      const posts = await runActor<FbPost>(ACTORS.fbPosts, {
-        startUrls: fb.map((a) => ({ url: a.handle })),
-        onlyPostsNewerThan: ymd(postsSince),
-        resultsLimit: 60,
-      }, log);
-      log(`Facebook: ${posts.length} publicaciones desde ${ymd(postsSince)}`);
-      const norm = (u?: string) => (u ?? '').replace(/#.*$/, '').replace(/\/+$/, '').toLowerCase();
-      const withComments = posts.filter((p) => p.url && num(p.comments) > 0);
-      const accFor = (p: FbPost) => {
-        const src = fbKeyOf(p.inputUrl ?? p.facebookUrl);
-        return fb.find((a) => fbKeyOf(a.handle) === src) ?? (fb.length === 1 ? fb[0] : undefined);
-      };
-      if (withComments.length) {
-        const comments = await runActor<FbComment>(ACTORS.fbComments, {
-          startUrls: withComments.map((p) => ({ url: p.url })),
-          onlyCommentsNewerThan: ymd(commentsSince),
-          resultsLimit: Math.min(3000, 150 * withComments.length),
-          includeNestedComments: false,
-          viewOption: 'RECENT_ACTIVITY',
+    // ── Facebook ──
+    const fb = g.plans.map((p) => p.acc).filter((a) => a.network === 'facebook');
+    if (fb.length) {
+      try {
+        const posts = await runActor<FbPost>(ACTORS.fbPosts, {
+          startUrls: fb.map((a) => ({ url: a.handle })),
+          onlyPostsNewerThan: ymd(g.postsSince),
+          resultsLimit: 60,
         }, log);
-        log(`Facebook: ${comments.length} comentarios de ${withComments.length} publicaciones`);
-        for (const c of comments) {
-          // inputUrl es exactamente la URL de publicación que se le pasó al extractor.
-          const cands = [c.inputUrl, c.postUrl, c.facebookUrl].filter(Boolean).map((u) => norm(u));
-          const post = withComments.find((p) => cands.includes(norm(p.url)));
-          const acc = post ? accFor(post) : undefined;
-          if (!post || !acc || !c.id || !c.text) continue;
-          push(acc, {
-            id: c.id, text: c.text, author: c.profileName, at: new Date(c.date ?? ''),
-            url: c.commentUrl ?? post.url, likes: num(c.likesCount), replies: 0, caption: post.text,
-          });
+        const accFor = (p: FbPost) => {
+          const src = fbKeyOf(p.inputUrl ?? p.facebookUrl);
+          return fb.find((a) => fbKeyOf(a.handle) === src) ?? (fb.length === 1 ? fb[0] : undefined);
+        };
+        const perAcc = new Map<SocialAccount, number>();
+        const byKey = new Map<string, { post: FbPost; acc: SocialAccount }>();
+        const toFetch: FbPost[] = [];
+        let orphanPosts = 0;
+        for (const p of posts) {
+          const acc = accFor(p);
+          const key = fbPostKey(p.url);
+          if (!acc || !key) { orphanPosts++; continue; }
+          perAcc.set(acc, (perAcc.get(acc) ?? 0) + 1);
+          byKey.set(key, { post: p, acc });
+          const prev = (await getMeta<number>(fbCountKey(key))) ?? 0;
+          if (num(p.comments) > prev) toFetch.push(p);
         }
-      } else {
-        log('Facebook: ninguna publicación con comentarios en el periodo');
+        log(`Facebook (${g.name}): ${posts.length} publicaciones desde ${ymd(g.postsSince)} — ${fb.map((a) => `${a.label} ${perAcc.get(a) ?? 0}`).join(', ')}${orphanPosts ? ` (${orphanPosts} sin cuenta asociada)` : ''}`);
+        if (toFetch.length) {
+          const minSince = new Date(Math.min(...fb.map((a) => commentsSince.get(a)!.getTime())));
+          const comments = await runActor<FbComment>(ACTORS.fbComments, {
+            startUrls: toFetch.map((p) => ({ url: p.url })),
+            onlyCommentsNewerThan: ymd(minSince),
+            resultsLimit: Math.min(3000, 150 * toFetch.length),
+            includeNestedComments: false,
+            viewOption: 'RECENT_ACTIVITY',
+          }, log);
+          const drops: Record<string, number> = {};
+          for (const c of comments) {
+            // inputUrl es exactamente la URL de publicación que se le pasó al extractor.
+            const ctx = [c.inputUrl, c.postUrl, c.facebookUrl].map((u) => byKey.get(fbPostKey(u))).find(Boolean);
+            const why = !ctx ? 'sin publicación' : !c.id ? 'sin id' : push(ctx.acc, {
+              id: c.id, text: c.text ?? '', author: c.profileName, at: new Date(c.date ?? ''),
+              url: c.commentUrl ?? ctx.post.url, likes: num(c.likesCount), replies: 0, caption: ctx.post.text,
+            });
+            if (why) drops[why] = (drops[why] ?? 0) + 1;
+          }
+          log(`Facebook: ${comments.length} comentarios de ${toFetch.length} publicaciones con comentarios nuevos${Object.keys(drops).length ? ` (descartados: ${tally(drops)})` : ''}`);
+        } else {
+          log('Facebook: sin comentarios nuevos');
+        }
+        for (const [key, { post }] of byKey) await setMeta(fbCountKey(key), num(post.comments));
+        okAccounts.push(...fb);
+      } catch (e) {
+        errors.push(`Facebook: ${(e as Error).message}`);
       }
-    } catch (e) {
-      errors.push(`Facebook: ${(e as Error).message}`);
     }
   }
 
   // ── Guardar ──
   let inserted = 0;
   if (rows.length) {
-    const db = await getDb();
     const unique = [...new Map(rows.map((r) => [`${r.source}|${r.externalId}`, r])).values()];
     for (let i = 0; i < unique.length; i += 100) {
       const res = await db.insert(mentions).values(unique.slice(i, i + 100)).onConflictDoNothing().returning({ id: mentions.id });
       inserted += res.length;
     }
   }
-  // Solo se avanza la marca de tiempo si al menos una red funcionó.
-  if (errors.length < (ig.length ? 1 : 0) + (fb.length ? 1 : 0)) await setMeta(lastKey, now.toISOString());
+  // Solo avanza la marca de tiempo de las cuentas cuya red funcionó.
+  for (const a of okAccounts) await setMeta(accKey(a), now.toISOString());
+  if (okAccounts.length) await setMeta(lastKey, now.toISOString());
   for (const e of errors) log(`ERROR ${e}`);
   log(`${inserted} comentarios nuevos guardados`);
-  return { tried: accounts.length, inserted, errors };
+  return { tried: due.length, inserted, errors };
 }
