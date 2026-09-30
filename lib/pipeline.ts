@@ -153,9 +153,15 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
       const aiOn = await ownerAiEnabled(db, project.ownerId);
       const theme = [project.name, project.semanticContext, `termini: ${project.keywords.join(', ')}`]
         .filter(Boolean).join(' — ');
-      const analysis = aiOn
-        ? await analyzePendingMentions(project.id, theme)
-        : { analyzed: 0, pending: 0 };
+      const analysis = { analyzed: 0, pending: 0 };
+      if (aiOn) {
+        for (let round = 0; round < 10; round++) {
+          const r = await analyzePendingMentions(project.id, theme);
+          analysis.analyzed += r.analyzed;
+          analysis.pending = r.analyzed === 0 ? r.pending : 0;
+          if (r.analyzed < 80) break;
+        }
+      }
       console.log(`[pipeline] analisi: ${analysis.analyzed} analizzate, ${analysis.pending} in attesa${aiOn ? '' : ' (AI dormiente)'}`);
       const newAlerts = await detectAlerts(project.id, { aiContext: aiOn });
       const trendCount = await computeTrends(project.id);

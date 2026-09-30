@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { getDb, getMeta, setMeta } from '@/lib/db';
 import { mentions, type projects } from '@/lib/db/schema';
 import { cfg } from '@/lib/connector-config';
@@ -121,6 +121,7 @@ async function runActor<T>(actor: string, input: unknown, log: (m: string) => vo
 type IgPost = {
   url?: string; shortCode?: string; caption?: string; timestamp?: string;
   commentsCount?: number; likesCount?: number; ownerUsername?: string; inputUrl?: string;
+  type?: string; videoViewCount?: number; videoPlayCount?: number;
 };
 type IgComment = {
   id?: string; text?: string; ownerUsername?: string; timestamp?: string;
@@ -129,6 +130,7 @@ type IgComment = {
 type FbPost = {
   url?: string; postId?: string; text?: string; time?: string; timestamp?: number;
   likes?: number; comments?: number; shares?: number; pageName?: string; facebookUrl?: string; inputUrl?: string;
+  viewsCount?: number; isVideo?: boolean;
 };
 type FbComment = {
   id?: string; text?: string; date?: string; profileName?: string; profileUrl?: string;
@@ -226,6 +228,11 @@ export async function ingestSocialApify(
   const igCountKey = (code: string) => `apify_cc:${project.id}:${code}`;
   const fbCountKey = (key: string) => `apify_fbcc:${project.id}:${key}`;
   const commentsSince = new Map(due.map((p) => [p.acc, sinceOf(p)]));
+  type PostRow = {
+    network: SocialNetwork; account: string; label: string; externalId: string; url?: string; caption?: string;
+    type?: string; at: Date; likes: number; comments: number; shares: number; views?: number;
+  };
+  const postRows: PostRow[] = [];
 
   /** Devuelve el motivo si el comentario se descarta. */
   const push = (acc: SocialAccount, r: {
@@ -280,6 +287,11 @@ export async function ingestSocialApify(
           if (!code || !acc || !p.url) continue;
           perAcc.set(acc.handle, (perAcc.get(acc.handle) ?? 0) + 1);
           byCode.set(code, { post: p, acc });
+          postRows.push({
+            network: 'instagram', account: acc.handle, label: acc.label, externalId: code, url: p.url, caption: p.caption,
+            type: p.type, at: new Date(p.timestamp ?? ''), likes: num(p.likesCount), comments: num(p.commentsCount), shares: 0,
+            views: num(p.videoPlayCount ?? p.videoViewCount) || undefined,
+          });
           const prev = (await getMeta<number>(igCountKey(code))) ?? 0;
           if (num(p.commentsCount) > prev) toFetch.push(p.url);
         }
@@ -334,6 +346,12 @@ export async function ingestSocialApify(
           if (!acc || !key) { orphanPosts++; continue; }
           perAcc.set(acc, (perAcc.get(acc) ?? 0) + 1);
           byKey.set(key, { post: p, acc });
+          postRows.push({
+            network: 'facebook', account: accId(acc), label: acc.label, externalId: key, url: p.url, caption: p.text,
+            type: p.isVideo ? 'Video' : undefined,
+            at: p.time ? new Date(p.time) : new Date((p.timestamp ?? 0) * 1000),
+            likes: num(p.likes), comments: num(p.comments), shares: num(p.shares), views: num(p.viewsCount) || undefined,
+          });
           const prev = (await getMeta<number>(fbCountKey(key))) ?? 0;
           if (num(p.comments) > prev) toFetch.push(p);
         }
@@ -378,6 +396,20 @@ export async function ingestSocialApify(
       inserted += res.length;
     }
   }
+  // Publicaciones de cada marca con sus métricas (se actualizan en cada lectura).
+  let savedPosts = 0;
+  for (const r of postRows) {
+    if (Number.isNaN(r.at.getTime())) continue;
+    await db.execute(sql`
+      INSERT INTO social_posts (project_id, network, account, label, external_id, url, caption, post_type, published_at, likes, comments, shares, views)
+      VALUES (${project.id}, ${r.network}, ${r.account}, ${r.label}, ${r.externalId}, ${r.url ?? null}, ${(r.caption ?? '').slice(0, 2000)},
+        ${r.type ?? null}, ${r.at.toISOString()}::timestamptz, ${r.likes}, ${r.comments}, ${r.shares}, ${r.views ?? null})
+      ON CONFLICT (project_id, network, external_id) DO UPDATE SET
+        likes = EXCLUDED.likes, comments = EXCLUDED.comments, shares = EXCLUDED.shares, views = EXCLUDED.views,
+        label = EXCLUDED.label, updated_at = now()`);
+    savedPosts++;
+  }
+  if (savedPosts) log(`${savedPosts} publicaciones de las marcas actualizadas con sus métricas`);
   // Solo avanza la marca de tiempo de las cuentas cuya red funcionó.
   for (const a of okAccounts) await setMeta(accKey(a), now.toISOString());
   if (okAccounts.length) await setMeta(lastKey, now.toISOString());

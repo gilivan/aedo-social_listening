@@ -9,11 +9,14 @@ import { ConnectorKeys } from '@/components/connector-keys';
 import { PageHeader, fmtDate } from '@/components/ui';
 import { getT } from '@/lib/i18n';
 import type { SourceStatus } from '@/lib/ingest';
+import { getDisabledConnectors } from '@/lib/source-toggles';
+import { toggleConnectorAction } from './actions';
 
 export const metadata = { title: 'Fuentes' };
 
 // What each source is and what data Radar collects from it: shown in the hover tooltip.
 const SOURCE_INFO: Record<string, string> = {
+  web: 'Blogs, portales locales, foros, sitios de reseñas (TripAdvisor) y medios pequeños que Google News no indexa, encontrados con el buscador de Tavily. Usa la misma clave gratuita de "LinkedIn (web)" (1.000 búsquedas/mes, compartidas). Excluye las redes sociales, que tienen sus propias fuentes.',
   googlenews: 'El agregador de noticias de Google. Recopila artículos públicos de miles de medios que coinciden con tus palabras clave, con título, medio y fecha. Ideal para la cobertura de la prensa tradicional.',
   gdelt: 'Índice global de noticias en más de 65 idiomas (más de 100.000 medios en todo el mundo). Recopila artículos internacionales por palabra clave: perfecto para monitoreo multilingüe y entre países.',
   reddit: 'Discusiones públicas de subreddits. Recopila publicaciones y comentarios que citan tus términos, con votos y la comunidad a la que pertenecen. Excelente para opiniones y sentimiento sin filtro.',
@@ -41,8 +44,8 @@ export default async function FontiPage() {
   const t = await getT();
   // Hydrate saved keys before reading the "active" status of the connectors.
   await hydrateConnectorCredentials();
-  const [sourceStatus, credStatuses, currentUser] = await Promise.all([
-    getMeta<SourceStatus>('source_status'), getConnectorCredStatuses(), getCurrentUser(),
+  const [sourceStatus, credStatuses, currentUser, disabled] = await Promise.all([
+    getMeta<SourceStatus>('source_status'), getConnectorCredStatuses(), getCurrentUser(), getDisabledConnectors(),
   ]);
   const canEditKeys = isAdmin(currentUser);
 
@@ -60,20 +63,20 @@ export default async function FontiPage() {
           <TierSection
             heading="Gratis" headingClass="text-emerald-400/80"
             connectors={CONNECTORS.filter((c) => c.tier === 'free')}
-            sourceStatus={sourceStatus} credStatuses={credStatuses} canEditKeys={canEditKeys} showKeys={false}
+            sourceStatus={sourceStatus} credStatuses={credStatuses} canEditKeys={canEditKeys} showKeys={false} disabled={disabled}
           />
           <TierSection
             heading="Gratis · requiere una clave gratuita" headingClass="text-sky-400/80"
             description="Gratis, pero debes registrar una clave de API gratuita en el servicio. Ingrésala aquí: la fuente se activa de inmediato."
             connectors={CONNECTORS.filter((c) => c.tier === 'freekey')}
-            sourceStatus={sourceStatus} credStatuses={credStatuses} canEditKeys={canEditKeys} showKeys
+            sourceStatus={sourceStatus} credStatuses={credStatuses} canEditKeys={canEditKeys} showKeys disabled={disabled}
           />
           <TierSection
             heading="Premium — pagas" headingClass="text-amber-400/80"
             description={<>Los conectores están listos: ingresa aquí tus claves de API, sin tocar código. Se activan de inmediato y aplican a toda la cuenta.
               Su costo lo factura cada proveedor; consulta la pestaña <span className="text-slate-400">Presupuesto</span>.</>}
             connectors={CONNECTORS.filter((c) => c.tier === 'premium')}
-            sourceStatus={sourceStatus} credStatuses={credStatuses} canEditKeys={canEditKeys} showKeys
+            sourceStatus={sourceStatus} credStatuses={credStatuses} canEditKeys={canEditKeys} showKeys disabled={disabled}
           />
         </section>
       </div>
@@ -87,11 +90,11 @@ export default async function FontiPage() {
  * identiche a parte lo "showKeys": tenerle come un unico componente evita
  * di ripetere tre volte la stessa logica di raggruppamento.
  */
-function TierSection({ heading, headingClass, description, connectors, sourceStatus, credStatuses, canEditKeys, showKeys }: {
+function TierSection({ heading, headingClass, description, connectors, sourceStatus, credStatuses, canEditKeys, showKeys, disabled }: {
   heading: string; headingClass: string; description?: React.ReactNode;
   connectors: (typeof CONNECTORS)[number][];
   sourceStatus?: SourceStatus | null; credStatuses: Record<string, ConnectorCredStatus>;
-  canEditKeys: boolean; showKeys: boolean;
+  canEditKeys: boolean; showKeys: boolean; disabled: Set<string>;
 }) {
   if (connectors.length === 0) return null;
   const byCategory = CATEGORY_ORDER
@@ -111,7 +114,7 @@ function TierSection({ heading, headingClass, description, connectors, sourceSta
             <div className="flex flex-col gap-2">
               {items.map((c) => (
                 <div key={c.id}>
-                  <SourceRow c={c} st={sourceStatus?.[c.id]} />
+                  <SourceRow c={c} st={sourceStatus?.[c.id]} off={disabled.has(c.id)} canEdit={canEditKeys} />
                   {showKeys && canEditKeys && credStatuses[c.id] && (
                     <ConnectorKeys connectorId={c.id} fields={credStatuses[c.id].fields} />
                   )}
@@ -126,15 +129,18 @@ function TierSection({ heading, headingClass, description, connectors, sourceSta
 }
 
 /** Status row for a source: dot, name, last-collection outcome. */
-function SourceRow({ c, st }: {
+function SourceRow({ c, st, off, canEdit }: {
   c: (typeof CONNECTORS)[number];
   st?: SourceStatus[string];
+  off: boolean; canEdit: boolean;
 }) {
   const enabled = c.enabled();
   // Amber = temporary hiccup (last run failed but it collected within the last
   // 24h, typical of GDELT's shared rate limit); red = genuinely down.
   const recentOk = st?.lastOkAt && Date.now() - new Date(st.lastOkAt).getTime() < 24 * 3600_000;
-  const dot = !enabled
+  const dot = off
+    ? 'bg-slate-600'
+    : !enabled
     ? 'bg-red-400/70'
     : st?.ok === false
       ? (recentOk ? 'bg-amber-400' : 'bg-red-400')
@@ -159,7 +165,9 @@ function SourceRow({ c, st }: {
         )}
       </span>
       <span className="truncate text-xs text-slate-500" title={!enabled ? c.disabledReason : st?.ok === false ? st.error : undefined}>
-        {!enabled
+        {off
+          ? 'apagada: no se consulta en las ejecuciones'
+          : !enabled
           ? c.disabledReason
           : st
             ? st.ok
@@ -169,6 +177,15 @@ function SourceRow({ c, st }: {
                 : `error: ${st.error}`
             : 'pendiente de la primera recopilación'}
       </span>
+      {canEdit && !c.projectLevel && (
+        <form action={toggleConnectorAction} className="ml-auto shrink-0">
+          <input type="hidden" name="id" value={c.id} />
+          <input type="hidden" name="off" value={off ? '0' : '1'} />
+          <button type="submit" className="rounded border border-[var(--border)] px-2 py-0.5 text-[11px] text-slate-400 transition hover:border-sky-500/60 hover:text-sky-300">
+            {off ? 'Encender' : 'Apagar'}
+          </button>
+        </form>
+      )}
     </div>
   );
 }

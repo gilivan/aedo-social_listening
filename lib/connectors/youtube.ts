@@ -20,11 +20,14 @@ export const youtube: Connector = {
   async fetchMentions(q) {
     const key = cfg('YOUTUBE_API_KEY')!;
     const out: RawMention[] = [];
+    // AEDO: con un solo país, se priorizan videos de ese país y en su idioma.
+    const region = q.countries.length === 1 ? `&regionCode=${q.countries[0].toUpperCase()}` : '';
+    const lang = q.languages.length === 1 ? `&relevanceLanguage=${q.languages[0]}` : '';
     // La quota gratuita (10.000 unità/giorno) si consuma in fretta con search
     // (100 unità a chiamata): limitiamo a 2 keyword per esecuzione.
     for (const kw of q.anyTerms.slice(0, 2)) {
       const search = await fetchJson<{ items?: SearchItem[] }>(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=date&maxResults=25&q=${encodeURIComponent(kw)}&key=${key}`,
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=date&maxResults=25${region}${lang}&q=${encodeURIComponent(kw)}&key=${key}`,
       );
       const items = (search.items ?? []).filter((i) => i.id.videoId);
       if (items.length === 0) continue;

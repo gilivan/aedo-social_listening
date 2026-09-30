@@ -6,6 +6,7 @@ import { CONNECTORS, kindOf } from '@/lib/connectors';
 import { setTelegramChannels } from '@/lib/connectors/telegram';
 import { setRssFeeds } from '@/lib/connectors/rss';
 import { hydrateConnectorCredentials } from '@/lib/connector-credentials';
+import { getDisabledConnectors } from '@/lib/source-toggles';
 import type { RawMention, ListeningQuery } from '@/lib/connectors/types';
 import { compilePlan, matchesQuery, queriesMatching, validatePlan, type CompiledQuery } from '@/lib/query-plan';
 
@@ -249,8 +250,9 @@ export async function ingestProject(project: typeof projects.$inferSelect) {
   // Un progetto 'talkwalker' interroga SOLO Talkwalker; tutti gli altri non lo
   // toccano mai. Le due regole sono la stessa cosa vista dai due lati: i
   // credits del contratto aziendale si spendono dove l'utente ha deciso.
+  const disabled = await getDisabledConnectors();
   let enabled = CONNECTORS
-    .filter((c) => c.enabled() && !c.projectLevel)
+    .filter((c) => c.enabled() && !c.projectLevel && !disabled.has(c.id))
     .filter((c) => (project.mode === 'talkwalker' ? c.id === 'talkwalker' : c.id !== 'talkwalker'));
 
   if (project.mode === 'talkwalker') {

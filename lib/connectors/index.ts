@@ -25,10 +25,11 @@ import { lemmy } from './lemmy';
 import { newsdata } from './newsdata';
 import { podcastIndex } from './podcastindex';
 import { apifySocial } from './apify';
+import { web } from './web';
 
 export const CONNECTORS: Connector[] = [
   // Gratuite (alcune richiedono una chiave gratuita: reddit, youtube, discord)
-  googleNews, gdelt, reddit, bluesky, mastodon, hackerNews, youtube, telegram, rss, linkedinWeb, stackExchange, github, discord, secEdgar, arxiv,
+  googleNews, web, gdelt, reddit, bluesky, mastodon, hackerNews, youtube, telegram, rss, linkedinWeb, stackExchange, github, discord, secEdgar, arxiv,
   lemmy, newsdata, podcastIndex,
   // Premium (si attivano con le chiavi API a pagamento)
   apifySocial, xTwitter, instagram, facebook, tiktok, linkedin, newsapi, talkwalker,
@@ -43,7 +44,7 @@ export const CONNECTORS: Connector[] = [
  */
 export type MentionKind = 'article' | 'post';
 export const SOURCE_KIND: Record<string, MentionKind> = {
-  googlenews: 'article', gdelt: 'article', newsapi: 'article', rss: 'article', upload: 'article', 'sec-edgar': 'article',
+  googlenews: 'article', web: 'article', gdelt: 'article', newsapi: 'article', rss: 'article', upload: 'article', 'sec-edgar': 'article',
   reddit: 'post', bluesky: 'post', mastodon: 'post', hackernews: 'post', youtube: 'post',
   x: 'post', telegram: 'post', instagram: 'post', facebook: 'post', tiktok: 'post',
   linkedin: 'post', linkedin_web: 'post', stackexchange: 'post', github: 'post', discord: 'post',
@@ -63,7 +64,7 @@ export const kindOf = (source: string): MentionKind => SOURCE_KIND[source] ?? 'p
  */
 export type SourceCategory = 'general' | 'tech' | 'social' | 'video' | 'audio' | 'finance' | 'academic';
 export const SOURCE_CATEGORY: Record<string, SourceCategory> = {
-  googlenews: 'general', gdelt: 'general', newsapi: 'general', rss: 'general',
+  googlenews: 'general', web: 'general', gdelt: 'general', newsapi: 'general', rss: 'general',
   hackernews: 'tech', stackexchange: 'tech', github: 'tech',
   reddit: 'social', bluesky: 'social', mastodon: 'social', x: 'social',
   instagram: 'social', facebook: 'social', tiktok: 'social', telegram: 'social',
