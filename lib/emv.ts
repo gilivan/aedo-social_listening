@@ -20,7 +20,7 @@ const NEWS_BASE_IMPRESSIONS = 5_000;
 const SOCIAL_ENGAGEMENT_MULTIPLIER = 30; // 1 interazione ≈ 30 visualizzazioni
 const SOCIAL_MIN_IMPRESSIONS = 200;
 
-/** Costo per mille impression (EUR), per tipo di fonte. */
+/** Costo por mil impresiones (USD), por tipo de fuente. AEDO: valores en dólares. */
 const CPM_NEWS = 12;
 const CPM_SOCIAL = 8;
 

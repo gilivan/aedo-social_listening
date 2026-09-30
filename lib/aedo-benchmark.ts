@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
+import { comparisonProjectIds } from '@/lib/competitor-split';
 
 // AEDO — comparaciones que no salen de las menciones: reputación en Google Maps
 // (reseñas por lugar) y rendimiento del contenido propio de cada marca en redes
@@ -13,6 +14,7 @@ export async function reviewsByPlace(projectId: number, days = 180): Promise<Pla
   const db = await getDb();
   const since = new Date(Date.now() - days * 86400_000).toISOString();
   const recent = new Date(Date.now() - 30 * 86400_000).toISOString();
+  const ids = sql.join((await comparisonProjectIds(projectId)).map((i) => sql`${i}`), sql`, `);
   const res = await db.execute(sql`
     SELECT rs.label,
       count(r.id)::int AS total,
@@ -22,7 +24,7 @@ export async function reviewsByPlace(projectId: number, days = 180): Promise<Pla
       avg(r.rating) FILTER (WHERE r.published_at >= ${recent}::timestamptz)::float AS recent_avg
     FROM review_sources rs
     LEFT JOIN reviews r ON r.source_id = rs.id AND r.published_at >= ${since}::timestamptz
-    WHERE rs.project_id = ${projectId}
+    WHERE rs.project_id IN (${ids})
     GROUP BY rs.id, rs.label
     ORDER BY total DESC`);
   return (res.rows as Record<string, unknown>[]).map((r) => ({

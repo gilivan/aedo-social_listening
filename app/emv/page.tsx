@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { AlertTriangle, Euro } from 'lucide-react';
+import { AlertTriangle, DollarSign as Euro } from 'lucide-react';
 import { getCurrentProject } from '@/lib/data';
 import { emvReport, EMV_ASSUMPTIONS } from '@/lib/emv';
 import { PageHeader, EmptyState, fmtNum } from '@/components/ui';
@@ -8,7 +8,7 @@ import { sourceLabel } from '@/lib/export-data';
 
 export const metadata = { title: 'Valor mediático ganado (EMV)' };
 
-const eur = (n: number) => `€${n.toLocaleString('es-CO')}`;
+const eur = (n: number) => `US$${n.toLocaleString('es-CO')}`;
 
 export default async function EmvPage() {
   const t = await getT();
@@ -78,7 +78,7 @@ export default async function EmvPage() {
               title="La cobertura negativa vale cero: es exposición, no valor. Se muestra aquí para que nunca quede escondida dentro del total.">
               <p className="text-[11px] uppercase tracking-wide text-slate-500">Exposición negativa</p>
               <p className="mt-1 text-2xl font-bold text-red-300">{fmtNum(r.negativeImpressions)}</p>
-              <p className="text-xs text-slate-500">{fmtNum(r.negativeItems)} piezas · valoradas en €0</p>
+              <p className="text-xs text-slate-500">{fmtNum(r.negativeItems)} piezas · valoradas en US$0</p>
             </div>
             <div className="panel px-4 py-3"
               title="Porcentaje de la cobertura cuyas impresiones se tuvieron que estimar porque la fuente no publica el alcance real">
@@ -150,7 +150,7 @@ export default async function EmvPage() {
             </h2>
             <p className="mb-3 text-xs leading-relaxed text-slate-400">
               El EMV es una <strong className="text-slate-300">estimación</strong>, no una cifra contable. Quien lo venda como un número
-              preciso está exagerando. Estas son las reglas que se usan aquí, para que puedas defender (o cuestionar) cada euro:
+              preciso está exagerando. Estas son las reglas que se usan aquí, para que puedas defender (o cuestionar) cada dólar:
             </p>
             <ul className="flex flex-col gap-1.5 text-xs text-slate-400">
               <li><Euro className="mr-1 inline size-3 text-emerald-400" />
@@ -160,7 +160,7 @@ export default async function EmvPage() {
                 ({fmtNum(r.withRealReach)} piezas aquí); si no, {fmtNum(EMV_ASSUMPTIONS.newsBaseImpressions)} por artículo de noticias,
                 o engagement × {EMV_ASSUMPTIONS.socialEngagementMultiplier} para publicaciones en redes sociales.
               </li>
-              <li>• <strong className="text-slate-300">CPM:</strong> €{EMV_ASSUMPTIONS.cpmNews} para noticias, €{EMV_ASSUMPTIONS.cpmSocial} para redes sociales: tarifas de mercado conservadoras.
+              <li>• <strong className="text-slate-300">CPM:</strong> US${EMV_ASSUMPTIONS.cpmNews} para noticias, US${EMV_ASSUMPTIONS.cpmSocial} para redes sociales: tarifas de mercado conservadoras.
               </li>
               <li>• <strong className="text-slate-300">Sentimiento:</strong> positivo ×{EMV_ASSUMPTIONS.factorPositive},
                 neutral ×{EMV_ASSUMPTIONS.factorNeutral}, negativo ×{EMV_ASSUMPTIONS.factorNegative}: la cobertura negativa

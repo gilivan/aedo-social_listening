@@ -68,6 +68,8 @@ export const projects = pgTable('projects', {
   // Feed RSS/Atom personalizzati da seguire (URL)
   rssFeeds: jsonb('rss_feeds').$type<string[]>().notNull().default([]),
   // AEDO: cuentas de Instagram / páginas de Facebook escuchadas vía Apify (lib/social/apify.ts).
+  /** AEDO: id del proyecto de marca del que este es la «· Competencia» (lib/competitor-split). */
+  competitorOf: integer('competitor_of'),
   socialAccounts: jsonb('social_accounts').$type<{ network: 'instagram' | 'facebook'; handle: string; label: string }[]>().notNull().default([]),
   // Tono di voce del brand, usato dal Content Studio
   brandVoice: text('brand_voice'),

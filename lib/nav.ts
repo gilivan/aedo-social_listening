@@ -2,7 +2,7 @@ import {
   Radar, LayoutDashboard, Ear, Newspaper, BarChart3, Users,
   Star, Bell, FileText, Settings, MessageSquareText, GitBranch,
   Diff, PenLine, MonitorPlay, Network, History, LayoutGrid, Lightbulb,
-  MessageSquareQuote, Euro, Award, Trophy, FileClock, BookOpen, LineChart,
+  MessageSquareQuote, DollarSign, Award, Trophy, FileClock, BookOpen, LineChart,
   UserRound, Shapes, UploadCloud, Gauge, SearchCheck, FlaskConical, Podcast, PlugZap, Blocks, ClipboardList,
 } from 'lucide-react';
 
@@ -54,7 +54,7 @@ export const NAV: NavItem[] = [
   { href: '/benchmark', label: 'Benchmark', key: 'nav.benchmark', icon: BarChart3, also: ['competitors', 'share of voice', 'sov', 'trends'] },
   { href: '/kpi', label: 'KPI y confiabilidad', key: 'nav.kpi', icon: Gauge, also: ['kpi', 'nss', 'net sentiment', 'soe', 'share of engagement', 'engagement rate', 'affidabilità', 'reliability', 'formule', 'glossario', 'analisi critica'] },
   { href: '/content', label: 'Contenido destacado', key: 'nav.content', icon: Star, also: ['best posts', 'quality'] },
-  { href: '/emv', label: 'Valor mediático', key: 'nav.emv', icon: Euro, also: ['emv', 'earned'] },
+  { href: '/emv', label: 'Valor mediático', key: 'nav.emv', icon: DollarSign, also: ['emv', 'earned', 'dólares', 'usd'] },
   { href: '/measures', label: 'Métricas y personas', key: 'nav.measures', icon: LineChart, also: ['people', 'personal branding', 'followers', 'metrics', 'spreadsheet'] },
   { href: '/graph', label: 'Studio Graph', key: 'nav.graph', icon: Shapes, also: ['chart builder', 'axes'] },
 

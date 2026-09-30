@@ -225,6 +225,9 @@ export async function mediaData(projectId: number) {
 
 export async function benchmarkData(projectId: number) {
   const db = await getDb();
+  // AEDO: la competencia vive en su propio proyecto; aquí se leen ambos.
+  const { comparisonProjectIds } = await import('@/lib/competitor-split');
+  const scopeIds = await comparisonProjectIds(projectId);
   const entities = await db.select().from(benchmarkEntities)
     .where(eq(benchmarkEntities.projectId, projectId));
   const d14 = new Date(Date.now() - 14 * 86400_000);
@@ -235,7 +238,7 @@ export async function benchmarkData(projectId: number) {
     const match = or(...entity.keywords.flatMap((k) => [
       ilike(mentions.content, `%${k}%`), ilike(mentions.title, `%${k}%`),
     ]));
-    const where = and(eq(mentions.projectId, projectId), gte(mentions.publishedAt, d14), match);
+    const where = and(inArray(mentions.projectId, scopeIds), gte(mentions.publishedAt, d14), match);
 
     const [agg] = await db.select({
       n: sql<number>`count(*)`,

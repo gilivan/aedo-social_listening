@@ -94,6 +94,7 @@ const DDL = [
   `ALTER TABLE projects ADD COLUMN IF NOT EXISTS semantic_context TEXT`,
   `ALTER TABLE projects ADD COLUMN IF NOT EXISTS rss_feeds JSONB NOT NULL DEFAULT '[]'`,
   `ALTER TABLE projects ADD COLUMN IF NOT EXISTS social_accounts JSONB NOT NULL DEFAULT '[]'`,
+  `ALTER TABLE projects ADD COLUMN IF NOT EXISTS competitor_of INTEGER`,
   `CREATE TABLE IF NOT EXISTS social_posts (
     id SERIAL PRIMARY KEY,
     project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,

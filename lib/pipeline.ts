@@ -6,6 +6,7 @@ import { enrichArticles } from '@/lib/article-enrich';
 import { ingestReviews } from '@/lib/reviews';
 import { ingestSocialApify } from '@/lib/social/apify';
 import { getDisabledConnectors } from '@/lib/source-toggles';
+import { splitCompetitorMentions, competitorProjectId } from '@/lib/competitor-split';
 import { ingestSport } from '@/lib/sport';
 import { ingestSearchInterest } from '@/lib/search-interest';
 import { ingestWikiEdits } from '@/lib/wikipedia';
@@ -74,6 +75,11 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
     const summary: Record<string, unknown>[] = [];
 
     for (const project of allProjects) {
+      // AEDO: el proyecto «· Competencia» no se recolecta solo: lo alimenta su marca.
+      if (project.competitorOf) {
+        console.log(`[pipeline] "${project.name}" se actualiza desde su proyecto de marca`);
+        continue;
+      }
       // I progetti "upload" non fanno scraping: le mention arrivano dai file
       // caricati dall'utente. La pipeline salta l'ingestion ma esegue comunque
       // l'analisi AI sulle mention ancora da taggare.
@@ -94,6 +100,16 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
           return { tried: 0, inserted: 0, errors: [] as string[] };
         });
         if (social.tried) console.log(`[pipeline] redes (Apify): ${social.inserted} comentarios nuevos de ${social.tried} cuentas`);
+      }
+      // AEDO: lo que es solo de la competencia pasa a su proyecto, antes de gastar IA.
+      if (project.mode !== 'upload') {
+        const split = await splitCompetitorMentions(project).catch((e) => {
+          console.error('[pipeline] separación de competencia falló:', e);
+          return null;
+        });
+        if (split && (split.moved || split.duplicates || split.reviewSources)) {
+          console.log(`[pipeline] competencia: ${split.moved} menciones movidas a su proyecto, ${split.duplicates} repetidas descartadas, ${split.reviewSources} fuentes de reseñas movidas`);
+        }
       }
       // Testo degli articoli PRIMA dell'analisi: se il pezzo è disponibile,
       // sentiment e temi si giudicano sul contenuto vero e non sul titolo.
@@ -166,6 +182,22 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
         }
       }
       console.log(`[pipeline] analisi: ${analysis.analyzed} analizzate, ${analysis.pending} in attesa${aiOn ? '' : ' (AI dormiente)'}`);
+      // AEDO: análisis (y reseñas desactualizadas) del proyecto de competencia.
+      const shadowId = await competitorProjectId(project.id);
+      if (shadowId) {
+        const compRevs = await ingestReviews(shadowId, { onlyStale: true }).catch(() => null);
+        if (compRevs?.tried) console.log(`[pipeline] reseñas competencia: ${compRevs.fetched} leídas de ${compRevs.tried} fuentes`);
+        if (aiOn) {
+          const compTheme = `Competidores de ${project.name} — ${project.semanticContext ?? ''}`;
+          let n = 0;
+          for (let round = 0; round < 10; round++) {
+            const r = await analyzePendingMentions(shadowId, compTheme);
+            n += r.analyzed;
+            if (r.analyzed < 80) break;
+          }
+          console.log(`[pipeline] análisis competencia: ${n} menciones`);
+        }
+      }
       const newAlerts = await detectAlerts(project.id, { aiContext: aiOn });
       const trendCount = await computeTrends(project.id);
       const row: Record<string, unknown> = {

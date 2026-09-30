@@ -24,7 +24,14 @@ export default async function DashboardPage() {
         title={project.name}
         subtitle={project.mode === 'upload'
           ? 'Datos importados, analizados con todo el motor de AEDO'
-          : `Monitoreando: ${project.keywords.join(', ')}`}
+          : project.competitorOf
+            ? 'Competencia: menciones y reseñas de los competidores, separadas de la marca'
+            : `Monitoreando: ${(() => {
+              // AEDO: solo la marca (conceptos «sujeto»); la competencia está en su propio proyecto.
+              const plan = project.queryPlan as { concepts?: { role: string; terms: string[] }[] } | null;
+              const subject = plan?.concepts?.filter((c) => c.role === 'subject').flatMap((c) => c.terms) ?? [];
+              return (subject.length ? subject : project.keywords).join(', ');
+            })()}`}
       />
 
       {project.mode === 'upload' && (

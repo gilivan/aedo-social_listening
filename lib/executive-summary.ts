@@ -1,7 +1,9 @@
-import { and, asc, eq, gte, sql } from 'drizzle-orm';
+import { and, asc, eq, gte, inArray, sql } from 'drizzle-orm';
 import { getDb, getMeta, setMeta } from '@/lib/db';
 import { benchmarkEntities, projects, reviewSources, reviews } from '@/lib/db/schema';
 import { callClaude, claudeAvailable, MODELS } from '@/lib/claude';
+import { compilePlan, queriesMatching, validatePlan, type QueryPlan } from '@/lib/query-plan';
+import { comparisonProjectIds } from '@/lib/competitor-split';
 import { reviewsByPlace, socialContentByAccount, type PlaceReputation, type AccountContent } from '@/lib/aedo-benchmark';
 
 // ---------------------------------------------------------------------------
@@ -74,12 +76,14 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
   const since = new Date(Date.now() - days * DAY);
   const sinceIso = since.toISOString();
   const [project] = await db.select().from(projects).where(eq(projects.id, projectId));
+  const scope = await comparisonProjectIds(projectId);
+  const inScope = sql.join(scope.map((i) => sql`${i}`), sql`, `);
   const entities = await db.select().from(benchmarkEntities).where(eq(benchmarkEntities.projectId, projectId)).orderBy(asc(benchmarkEntities.id));
 
   // ── Alcance ──
   const srcRows = (await db.execute(sql`
     SELECT source, kind, count(*)::int AS n FROM mentions
-    WHERE project_id = ${projectId} AND published_at >= ${sinceIso}::timestamptz
+    WHERE project_id IN (${inScope}) AND published_at >= ${sinceIso}::timestamptz
     GROUP BY source, kind ORDER BY n DESC`)).rows as { source: string; kind: string; n: number }[];
   const bySource = new Map<string, number>();
   for (const r of srcRows) bySource.set(r.source, (bySource.get(r.source) ?? 0) + Number(r.n));
@@ -89,7 +93,7 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
   const revs = await db.select({
     rating: reviews.rating, content: reviews.content, publishedAt: reviews.publishedAt, label: reviewSources.label,
   }).from(reviews).innerJoin(reviewSources, eq(reviewSources.id, reviews.sourceId))
-    .where(and(eq(reviews.projectId, projectId), gte(reviews.publishedAt, new Date(Date.now() - days * 2 * DAY))));
+      .where(and(inArray(reviews.projectId, scope), gte(reviews.publishedAt, new Date(Date.now() - days * 2 * DAY))));
   const placeNames = places.filter((p) => p.total > 0).map((p) => p.label);
   const themes: ThemeMatrix = {
     places: placeNames,
@@ -108,29 +112,48 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
   const positiveQuotes = perPlace(byNewest.filter((r) => r.rating === 5 && r.content.trim().length > 60), 2).map(quote);
 
   // ── Voz por entidad (prensa + redes + web) ──
+  // Se vuelve a aplicar el plan de consultas ACTUAL a lo que no es comentario de
+  // una cuenta escuchada: así el ruido que entró antes de ajustar exclusiones
+  // (otra ciudad, otro "San Nicolás") no contamina el resumen. Para la marca
+  // principal, además, se descartan artículos que la IA calificó con relevancia 1–2.
+  const compiled = (() => {
+    try { return project?.queryPlan ? compilePlan(validatePlan(project.queryPlan as QueryPlan).plan) : null; } catch { return null; }
+  })();
+  const countries = new Set(((project?.countries ?? []) as string[]).map((c) => c.toLowerCase()));
   const voices: EntityVoice[] = [];
   const press: PressItem[] = [];
-  for (const e of entities) {
+  let droppedNoise = 0;
+  for (const [idx, e] of entities.entries()) {
     if (!e.keywords.length) continue;
     const pats = sql.join(e.keywords.map((k) => sql`${`%${k}%`}`), sql`, `);
-    const match = sql`(coalesce(title,'') || ' ' || content) ILIKE ANY (ARRAY[${pats}])`;
-    const [v] = (await db.execute(sql`
-      SELECT count(*)::int AS total,
-        count(*) FILTER (WHERE kind = 'article')::int AS articles,
-        count(*) FILTER (WHERE kind <> 'article')::int AS posts,
-        count(*) FILTER (WHERE sentiment = 'positive')::int AS positive,
-        count(*) FILTER (WHERE sentiment = 'negative')::int AS negative,
-        count(*) FILTER (WHERE sentiment = 'neutral')::int AS neutral
-      FROM mentions WHERE project_id = ${projectId} AND published_at >= ${sinceIso}::timestamptz AND ${match}`)).rows as Record<string, number>[];
-    voices.push({
-      name: e.name, total: Number(v.total), articles: Number(v.articles), posts: Number(v.posts),
-      positive: Number(v.positive), negative: Number(v.negative), neutral: Number(v.neutral),
+    const rows = (await db.execute(sql`
+      SELECT id, source, kind, title, content, community, url, published_at, sentiment, relevance, country FROM mentions
+      WHERE project_id IN (${inScope}) AND published_at >= ${sinceIso}::timestamptz
+        AND (coalesce(title,'') || ' ' || content) ILIKE ANY (ARRAY[${pats}])
+      ORDER BY published_at DESC`)).rows as {
+      id: number; source: string; kind: string; title: string | null; content: string; community: string | null;
+      url: string | null; published_at: string; sentiment: string | null; relevance: number | null; country: string | null;
+    }[];
+    const kept = rows.filter((r) => {
+      if (r.source === 'instagram' || r.source === 'facebook') return true;
+      if (compiled && compiled.length && queriesMatching(compiled, `${r.title ?? ''} ${r.content}`).length === 0) return false;
+      if (idx === 0 && r.relevance != null && r.relevance < 3) return false;
+      // Medios de otro país (p. ej. un .mx) cuando el proyecto se limita a ciertos países.
+      if (r.country && countries.size && !countries.has(r.country.toLowerCase())) return false;
+      return true;
     });
-    const arts = (await db.execute(sql`
-      SELECT title, community, url, published_at, sentiment FROM mentions
-      WHERE project_id = ${projectId} AND kind = 'article' AND published_at >= ${sinceIso}::timestamptz AND ${match}
-      ORDER BY published_at DESC LIMIT 6`)).rows as { title: string; community: string | null; url: string | null; published_at: string; sentiment: string | null }[];
-    for (const a of arts) press.push({ entity: e.name, title: a.title, outlet: a.community, url: a.url, date: iso(a.published_at), sentiment: a.sentiment });
+    droppedNoise += rows.length - kept.length;
+    voices.push({
+      name: e.name, total: kept.length,
+      articles: kept.filter((r) => r.kind === 'article').length,
+      posts: kept.filter((r) => r.kind !== 'article').length,
+      positive: kept.filter((r) => r.sentiment === 'positive').length,
+      negative: kept.filter((r) => r.sentiment === 'negative').length,
+      neutral: kept.filter((r) => r.sentiment === 'neutral').length,
+    });
+    for (const a of kept.filter((r) => r.kind === 'article').slice(0, 6)) {
+      press.push({ entity: e.name, title: a.title ?? '', outlet: a.community, url: a.url, date: iso(a.published_at), sentiment: a.sentiment });
+    }
   }
 
   // ── Redes (comentarios vía Apify) ──
@@ -141,14 +164,14 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
       count(*) FILTER (WHERE sentiment = 'neutral')::int AS neutral,
       count(*) FILTER (WHERE sentiment IS NULL)::int AS pending
     FROM mentions
-    WHERE project_id = ${projectId} AND source IN ('instagram', 'facebook') AND published_at >= ${sinceIso}::timestamptz
+    WHERE project_id IN (${inScope}) AND source IN ('instagram', 'facebook') AND published_at >= ${sinceIso}::timestamptz
     GROUP BY source, community ORDER BY comments DESC`)).rows as Record<string, unknown>[]).map((r) => ({
     network: String(r.network), account: String(r.account), comments: Number(r.comments),
     positive: Number(r.positive), negative: Number(r.negative), neutral: Number(r.neutral), pending: Number(r.pending),
   }));
   const sq = (await db.execute(sql`
     SELECT community, content, coalesce((engagement->>'likes')::int, 0) AS likes FROM mentions
-    WHERE project_id = ${projectId} AND source IN ('instagram', 'facebook') AND published_at >= ${sinceIso}::timestamptz
+    WHERE project_id IN (${inScope}) AND source IN ('instagram', 'facebook') AND published_at >= ${sinceIso}::timestamptz
     ORDER BY published_at DESC LIMIT 600`)).rows as { community: string; content: string; likes: number }[];
   const socialQuotes: SocialQuote[] = [];
   for (const acc of social) {
@@ -156,7 +179,8 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
       .sort((a, b) => Number(b.likes) - Number(a.likes)).slice(0, 6)
       .map((r) => ({ account: acc.account, text: r.content.replace(/\s+/g, ' ').slice(0, 220), likes: Number(r.likes) })));
   }
-  const content = await socialContentByAccount(projectId, days);
+  // La tabla social_posts se crea al reiniciar AEDO; antes de eso, la sección queda vacía.
+  const content = await socialContentByAccount(projectId, days).catch(() => [] as AccountContent[]);
 
   // ── Búsquedas en Google ──
   const searchPeaks = ((await db.execute(sql`
@@ -180,6 +204,7 @@ export async function execFacts(projectId: number, days = EXEC_DAYS): Promise<Ex
     gaps.push(`${e.name}: sin reseñas de Google Maps configuradas.`);
   }
   const pendingSent = social.reduce((s, a) => s + a.pending, 0);
+  if (droppedNoise) gaps.push(`${droppedNoise} menciones antiguas quedaron fuera por no coincidir con las consultas actuales o por baja relevancia (ruido).`);
   if (pendingSent) gaps.push(`${pendingSent} comentarios en redes aún sin análisis de sentimiento.`);
 
   return {
