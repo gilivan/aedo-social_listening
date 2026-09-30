@@ -70,7 +70,9 @@ const CONNECTOR_TERM_CAP: Partial<Record<string, number>> = {
 // termini in una volta, quindi "spezzare" significa comunque una chiamata sola
 // (10 credits + 1 per risultato) invece di ruotare le parole e vedere ogni
 // ciclo un pezzo diverso del tema.
-const BATCH_FULLY: Set<string> = new Set(['googlenews', 'gdelt', 'reddit', 'bluesky', 'mastodon', 'talkwalker']);
+// AEDO: YouTube (cuota diaria amplia), Web y blogs (1.000/mes) y RSS (gratis) también corren
+// todas las consultas en cada ejecución: con la rotación, una corrida solo veía 2 de 8.
+const BATCH_FULLY: Set<string> = new Set(['googlenews', 'gdelt', 'reddit', 'bluesky', 'mastodon', 'talkwalker', 'youtube', 'web', 'rss']);
 // Sottoinsieme usato per la ricerca-concorrente: GDELT escluso apposta.
 // Verificato dal vivo che fallisce sempre con 429 su una richiesta ogni
 // entità (una quota giornaliera già stretta, saturata subito da una dozzina

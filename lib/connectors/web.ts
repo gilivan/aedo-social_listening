@@ -1,5 +1,4 @@
 import type { Connector, RawMention } from './types';
-import { booleanQuery } from './types';
 import { truncate } from './util';
 import { cfg } from '@/lib/connector-config';
 
@@ -32,7 +31,13 @@ export const web: Connector = {
   enabled: () => Boolean(cfg('TAVILY_API_KEY')),
   disabledReason: 'Requiere la clave gratuita de Tavily (la misma de LinkedIn web): ingrésala en LinkedIn (web)',
   async fetchMentions(q) {
-    const query = booleanQuery({ ...q, excludeTerms: q.excludeTerms.slice(0, 8) });
+    // Tavily es un buscador semántico: la sintaxis booleana larga (OR, comillas,
+    // exclusiones con «-») lo deja sin resultados. Se le pasa una búsqueda simple
+    // con los nombres principales y el contexto; las exclusiones y los grupos los
+    // aplica después el filtro central de la ingesta.
+    const names = q.anyTerms.slice(0, 3).map((t) => (t.includes(' ') ? `"${t}"` : t));
+    const context = (q.groups ?? []).map((g) => g[0]).filter(Boolean).slice(0, 2);
+    const query = [names.join(' OR '), ...context].filter(Boolean).join(' ');
     if (!query) return [];
     const country = q.countries.length === 1 ? COUNTRY_NAME[q.countries[0].toUpperCase()] : undefined;
 
