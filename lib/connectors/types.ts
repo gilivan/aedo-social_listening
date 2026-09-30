@@ -58,6 +58,8 @@ export interface Connector {
   tier: 'free' | 'freekey' | 'premium';
   /** false = connettore presente ma spento (es. manca la chiave API) */
   enabled: () => boolean;
+  /** AEDO: true = corre una vez por proyecto en la pipeline (p. ej. Apify), no en cada consulta. */
+  projectLevel?: boolean;
   /** Motivo per cui è spento, mostrato nelle Impostazioni */
   disabledReason?: string;
   fetchMentions(q: ListeningQuery): Promise<RawMention[]>;

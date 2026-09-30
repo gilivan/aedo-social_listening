@@ -66,6 +66,9 @@ export const CREDENTIAL_FIELDS: Record<string, CredField[]> = {
   newsdata: [
     { env: 'NEWSDATA_API_KEY', label: 'Clave API', hint: 'gratis, desde newsdata.io/register (200 créditos al día, uso comercial permitido)', secret: true },
   ],
+  apify: [
+    { env: 'APIFY_TOKEN', label: 'Token de API de Apify', hint: 'apify.com → Settings → API & Integrations', secret: true },
+  ],
   podcastindex: [
     { env: 'PODCASTINDEX_API_KEY', label: 'Clave API', hint: 'gratis, desde api.podcastindex.org (llega por correo)', secret: true },
     { env: 'PODCASTINDEX_API_SECRET', label: 'Secreto API', hint: 'el secreto que se entrega junto con la clave', secret: true },

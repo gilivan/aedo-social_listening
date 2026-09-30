@@ -6,6 +6,9 @@ import { projectPlan, queryStats } from '@/lib/query-builder';
 import { PageHeader, EmptyState } from '@/components/ui';
 import { QueryStudio } from '@/components/query-studio';
 import { CountryPicker } from '@/components/country-picker';
+import { SocialAccounts } from '@/components/social-accounts';
+import { apifyEnabled } from '@/lib/social/apify';
+import { hydrateConnectorCredentials } from '@/lib/connector-credentials';
 
 // ---------------------------------------------------------------------------
 // Query: che cosa Radar ascolta, separato da come è fatto il progetto.
@@ -54,6 +57,8 @@ export default async function QueryPage({ searchParams }: {
   }
   const lens = project.mode === 'talkwalker';
 
+  await hydrateConnectorCredentials();
+  const apifyReady = apifyEnabled();
   const [current, stats, ai] = await Promise.all([
     projectPlan(project.id), queryStats(project.id), claudeAvailable(),
   ]);
@@ -75,6 +80,7 @@ export default async function QueryPage({ searchParams }: {
         </p>
       )}
       {!lens && <CountryPicker projectId={project.id} countries={project.countries ?? []} />}
+      {!lens && <SocialAccounts projectId={project.id} accounts={project.socialAccounts ?? []} apifyReady={apifyReady} />}
       <QueryStudio
         key={project.id}
         projectId={project.id}

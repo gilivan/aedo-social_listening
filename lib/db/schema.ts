@@ -67,6 +67,8 @@ export const projects = pgTable('projects', {
   telegramChannels: jsonb('telegram_channels').$type<string[]>().notNull().default([]),
   // Feed RSS/Atom personalizzati da seguire (URL)
   rssFeeds: jsonb('rss_feeds').$type<string[]>().notNull().default([]),
+  // AEDO: cuentas de Instagram / páginas de Facebook escuchadas vía Apify (lib/social/apify.ts).
+  socialAccounts: jsonb('social_accounts').$type<{ network: 'instagram' | 'facebook'; handle: string; label: string }[]>().notNull().default([]),
   // Tono di voce del brand, usato dal Content Studio
   brandVoice: text('brand_voice'),
   // Area semantica: descrizione del tema in linguaggio naturale; genera i

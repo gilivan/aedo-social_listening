@@ -4,6 +4,7 @@ import { mentions, projects } from '@/lib/db/schema';
 import { ingestProject } from '@/lib/ingest';
 import { enrichArticles } from '@/lib/article-enrich';
 import { ingestReviews } from '@/lib/reviews';
+import { ingestSocialApify } from '@/lib/social/apify';
 import { ingestSport } from '@/lib/sport';
 import { ingestSearchInterest } from '@/lib/search-interest';
 import { ingestWikiEdits } from '@/lib/wikipedia';
@@ -83,6 +84,14 @@ export async function runPipeline(opts: { full?: boolean; digest?: boolean; proj
             console.log(`[pipeline] ingestion completata: ${r.inserted} nuove mention`);
             return r;
           })();
+      // AEDO: comentarios de Instagram/Facebook vía Apify, ANTES del análisis de IA.
+      if (project.mode !== 'upload' && project.mode !== 'talkwalker') {
+        const social = await ingestSocialApify(project).catch((e) => {
+          console.error(`[pipeline] Apify falló para "${project.name}":`, e);
+          return { tried: 0, inserted: 0, errors: [] as string[] };
+        });
+        if (social.tried) console.log(`[pipeline] redes (Apify): ${social.inserted} comentarios nuevos de ${social.tried} cuentas`);
+      }
       // Testo degli articoli PRIMA dell'analisi: se il pezzo è disponibile,
       // sentiment e temi si giudicano sul contenuto vero e non sul titolo.
       // Non costa nulla in AI — sono solo pagine web.

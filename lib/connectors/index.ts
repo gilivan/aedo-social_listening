@@ -24,13 +24,14 @@ import { talkwalker } from './talkwalker';
 import { lemmy } from './lemmy';
 import { newsdata } from './newsdata';
 import { podcastIndex } from './podcastindex';
+import { apifySocial } from './apify';
 
 export const CONNECTORS: Connector[] = [
   // Gratuite (alcune richiedono una chiave gratuita: reddit, youtube, discord)
   googleNews, gdelt, reddit, bluesky, mastodon, hackerNews, youtube, telegram, rss, linkedinWeb, stackExchange, github, discord, secEdgar, arxiv,
   lemmy, newsdata, podcastIndex,
   // Premium (si attivano con le chiavi API a pagamento)
-  xTwitter, instagram, facebook, tiktok, linkedin, newsapi, talkwalker,
+  apifySocial, xTwitter, instagram, facebook, tiktok, linkedin, newsapi, talkwalker,
 ];
 
 /**
@@ -70,7 +71,7 @@ export const SOURCE_CATEGORY: Record<string, SourceCategory> = {
   youtube: 'video',
   'sec-edgar': 'finance',
   arxiv: 'academic', talkwalker: 'social', talkwalker_news: 'general',
-  lemmy: 'social', newsdata: 'general', podcastindex: 'audio',
+  lemmy: 'social', newsdata: 'general', podcastindex: 'audio', apify: 'social',
 };
 export const CATEGORY_ORDER: SourceCategory[] = ['general', 'finance', 'academic', 'tech', 'social', 'video', 'audio'];
 export const CATEGORY_LABEL: Record<SourceCategory, string> = {
@@ -146,6 +147,10 @@ export const SOURCE_META: Record<string, { label: string; color: string; note?: 
   newsdata: {
     label: 'NewsData.io', color: '#6366f1',
     note: 'Noticias de más de 100.000 medios en más de 80 idiomas. Clave gratuita, 200 créditos al día, uso comercial permitido. Una búsqueda por proyecto en cada recolección (10 artículos, consulta booleana de 100 caracteres); los términos restantes rotan en la siguiente ejecución. El texto completo no está en el plan gratuito: los artículos se enriquecen después, como los demás.',
+  },
+  apify: {
+    label: 'Meta vía Apify', color: '#e1306c',
+    note: 'Comentarios del público en las publicaciones de las cuentas de Instagram y páginas de Facebook definidas en Consultas (la marca y sus competidores), leídos con los extractores oficiales de Apify. Primera carga: 60 días; después, solo lo nuevo. Cada ejecución lleva un tope de gasto en Apify.',
   },
   podcastindex: {
     label: 'Podcast Index', color: '#f43f5e',

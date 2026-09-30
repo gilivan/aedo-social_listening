@@ -9,6 +9,7 @@ import { getCurrentUser, isAdmin } from '@/lib/auth';
 import { buildPlan, probePlan, retagMentions, savePlan, type BuildResult, type PlanProbe } from '@/lib/query-builder';
 import { planFromRules, validatePlan, type QueryPlan } from '@/lib/query-plan';
 import { normalizeCountries } from '@/lib/project-countries';
+import { parseAccounts } from '@/lib/social/apify';
 
 // Le azioni della pagina Query. Tutte controllano che l'utente possa
 // modificare il progetto: il piano decide che cosa Radar raccoglie.
@@ -80,5 +81,19 @@ export async function saveCountriesAction(formData: FormData): Promise<void> {
   const countries = normalizeCountries(formData.getAll('countries').map(String), formData.get('worldwide') === 'on');
   const db = await getDb();
   await db.update(projects).set({ countries }).where(eq(projects.id, projectId));
+  revalidatePath('/', 'layout');
+}
+
+/** Cuentas de Instagram / Facebook escuchadas vía Apify (panel en Consultas). */
+export async function saveSocialAccountsAction(formData: FormData): Promise<void> {
+  const projectId = Number(formData.get('projectId'));
+  const p = await editable(projectId);
+  if (!p) return;
+  const socialAccounts = [
+    ...parseAccounts('instagram', String(formData.get('instagram') ?? '')),
+    ...parseAccounts('facebook', String(formData.get('facebook') ?? '')),
+  ];
+  const db = await getDb();
+  await db.update(projects).set({ socialAccounts }).where(eq(projects.id, projectId));
   revalidatePath('/', 'layout');
 }

@@ -40,3 +40,12 @@ Luego en Reseñas → Google Maps se agrega el lugar (URL o nombre). Primera vez
 reseñas; después solo las nuevas (ordena por más recientes). Fechas aproximadas.
 Variables opcionales: GMAPS_CHROME_PATH, GMAPS_HEADLESS=1 (forzar headless; por defecto Chrome corre con ventana fuera de la pantalla), GMAPS_PROFILE_DIR.
 4. Facebook de terceros vía Apify solo si hace falta.
+
+## Instagram y Facebook vía Apify
+Comentarios del público en las publicaciones de las cuentas de cada proyecto (marca y competidores).
+- Token: Ajustes → Fuentes → "Meta vía Apify" (apify.com → Settings → API & Integrations).
+- Cuentas: Consultas → "Cuentas en redes": `@usuario | Nombre` (Instagram) y `URL | Nombre` (Facebook).
+  El Nombre debe coincidir con la entidad del Benchmark.
+- Primera carga 60 días (APIFY_FIRST_DAYS); después posts de 14 días y comentarios solo donde el contador subió.
+- Tope de gasto por ejecución: APIFY_MAX_USD_PER_RUN (3 USD por defecto).
+- Código: lib/social/apify.ts (se ejecuta en la pipeline antes del análisis de IA).

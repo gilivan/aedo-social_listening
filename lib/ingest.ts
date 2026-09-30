@@ -250,7 +250,7 @@ export async function ingestProject(project: typeof projects.$inferSelect) {
   // toccano mai. Le due regole sono la stessa cosa vista dai due lati: i
   // credits del contratto aziendale si spendono dove l'utente ha deciso.
   let enabled = CONNECTORS
-    .filter((c) => c.enabled())
+    .filter((c) => c.enabled() && !c.projectLevel)
     .filter((c) => (project.mode === 'talkwalker' ? c.id === 'talkwalker' : c.id !== 'talkwalker'));
 
   if (project.mode === 'talkwalker') {
